@@ -46,6 +46,22 @@ namespace mfl
         char value[N] {};
     };
 
+    template <std::size_t... len>
+    consteval auto concat(const static_string<len>&... strings)
+    {
+        constexpr std::size_t N{ (... + len) - sizeof...(len) };
+        std::array<char, N+1> result{};
+        std::size_t index{ 0 };
+        ([&] {
+            const auto sv{ strings.data() };
+            std::copy(std::begin(sv), std::end(sv), std::begin(result) + index);
+            index += std::size(sv);
+        }(), ...);
+
+        result[N] = '\0';
+        return static_string{ result };
+    }
+
     template <auto value>
     consteval auto to_static_string() {
         constexpr auto enum_val_str{ magic_enum::enum_name(value) };

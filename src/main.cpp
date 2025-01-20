@@ -4,9 +4,6 @@
 
 #include "static_string.hpp"
 
-#define STRINGIFY(x) #x
-#define TO_STR(x) STRINGIFY(x)
-
 using namespace mfl;
 
 enum class Uniform_t
@@ -23,26 +20,6 @@ constexpr auto space{ static_string{ " " } };
 constexpr auto equal{ static_string{ "=" } };
 constexpr auto plus{ static_string{ "+" } };
 constexpr auto line_end{ static_string{ ";" } };
-
-template <std::size_t... len>
-consteval auto concat(const static_string<len>&... strings)
-{
-    constexpr std::size_t N{ (... + len) - sizeof...(len) };
-    std::array<char, N+1> result{};
-    std::size_t index{ 0 };
-    ([&] {
-        const auto sv{ strings.data() };
-        std::copy(std::begin(sv), std::end(sv), std::begin(result) + index);
-        index += std::size(sv);
-    }(), ...);
-
-    result[N] = '\0';
-    return static_string{ result };
-}
-
-consteval auto keyword_to_string(Keyword key) {
-    return static_string("uniform");
-}
 
 auto print(const auto& thing) {
     for (auto e : thing) {
