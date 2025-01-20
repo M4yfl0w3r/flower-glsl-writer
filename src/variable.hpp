@@ -23,16 +23,12 @@ namespace mfl
     static constexpr auto plus{ static_string{ "+" } };
     static constexpr auto line_end{ static_string{ ";\n" } };
 
-    template <auto static_name, Type t, Keyword key>
+    template <static_string name, Type type, Keyword keyword>
     struct [[nodiscard]] variable 
     {
-        static constexpr auto name{ static_name };
-        static constexpr auto type{ t };
-        static constexpr auto keyword{ key };
-
         static constexpr auto declaration{ 
             concat(
-                to_static_string<key>(), 
+                to_static_string<keyword>(), 
                 space, 
                 to_static_string<type>(), 
                 space, 
@@ -56,5 +52,8 @@ namespace mfl
     consteval auto assign(const variable<n1, t, key>& dest, const static_string<N>& src) {
         return concat(dest.name, space, equal, space, src);
     }
+
+    template <static_string name, Type t>
+    using uniform = variable<name, t, Keyword::uniform>;
 }
 

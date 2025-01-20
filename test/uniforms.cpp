@@ -14,9 +14,9 @@ using namespace mfl;
 TEST(Uniforms, UniformsDeclaration)
 {
     constexpr auto create_uniforms = []() {
-        constexpr auto color_map{ variable<static_string{ "color_map" }, Type::sampler2D, Keyword::uniform>() };
-        constexpr auto normal_map{ variable<static_string{ "normal_map" }, Type::sampler2D, Keyword::uniform>() };
-        constexpr auto fog_color{ variable<static_string{ "fog_color" }, Type::vec3, Keyword::uniform>() };
+        constexpr auto color_map{ uniform<"color_map", Type::sampler2D>() };
+        constexpr auto normal_map{ uniform<"normal_map", Type::sampler2D>() };
+        constexpr auto fog_color{ uniform<"fog_color", Type::vec3>() };
         return concat(color_map.declaration, normal_map.declaration, fog_color.declaration);
     };
 
