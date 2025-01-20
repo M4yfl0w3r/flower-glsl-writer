@@ -4,15 +4,18 @@
 
 using namespace mfl;
 
-enum class Uniform_t
+enum class Type 
 {
+    vec2,
     vec3,
-    vec4
+    vec4,
+    sampler2D
 };
 
 enum class Keyword 
 {
-    Uniform
+    uniform,
+    in
 };
 
 constexpr auto space{ static_string{ " " } };
@@ -27,14 +30,14 @@ auto print(const auto& thing) {
     std::println("");
 }
 
-template <auto static_name, Uniform_t t>
-struct uniform 
+template <auto static_name, Type t, Keyword key>
+struct variable 
 {
     static constexpr auto name{ static_name };
     static constexpr auto type{ t };
-    static constexpr auto key{ Keyword::Uniform };
+    static constexpr auto keyword{ key };
 
-    static constexpr auto init_expression{ 
+    static constexpr auto declaration{ 
         concat(
             to_static_string<key>(), 
             space, 
@@ -46,32 +49,50 @@ struct uniform
     };
 };
 
-template <auto n1, auto n2, Uniform_t t>
-consteval auto add(const uniform<n1, t>& st, const uniform<n2, t>& nd) {
+template <auto n1, auto n2, Type t, Keyword key>
+consteval auto add(const variable<n1, t, key>& st, const variable<n2, t, key>& nd) {
     return concat(st.name, space, plus, space, nd.name, line_end);
 }
 
-template <auto n1, auto n2, Uniform_t t>
-consteval auto assign(const uniform<n1, t>& dest, const uniform<n2, t>& src) {
+template <auto n1, auto n2, Type t, Keyword key>
+consteval auto assign(const variable<n1, t, key>& dest, const variable<n2, t, key>& src) {
     return concat(dest.name, space, equal, space, src.name, line_end);
 }
 
-template <auto n1, auto N, Uniform_t t>
-consteval auto assign(const uniform<n1, t>& dest, const static_string<N>& src) {
+template <auto n1, auto N, Type t, Keyword key>
+consteval auto assign(const variable<n1, t, key>& dest, const static_string<N>& src) {
     return concat(dest.name, space, equal, space, src);
 }
 
 auto main() -> int 
 {
-    constexpr auto ambient{ uniform<static_string{ "ambient" }, Uniform_t::vec3>() };
-    constexpr auto diffuse{ uniform<static_string{ "diffuse" }, Uniform_t::vec3>() };
-    constexpr auto color{ uniform<static_string{ "color" }, Uniform_t::vec3>() };
+    constexpr auto color_map{ 
+        variable<
+            static_string{ "color_map" }, 
+            Type::sampler2D, 
+            Keyword::uniform
+        >() 
+    };
 
-    constexpr auto add_res{ add(ambient, diffuse) };
-    constexpr auto ass_res{ assign(color, diffuse) };
-    constexpr auto test{ assign(color, add_res) };
+    constexpr auto in_tex_coord{ 
+        variable<
+            static_string{ "uv_tex_coord" }, 
+            Type::vec2, 
+            Keyword::in
+        >() 
+    };
 
-    print(add_res);
-    print(ass_res);
-    print(test);
+    // constexpr auto ambient{ uniform<static_string{ "ambient" }, Uniform_t::vec3>() };
+    // constexpr auto diffuse{ uniform<static_string{ "diffuse" }, Uniform_t::vec3>() };
+    // constexpr auto color{ uniform<static_string{ "color" }, Uniform_t::vec3>() };
+
+    // constexpr auto add_res{ add(ambient, diffuse) };
+    // constexpr auto ass_res{ assign(color, diffuse) };
+    // constexpr auto test{ assign(color, add_res) };
+
+    print(color_map.declaration);
+    print(in_tex_coord.declaration);
+    // print(add_res);
+    // print(ass_res);
+    // print(test);
 }
