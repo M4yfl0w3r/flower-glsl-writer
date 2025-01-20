@@ -46,6 +46,9 @@ namespace mfl
         char value[N] {};
     };
 
+    template <std::size_t N>
+    static_string(const char (&str)[N]) -> static_string<N>;
+
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
     {
@@ -65,7 +68,6 @@ namespace mfl
     template <auto value>
     consteval auto to_static_string() {
         constexpr auto enum_val_str{ magic_enum::enum_name(value) };
-        constexpr auto length{ std::size(enum_val_str) + 1 }; // \0
 
         constexpr auto buffer{ 
             detail::fill_buffer<char>(
@@ -74,7 +76,7 @@ namespace mfl
             )
         };
 
-        return static_string<length>(buffer);
+        return static_string(buffer);
     }
 }
 

@@ -1,6 +1,4 @@
 #include <print>
-#include <ranges>
-#include <type_traits>
 
 #include "static_string.hpp"
 
@@ -8,7 +6,8 @@ using namespace mfl;
 
 enum class Uniform_t
 {
-    vec3
+    vec3,
+    vec4
 };
 
 enum class Keyword 
