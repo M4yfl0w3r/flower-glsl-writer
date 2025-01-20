@@ -23,7 +23,9 @@ TEST(Uniforms, UniformsDeclaration)
     constexpr auto result{ create_uniforms() };
 
     constexpr auto expected_result{ 
-        static_string{ "uniform sampler2D color_map;\nuniform sampler2D normal_map;\nuniform vec3 fog_color;\n" } 
+        static_string{ "uniform sampler2D color_map;\n"
+                       "uniform sampler2D normal_map;\n"
+                       "uniform vec3 fog_color;\n" } 
     };
 
     EXPECT_TRUE(result == expected_result);

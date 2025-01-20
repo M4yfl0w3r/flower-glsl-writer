@@ -16,7 +16,7 @@ auto main() -> int
 {
     constexpr auto color_map{ 
         variable<
-            static_string{ "color_map" }, 
+            { "color_map" }, 
             Type::sampler2D, 
             Keyword::uniform
         >() 

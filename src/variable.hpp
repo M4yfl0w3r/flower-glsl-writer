@@ -2,6 +2,11 @@
 
 #include "static_string.hpp"
 
+static constexpr auto space{ mfl::static_string{ " " } };
+static constexpr auto equal{ mfl::static_string{ "=" } };
+static constexpr auto plus{ mfl::static_string{ "+" } };
+static constexpr auto line_end{ mfl::static_string{ ";\n" } };
+
 namespace mfl 
 {
     enum class Type 
@@ -17,11 +22,6 @@ namespace mfl
         uniform,
         in
     };
-
-    static constexpr auto space{ static_string{ " " } };
-    static constexpr auto equal{ static_string{ "=" } };
-    static constexpr auto plus{ static_string{ "+" } };
-    static constexpr auto line_end{ static_string{ ";\n" } };
 
     template <static_string name, Type type, Keyword keyword>
     struct [[nodiscard]] variable 
