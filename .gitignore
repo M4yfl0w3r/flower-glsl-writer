@@ -3,3 +3,6 @@
 
 build
 compile_commands.json
+
+src/a.out
+src/test.cpp
