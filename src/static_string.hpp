@@ -40,6 +40,14 @@ namespace mfl
             return std::string_view{ value };
         }
 
+        consteval auto at(std::size_t i) const {
+            return value[i];
+        }
+
+        constexpr bool operator==(const static_string& other) const {
+            return std::equal(std::begin(value), std::end(value), std::begin(other.value));
+        }
+
         constexpr auto begin() const { return value; }
         constexpr auto end() const { return value + size; }
 

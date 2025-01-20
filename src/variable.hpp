@@ -21,7 +21,7 @@ namespace mfl
     static constexpr auto space{ static_string{ " " } };
     static constexpr auto equal{ static_string{ "=" } };
     static constexpr auto plus{ static_string{ "+" } };
-    static constexpr auto line_end{ static_string{ ";" } };
+    static constexpr auto line_end{ static_string{ ";\n" } };
 
     template <auto static_name, Type t, Keyword key>
     struct [[nodiscard]] variable 
