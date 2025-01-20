@@ -2,13 +2,14 @@
 
 #include "static_string.hpp"
 
-static constexpr auto space{ mfl::static_string{ " " } };
-static constexpr auto equal{ mfl::static_string{ "=" } };
-static constexpr auto plus{ mfl::static_string{ "+" } };
-static constexpr auto line_end{ mfl::static_string{ ";\n" } };
-
 namespace mfl 
 {
+    // TODO: move it somewhere
+    constexpr auto space{ static_string{ " " } };
+    constexpr auto equal{ static_string{ "=" } };
+    constexpr auto plus{ static_string{ "+" } };
+    constexpr auto line_end{ static_string{ ";\n" } };
+
     enum class Type 
     {
         vec2,
