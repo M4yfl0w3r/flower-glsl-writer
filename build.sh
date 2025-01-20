@@ -1,4 +1,4 @@
 #!/bin/bash 
 
 xmake 
-xmake run
+xmake run app
