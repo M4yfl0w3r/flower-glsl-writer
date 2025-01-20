@@ -7,5 +7,5 @@ set_warnings("all")
 add_requires("glm", "gtest")
 
 target("test")
-    add_files("*.cpp")
+    add_files("src/*.cpp")
     add_packages("glm")
