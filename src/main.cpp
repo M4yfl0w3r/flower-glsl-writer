@@ -63,18 +63,12 @@ consteval auto assign(const uniform<n1, t>& dest, const static_string<N>& src) {
 
 auto main() -> int 
 {
-    constexpr auto ambient_name{ static_string{ "ambient" } };
-    constexpr auto ambient{ uniform<ambient_name, Uniform_t::vec3>() };
-
-    constexpr auto diffuse_name{ static_string{ "diffuse" } };
-    constexpr auto diffuse{ uniform<diffuse_name, Uniform_t::vec3>() };
-
-    constexpr auto color_name{ static_string{ "color" } };
-    constexpr auto color{ uniform<color_name, Uniform_t::vec3>() };
+    constexpr auto ambient{ uniform<static_string{ "ambient" }, Uniform_t::vec3>() };
+    constexpr auto diffuse{ uniform<static_string{ "diffuse" }, Uniform_t::vec3>() };
+    constexpr auto color{ uniform<static_string{ "color" }, Uniform_t::vec3>() };
 
     constexpr auto add_res{ add(ambient, diffuse) };
     constexpr auto ass_res{ assign(color, diffuse) };
-
     constexpr auto test{ assign(color, add_res) };
 
     print(add_res);
