@@ -1,11 +1,8 @@
 #include <print>
-#include <source_location>
-#include <glm/vec4.hpp>
+#include <unordered_map>
 
 #define STRINGIFY(x) #x
 #define TO_STR(x) STRINGIFY(x)
-
-using vec4 = glm::vec4;
 
 enum class Uniform_t
 {
@@ -40,6 +37,11 @@ struct static_string
     char value[N] {};
 };
 
+constexpr auto space{ static_string{ " " } };
+constexpr auto equal{ static_string{ "=" } };
+constexpr auto plus{ static_string{ "+" } };
+constexpr auto line_end{ static_string{ ";" } };
+
 template <std::size_t... len>
 consteval auto concat(const static_string<len>&... strings)
 {
@@ -63,29 +65,6 @@ consteval auto enum_to_string(Uniform_t type) {
 consteval auto keyword_to_string(Keyword key) {
     return static_string("uniform");
 }
-    
-constexpr auto space{ static_string{ " " } };
-constexpr auto equal{ static_string{ "=" } };
-constexpr auto plus{ static_string{ "+" } };
-constexpr auto line_end{ static_string{ ";" } };
-
-template <auto n, Uniform_t t>
-struct uniform 
-{
-    static constexpr auto name{ n };
-    static constexpr auto type{ t };
-    static constexpr auto key{ Keyword::Uniform };
-    static constexpr auto declaration{ concat(keyword_to_string(key), space, enum_to_string(type), space, name, line_end) };
-
-    consteval auto operator=(const uniform& u) {
-        return concat(name, space, equal, u.name, line_end);
-    }
-};
-
-template <auto n1, auto n2, Uniform_t t>
-consteval auto operator+(const uniform<n1, t>& st, const uniform<n2, t>& nd) {
-    return concat(st.name, space, plus, space, nd.name, line_end);
-}
 
 auto print(const auto& thing) {
     for (auto e : thing) {
@@ -94,15 +73,47 @@ auto print(const auto& thing) {
     std::println("");
 }
 
+template <auto static_name, Uniform_t t>
+struct uniform 
+{
+    static constexpr auto name{ static_name };
+    static constexpr auto type{ t };
+    static constexpr auto key{ Keyword::Uniform };
+    static constexpr auto init_expression{ concat(keyword_to_string(key), space, enum_to_string(type), space, name, line_end) };
+};
+
+template <auto n1, auto n2, Uniform_t t>
+consteval auto add(const uniform<n1, t>& st, const uniform<n2, t>& nd) {
+    return concat(st.name, space, plus, space, nd.name, line_end);
+}
+
+template <auto n1, auto n2, Uniform_t t>
+consteval auto assign(const uniform<n1, t>& dest, const uniform<n2, t>& src) {
+    return concat(dest.name, space, equal, space, src.name, line_end);
+}
+
+template <auto n1, auto N, Uniform_t t>
+consteval auto assign(const uniform<n1, t>& dest, const static_string<N>& src) {
+    return concat(dest.name, space, equal, space, src);
+}
+
 auto main() -> int 
 {
-    constexpr auto ambient_name{ static_string("ambient") };
+    constexpr auto ambient_name{ static_string{ "ambient" } };
     constexpr auto ambient{ uniform<ambient_name, Uniform_t::vec3>() };
 
-    constexpr auto diffuse_name{ static_string("diffuse") };
+    constexpr auto diffuse_name{ static_string{ "diffuse" } };
     constexpr auto diffuse{ uniform<diffuse_name, Uniform_t::vec3>() };
-    
-    constexpr auto res{ ambient + diffuse };
 
-    print(res);
+    constexpr auto color_name{ static_string{ "color" } };
+    constexpr auto color{ uniform<color_name, Uniform_t::vec3>() };
+
+    constexpr auto add_res{ add(ambient, diffuse) };
+    constexpr auto ass_res{ assign(color, diffuse) };
+
+    constexpr auto test{ assign(color, add_res) };
+
+    print(add_res);
+    print(ass_res);
+    print(test);
 }
