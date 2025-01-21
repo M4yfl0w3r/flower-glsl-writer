@@ -74,7 +74,8 @@ namespace mfl
     }
 
     template <auto value>
-    consteval auto to_static_string() {
+    consteval auto to_static_string() 
+    {
         constexpr auto enum_val_str{ magic_enum::enum_name(value) };
 
         constexpr auto buffer{ 
@@ -84,7 +85,7 @@ namespace mfl
             )
         };
 
-        return static_string(buffer);
+        return static_string{ buffer };
     }
 }
 

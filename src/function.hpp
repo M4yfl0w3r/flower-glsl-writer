@@ -4,25 +4,59 @@
 
 namespace mfl::detail 
 {
-    template <auto value>
-    static constexpr auto get_type_or_empty() {
-        if constexpr (value == Type::empty) {
-            return static_string("");
+    template <Type output_type>
+    static consteval auto type_or_empty()
+    {
+        if constexpr (output_type == Type::empty) {
+            return static_string{ "" };
         }
-        return to_static_string<value>();
+        else {
+            return to_static_string<output_type>();
+        }
     }
 
     template <typename... Params>
-    static constexpr auto make_lvalue_input() {
-        return concat(
-            concat(
-                to_static_string<Keyword::in>(), 
-                space, 
-                to_static_string<Params::type>(), 
-                space, 
-                Params::name
-            )...
-        );
+    static consteval auto make_input() 
+    {
+        if constexpr ((... && (Params::type == Type::empty))) {
+            return concat(concat(Params::name)...);
+        }
+        else {
+            return concat(
+                concat(
+                    to_static_string<Params::type>(), 
+                    space, 
+                    Params::name
+                )...
+            );
+        }
+    }
+
+    template <static_string fn_name, Type output_type, static_string output, static_string input>
+    static consteval auto user_defined_or_builtin() 
+    {
+        if constexpr (output_type == Type::empty) {
+            return concat( 
+                fn_name,
+                left_parenthesis,
+                input,
+                right_parenthesis
+            );
+        }
+        else {
+            return concat(
+                output,
+                space,
+                fn_name,
+                left_parenthesis,
+                input,
+                right_parenthesis,
+                space,
+                left_brace,
+                right_brace,
+                line_end
+            );
+        }
     }
 }
 
@@ -37,22 +71,8 @@ namespace mfl
     template <static_string fn_name, Type output_type, typename... Params>
     struct [[nodiscard]] function 
     {
-        static constexpr auto input{ detail::make_lvalue_input<Params...>() };
-        static constexpr auto output{ detail::get_type_or_empty<output_type>() };
-        
-        static constexpr auto declaration{ 
-            concat(
-                output,
-                space,
-                fn_name,
-                left_parenthesis,
-                input,
-                right_parenthesis,
-                space,
-                left_brace,
-                right_brace,
-                line_end
-            )
-        };
+        static constexpr auto input{ detail::make_input<Params...>() };
+        static constexpr auto output{ detail::type_or_empty<output_type>() };
+        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, input>() };
     };
 }
