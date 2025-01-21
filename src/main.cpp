@@ -15,7 +15,7 @@ auto main() -> int
 {
     constexpr auto color_map{ 
         variable<
-            { "color_map" }, 
+            "color_map", 
             Type::sampler2D, 
             Keyword::uniform
         >() 
@@ -23,7 +23,7 @@ auto main() -> int
 
     constexpr auto in_tex_coord{ 
         variable<
-            static_string{ "uv_tex_coord" }, 
+            "uv_tex_coord", 
             Type::vec2, 
             Keyword::in
         >() 

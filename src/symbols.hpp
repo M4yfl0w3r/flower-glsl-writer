@@ -6,10 +6,12 @@ namespace mfl
 {
     enum class Type 
     {
+        f32,
         vec2,
         vec3,
         vec4,
-        sampler2D
+        sampler2D,
+        empty
     };
 
     enum class Keyword 

@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include "function.hpp"
 
 using namespace mfl;
@@ -32,4 +31,9 @@ TEST(Functions, MultiParamsFunction)
     constexpr auto expected_declaration{ static_string{ "vec3 test_multiparam(in vec3 a, in vec3 b) {};\n"} };
 
     EXPECT_TRUE(fn.declaration == expected_declaration);
+}
+
+TEST(Functions, BuiltinFunction)
+{
+
 }

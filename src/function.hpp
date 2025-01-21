@@ -4,8 +4,16 @@
 
 namespace mfl::detail 
 {
+    template <auto value>
+    static constexpr auto get_type_or_empty() {
+        if constexpr (value == Type::empty) {
+            return static_string("");
+        }
+        return to_static_string<value>();
+    }
+
     template <typename... Params>
-    static constexpr auto make_input() {
+    static constexpr auto make_lvalue_input() {
         return concat(
             concat(
                 to_static_string<Keyword::in>(), 
@@ -29,11 +37,12 @@ namespace mfl
     template <static_string fn_name, Type output_type, typename... Params>
     struct [[nodiscard]] function 
     {
-        static constexpr auto input{ detail::make_input<Params...>() };
+        static constexpr auto input{ detail::make_lvalue_input<Params...>() };
+        static constexpr auto output{ detail::get_type_or_empty<output_type>() };
         
         static constexpr auto declaration{ 
             concat(
-                to_static_string<output_type>(),
+                output,
                 space,
                 fn_name,
                 left_parenthesis,
