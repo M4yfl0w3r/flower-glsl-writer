@@ -9,6 +9,7 @@ using namespace mfl;
 //     return res_toGamma;
 // }
 
+// #include <print>
 // auto print(const auto& thing) {
 //     for (auto e : thing) {
 //         std::print("{}", e);
@@ -16,9 +17,9 @@ using namespace mfl;
 //     std::println("");
 // }
 
-TEST(Functions, FunctionSignature)
+TEST(Functions, BasicFunctionSignature)
 {
-    constexpr auto fn{ function<static_string{ "to_gamma" }, static_string{ "v" }, Type::vec3, Type::vec3>() };
+    constexpr auto fn{ function<"to_gamma", Type::vec3, Param<Type::vec3, "v">>() };
     constexpr auto expected_result{ static_string{ "vec3 to_gamma(in vec3 v) {};\n" } };
 
     EXPECT_TRUE(fn.declaration == expected_result);

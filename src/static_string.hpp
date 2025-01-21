@@ -26,7 +26,7 @@ namespace mfl
     template <std::size_t N>
     struct static_string 
     {
-        static constexpr int size = N - 1;
+        static constexpr auto size{ N - 1 };
 
         consteval static_string(const char (&str)[N])  {
             std::copy_n(str, N, value);
