@@ -24,6 +24,7 @@ namespace mfl
     inline constexpr auto equal{ static_string{ "=" } };
     inline constexpr auto plus{ static_string{ "+" } };
     inline constexpr auto line_end{ static_string{ ";\n" } };
+    inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
     inline constexpr auto left_brace{ static_string{ "{" } };
     inline constexpr auto right_brace{ static_string{ "}" } };

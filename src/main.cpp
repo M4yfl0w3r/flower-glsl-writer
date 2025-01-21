@@ -23,6 +23,8 @@ auto main() -> int
     constexpr auto tex_coord{ in_var<"uvTexCoord", Type::vec2>() };
     constexpr auto position{ in_var<"position", Type::vec2>() };
 
+    constexpr auto to_gamma{ function<"toGamma", Type::vec3, Param<Type::vec3, "v">>() };
+
     constexpr auto result{ 
         concat(
             colormap.declaration, 
@@ -30,7 +32,8 @@ auto main() -> int
             fog_color.declaration, 
             fog_density.declaration,
             tex_coord.declaration,
-            position.declaration
+            position.declaration,
+            to_gamma.declaration
         ) 
     };
 

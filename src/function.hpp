@@ -58,7 +58,7 @@ namespace mfl::detail
                 space,
                 left_brace,
                 right_brace,
-                line_end
+                new_line 
             );
         }
     }
