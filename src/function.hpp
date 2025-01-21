@@ -1,16 +1,25 @@
 #pragma once
 
-#include "variable.hpp"
-#include "static_string.hpp"
+#include "symbols.hpp"
+
+namespace mfl::detail 
+{
+    template <typename... Params>
+    static constexpr auto make_input() {
+        return concat(
+            concat(
+                to_static_string<Keyword::in>(), 
+                space, 
+                to_static_string<Params::type>(), 
+                space, 
+                Params::name
+            )...
+        );
+    }
+}
 
 namespace mfl
 {
-    static constexpr auto comma{ static_string{ "," } };
-    static constexpr auto left_brace{ static_string{ "{" } };
-    static constexpr auto right_brace{ static_string{ "}" } };
-    static constexpr auto left_parenthesis{ static_string{ "(" } };
-    static constexpr auto right_parenthesis{ static_string{ ")" } };
-
     template <Type t, static_string n>
     struct Param {
         static constexpr auto type{ t };
@@ -20,15 +29,7 @@ namespace mfl
     template <static_string fn_name, Type output_type, typename... Params>
     struct [[nodiscard]] function 
     {
-        static constexpr auto input{
-            concat(
-                to_static_string<Keyword::in>(),
-                space, 
-                to_static_string<Params::type>(),
-                space,
-                Params::name
-            )... 
-        };
+        static constexpr auto input{ detail::make_input<Params...>() };
         
         static constexpr auto declaration{ 
             concat(

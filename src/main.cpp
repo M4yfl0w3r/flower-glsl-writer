@@ -1,7 +1,6 @@
 #include <print>
 
 #include "variable.hpp"
-#include "static_string.hpp"
 
 using namespace mfl;
 
