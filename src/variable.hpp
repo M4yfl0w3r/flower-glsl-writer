@@ -36,5 +36,8 @@ namespace mfl
 
     template <static_string name, Type t>
     using uniform = variable<name, t, Keyword::uniform>;
+
+    template <static_string name, Type t>
+    using in_var = variable<name, t, Keyword::in>;
 }
 

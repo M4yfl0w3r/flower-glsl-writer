@@ -7,8 +7,12 @@ namespace mfl::detail
     template <Type output_type>
     static consteval auto type_or_empty()
     {
+        // TODO: handle it globally - f32 = float
         if constexpr (output_type == Type::empty) {
             return static_string{ "" };
+        }
+        else if constexpr (output_type == Type::f32) {
+            return static_string{ "float" };
         }
         else {
             return to_static_string<output_type>();
