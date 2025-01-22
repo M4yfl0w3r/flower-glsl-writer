@@ -10,12 +10,12 @@ using namespace mfl;
 //     return res_toGamma;
 // }
 
-#include <print>
-auto print(const auto& thing) {
-    for (auto e : thing) {
-        std::print("{}", e);
-    }
-}
+// #include <print>
+// auto print(const auto& thing) {
+//     for (auto e : thing) {
+//         std::print("{}", e);
+//     }
+// }
 
 TEST(Functions, BasicFunctionSignature)
 {
@@ -58,12 +58,16 @@ TEST(Functions, BuiltinFunction)
 TEST(Functions, FunctionWithBody)
 {
     constexpr auto body{ variable<"result", Type::vec3, value(1.0f / 2.0f)>() };
+    constexpr auto fn{ function<"to_gamma", Type::vec3, body.declaration, Param<Type::vec3, "v">>() };
 
-    print(body.declaration);
+    constexpr auto expected_declaration{ 
+        static_string{ 
+            "vec3 to_gamma(vec3 v) {\n"
+            "vec3 result = 1.0f / 2.0f;\n"
+            "\n"
+            "}\n" 
+        } 
+    };
 
-    // vec3 result = 1.0f / 2.0f;
-
-    // auto res = assign(body, val);
-
-    // constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<Type::vec3, "a, ">, Param<Type::vec3, "b">>() };
+    EXPECT_TRUE(fn.declaration == expected_declaration);
 }
