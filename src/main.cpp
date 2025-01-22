@@ -2,6 +2,7 @@
 
 #include "variable.hpp"
 #include "function.hpp"
+#include "value.hpp"
 
 using namespace mfl;
 
@@ -11,6 +12,22 @@ auto print(const auto& thing) {
         std::print("{}", e);
     }
     std::println("");
+}
+
+consteval auto to_gamma_body() 
+{
+    constexpr auto vec{ 
+        builtin_function<"vec3", Param<Type::empty, value(1.0f / 2.2f)>>() 
+    };
+    
+    constexpr auto pow{ 
+        builtin_function<"pow", Param<Type::empty, value(1.0f / 2.2f)>, 
+                                Param<Type::empty, vec.declaration>>() 
+    };
+
+    constexpr auto result{ variable<"result", Type::vec3, pow.declaration>() };
+    
+    return result.declaration;
 }
 
 auto main() -> int 
@@ -23,7 +40,7 @@ auto main() -> int
     constexpr auto tex_coord{ in_var<"uvTexCoord", Type::vec2>() };
     constexpr auto position{ in_var<"position", Type::vec2>() };
 
-    constexpr auto to_gamma{ builtin_function<"toGamma", Type::vec3, Param<Type::vec3, "v">>() };
+    constexpr auto to_gamma{ function<"toGamma", Type::vec3, to_gamma_body(), Param<Type::vec3, "v">>() };
 
     constexpr auto result{ 
         concat(

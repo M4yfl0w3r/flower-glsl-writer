@@ -49,7 +49,7 @@ TEST(Functions, MultiParamsFunction)
 
 TEST(Functions, BuiltinFunction)
 {
-    constexpr auto fn{ builtin_function<"vec3", Type::empty, Param<Type::empty, value(1.0f / 2.2f)>>() };
+    constexpr auto fn{ builtin_function<"vec3", Param<Type::empty, value(1.0f / 2.2f)>>() };
     constexpr auto expected_declaration{ static_string{ "vec3(1.0f / 2.2f)" } };
 
     EXPECT_TRUE(fn.declaration == expected_declaration);

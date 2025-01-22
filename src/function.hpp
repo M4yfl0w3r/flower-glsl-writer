@@ -82,6 +82,6 @@ namespace mfl
         static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
     };
 
-    template <static_string fn_name, Type output_type, typename... Params>
-    using builtin_function = function<fn_name, output_type, "", Params...>;
+    template <static_string fn_name, typename... Params>
+    using builtin_function = function<fn_name, Type::empty, "", Params...>;
 }
