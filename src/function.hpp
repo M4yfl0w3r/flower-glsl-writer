@@ -7,7 +7,6 @@ namespace mfl::detail
     template <Type output_type>
     static consteval auto type_or_empty()
     {
-        // TODO: handle it globally - f32 = float
         if constexpr (output_type == Type::empty) {
             return static_string{ "" };
         }
@@ -74,9 +73,6 @@ namespace mfl
         static constexpr auto type{ t };
         static constexpr auto name{ n };
     };
-
-    // TODO:
-    // - take body function - string like normal - declarations and whatno
 
     template <static_string fn_name, Type output_type, static_string body, typename... Params>
     struct [[nodiscard]] function 

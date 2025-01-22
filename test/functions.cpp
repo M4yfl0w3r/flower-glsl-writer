@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "function.hpp"
+#include "variable.hpp"
 #include "value.hpp"
 
 using namespace mfl;
@@ -9,12 +10,12 @@ using namespace mfl;
 //     return res_toGamma;
 // }
 
-// #include <print>
-// auto print(const auto& thing) {
-//     for (auto e : thing) {
-//         std::print("{}", e);
-//     }
-// }
+#include <print>
+auto print(const auto& thing) {
+    for (auto e : thing) {
+        std::print("{}", e);
+    }
+}
 
 TEST(Functions, BasicFunctionSignature)
 {
@@ -33,7 +34,6 @@ TEST(Functions, BasicFunctionSignature)
 
 TEST(Functions, MultiParamsFunction)
 {
-    // comma - super ugly fix for now, have to change it later
     constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<Type::vec3, "a, ">, Param<Type::vec3, "b">>() };
     
     constexpr auto expected_declaration{ 
@@ -53,4 +53,17 @@ TEST(Functions, BuiltinFunction)
     constexpr auto expected_declaration{ static_string{ "vec3(1.0f / 2.2f)" } };
 
     EXPECT_TRUE(fn.declaration == expected_declaration);
+}
+
+TEST(Functions, FunctionWithBody)
+{
+    constexpr auto body{ variable<"result", Type::vec3, value(1.0f / 2.0f)>() };
+
+    print(body.declaration);
+
+    // vec3 result = 1.0f / 2.0f;
+
+    // auto res = assign(body, val);
+
+    // constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<Type::vec3, "a, ">, Param<Type::vec3, "b">>() };
 }

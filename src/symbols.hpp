@@ -17,7 +17,8 @@ namespace mfl
     enum class Keyword 
     {
         uniform,
-        in
+        in,
+        none
     };
 
     inline constexpr auto space{ static_string{ " " } };

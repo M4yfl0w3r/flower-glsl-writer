@@ -47,6 +47,10 @@ namespace mfl
         consteval bool operator==(const static_string& other) const {
             return std::equal(std::begin(value), std::end(value), std::begin(other.value));
         }
+        
+        consteval bool operator==(const char* other) const {
+            return std::string_view{ value } == other;
+        }
 
         constexpr auto begin() const { return value; }
         constexpr auto end() const { return value + size; }
@@ -71,6 +75,11 @@ namespace mfl
 
         result[N] = '\0';
         return static_string{ result };
+    }
+
+    template <std::size_t st_len, std::size_t nd_len>
+    consteval auto operator+(const static_string<st_len>& st, const static_string<nd_len>& nd) {
+        return concat(st, nd);
     }
 
     template <auto value>
