@@ -48,9 +48,6 @@ namespace mfl::detail
         if constexpr (sizeof...(Params) == 0) {
             return static_string{ "" };
         }
-        else if constexpr ((... && (Params::type == Type::empty))) {
-            return concat(concat(Params::name)...);
-        }
         else {
             return []<auto... Indices>(std::index_sequence<Indices...>) {
                 return concat(
