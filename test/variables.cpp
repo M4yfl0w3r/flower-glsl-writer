@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "variable.hpp"
+#include "value.hpp"
 
 using namespace mfl;
 
@@ -11,7 +12,7 @@ using namespace mfl;
 //     std::println("");
 // }
 
-TEST(Uniforms, UniformsDeclaration)
+TEST(Variables, UniformsDeclaration)
 {
     constexpr auto create_uniforms = []() {
         constexpr auto color_map{ uniform<"color_map", Type::sampler2D>() };
@@ -29,4 +30,14 @@ TEST(Uniforms, UniformsDeclaration)
     };
 
     EXPECT_TRUE(result == expected_result);
+} 
+
+TEST(Variables, ReturnStatement)
+{
+    constexpr auto value_to_return{ value(1.0f / 2.0f) };
+    constexpr auto ret{ statement<value_to_return, Keyword::ret>() };
+    
+    constexpr auto expected_result{ static_string{ "return 1.0f / 2.0f;\n" } };
+
+    EXPECT_TRUE(ret.declaration == expected_result);
 }

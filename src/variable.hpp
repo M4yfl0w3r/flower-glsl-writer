@@ -10,6 +10,9 @@ namespace mfl::detail
         if constexpr (keyword == Keyword::none) {
             return static_string{ "" };
         }
+        else if constexpr (keyword == Keyword::ret) {
+            return static_string{ "return" };
+        }
         else {
             return to_static_string<keyword>() + space;
         }
@@ -18,7 +21,15 @@ namespace mfl::detail
     template <static_string name, Type type, static_string keyword, static_string value>
     static consteval auto init_value_or_empty()
     {
-        if constexpr (value == "") {
+        if constexpr (keyword == "return") {
+            return concat(
+                keyword,
+                space,
+                value,
+                line_end
+            );
+        }
+        else if constexpr (value == "") {
             return concat(
                 keyword,
                 to_static_string<type>(), 
@@ -75,5 +86,11 @@ namespace mfl
 
     template <static_string name, Type t, static_string value>
     using variable = variable_impl<name, t, Keyword::none, value>;
+
+    template <static_string name, static_string value>
+    using keyword = variable_impl<name, Type::empty, Keyword::none, value>;
+
+    template <static_string value, Keyword key>
+    using statement = variable_impl<"", Type::empty, key, value>;
 }
 

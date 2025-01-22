@@ -18,6 +18,7 @@ namespace mfl
     {
         uniform,
         in,
+        ret,
         none
     };
 

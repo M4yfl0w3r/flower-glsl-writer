@@ -25,9 +25,11 @@ consteval auto to_gamma_body()
                                 Param<Type::empty, vec.declaration>>() 
     };
 
-    constexpr auto result{ variable<"result", Type::vec3, pow.declaration>() };
-    
-    return result.declaration;
+    // constexpr auto ret{
+    //     keyword<"return", pow.declaration>()
+    // };
+
+    return variable<"result", Type::vec3, pow.declaration>().declaration;
 }
 
 auto main() -> int 
