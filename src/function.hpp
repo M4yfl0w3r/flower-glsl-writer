@@ -29,14 +29,12 @@ namespace mfl::detail
     {
         if constexpr (is_last) {
             return concat(
-                to_static_string<Param::type>(), 
-                space, 
+                type_or_empty<Param::type>(),
                 Param::name
             );
         } else {
             return concat(
-                to_static_string<Param::type>(), 
-                space, 
+                type_or_empty<Param::type>(),
                 Param::name,
                 comma,
                 space
