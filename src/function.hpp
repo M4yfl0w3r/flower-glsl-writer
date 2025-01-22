@@ -24,6 +24,26 @@ namespace mfl::detail
         }
     }
 
+    template <bool is_last, typename Param>
+    static consteval auto format_param(Param param) 
+    {
+        if constexpr (is_last) {
+            return concat(
+                to_static_string<Param::type>(), 
+                space, 
+                Param::name
+            );
+        } else {
+            return concat(
+                to_static_string<Param::type>(), 
+                space, 
+                Param::name,
+                comma,
+                space
+            );
+        }
+    }
+
     template <typename... Params>
     static consteval auto make_input() 
     {
@@ -34,13 +54,15 @@ namespace mfl::detail
             return concat(concat(Params::name)...);
         }
         else {
-            return concat(
-                concat(
-                    to_static_string<Params::type>(), 
-                    space, 
-                    Params::name
-                )...
-            );
+            constexpr auto format_all{ 
+                []<auto... Indices>(std::index_sequence<Indices...>) {
+                    return concat(
+                        format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...
+                    );
+                }
+            };
+
+            return format_all(std::make_index_sequence<sizeof...(Params)>());
         }
     }
 

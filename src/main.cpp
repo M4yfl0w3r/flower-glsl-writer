@@ -17,9 +17,8 @@ auto print(const auto& thing) {
 // TODO: pass lvalues
 consteval auto main_body()
 {
-    // TODO: ugly comma fix
-    constexpr auto depth_map_sample{ builtin_fn<"texture2D", Param<"depth_map, ">, Param<"uv_tex_coord">>() };
-    constexpr auto color_map_sample{ builtin_fn<"texture2D", Param<"color_map, ">, Param<"uv_tex_coord + parallax">>() };
+    constexpr auto depth_map_sample{ builtin_fn<"texture2D", Param<"depth_map">, Param<"uv_tex_coord">>() };
+    constexpr auto color_map_sample{ builtin_fn<"texture2D", Param<"color_map">, Param<"uv_tex_coord + parallax">>() };
 
     constexpr auto depth_distortion{ variable<"depth_distortion", Type::vec4, depth_map_sample.declaration>() };
     constexpr auto parallax_multiplier{ variable<"parallax_multiplier", Type::float_t, value(depth_distortion.r)>() };

@@ -5,17 +5,12 @@
 
 using namespace mfl;
 
-// vec3 toGamma(in vec3 v) {
-//     vec3 res_toGamma = pow(v, vec3(1.0 / 2.2));
-//     return res_toGamma;
+// #include <print>
+// auto print(const auto& thing) {
+//     for (auto e : thing) {
+//         std::print("{}", e);
+//     }
 // }
-
-#include <print>
-auto print(const auto& thing) {
-    for (auto e : thing) {
-        std::print("{}", e);
-    }
-}
 
 TEST(Functions, BasicFunctionSignature)
 {
@@ -33,7 +28,7 @@ TEST(Functions, BasicFunctionSignature)
 
 TEST(Functions, MultiParamsFunction)
 {
-    constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<"a, ", Type::vec3>, Param<"b", Type::vec3>>() };
+    constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<"a", Type::vec3>, Param<"b", Type::vec3>>() };
     
     constexpr auto expected_declaration{ 
         static_string{ 
