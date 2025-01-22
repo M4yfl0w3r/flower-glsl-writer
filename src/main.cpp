@@ -3,7 +3,6 @@
 #include "variable.hpp"
 #include "function.hpp"
 #include "symbols.hpp"
-#include "value.hpp"
 
 using namespace mfl;
 
@@ -21,7 +20,7 @@ consteval auto main_body()
     };
 
     constexpr auto parallax_multiplier{ 
-        variable<Type::float_t, "parallax_multiplier", value(depth_distortion.r)>() 
+        variable<Type::float_t, "parallax_multiplier", depth_distortion.r()>() 
     };
 
     constexpr auto parallax{ 

@@ -13,7 +13,7 @@ consteval auto main_body()
     };
 
     constexpr auto parallax_multiplier{ 
-        variable<Type::float_t, "parallax_multiplier", value(depth_distortion.r)>() 
+        variable<Type::float_t, "parallax_multiplier", depth_distortion.r()>() 
     };
 
     constexpr auto parallax{ 
@@ -50,6 +50,8 @@ constexpr auto result {
     )
 };
 ```
+
+the result variable holds
 
 ```glsl
 uniform vec2 deflection;

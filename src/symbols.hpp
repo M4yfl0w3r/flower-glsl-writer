@@ -40,6 +40,7 @@ namespace mfl
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
+    inline constexpr auto dot{ static_string{ "." } };
     inline constexpr auto left_brace{ static_string{ "{" } };
     inline constexpr auto right_brace{ static_string{ "}" } };
     inline constexpr auto left_parenthesis{ static_string{ "(" } };
@@ -49,6 +50,9 @@ namespace mfl
 
 namespace mfl::detail
 {
+    template <Type type>
+    concept is_vec = (type == Type::vec2 || type == Type::vec3 || type == Type::vec4);
+
     template <Type output_type>
     static consteval auto type_or_empty()
     {
