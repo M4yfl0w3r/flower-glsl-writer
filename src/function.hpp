@@ -54,15 +54,11 @@ namespace mfl::detail
             return concat(concat(Params::name)...);
         }
         else {
-            constexpr auto format_all{ 
-                []<auto... Indices>(std::index_sequence<Indices...>) {
-                    return concat(
-                        format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...
-                    );
-                }
-            };
-
-            return format_all(std::make_index_sequence<sizeof...(Params)>());
+            return []<auto... Indices>(std::index_sequence<Indices...>) {
+                return concat(
+                    format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...
+                );
+            } (std::make_index_sequence<sizeof...(Params)>());
         }
     }
 
