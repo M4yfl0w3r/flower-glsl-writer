@@ -5,13 +5,6 @@
 
 using namespace mfl;
 
-// #include <print>
-// auto print(const auto& thing) {
-//     for (auto e : thing) {
-//         std::print("{}", e);
-//     }
-// }
-
 TEST(Functions, BasicFunctionSignature)
 {
     constexpr auto fn{ function<"to_gamma", Type::vec3, "", Param<"v", Type::vec3>>() };
@@ -49,7 +42,7 @@ TEST(Functions, BuiltinFunction)
 
 TEST(Functions, FunctionWithBody)
 {
-    constexpr auto body{ variable<"result", Type::vec3, value(1.0f / 2.0f)>() };
+    constexpr auto body{ variable<Type::vec3, "result", value(1.0f / 2.0f)>() };
     constexpr auto fn{ function<"to_gamma", Type::vec3, body.declaration, Param<"v", Type::vec3>>() };
 
     constexpr auto expected_declaration{ 

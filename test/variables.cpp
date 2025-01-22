@@ -5,20 +5,12 @@
 
 using namespace mfl;
 
-#include <print>
-auto print(const auto& thing) {
-    for (auto e : thing) {
-        std::print("{}", e);
-    }
-    std::println("");
-}
-
 TEST(Variables, UniformsDeclaration)
 {
     constexpr auto create_uniforms = []() {
-        constexpr auto color_map{ uniform<"color_map", Type::sampler2D>() };
-        constexpr auto normal_map{ uniform<"normal_map", Type::sampler2D>() };
-        constexpr auto fog_color{ uniform<"fog_color", Type::vec3>() };
+        constexpr auto color_map{ uniform<Type::sampler2D, "color_map">() };
+        constexpr auto normal_map{ uniform<Type::sampler2D, "normal_map">() };
+        constexpr auto fog_color{ uniform<Type::vec3, "fog_color">() };
         return concat(color_map.declaration, normal_map.declaration, fog_color.declaration);
     };
 
@@ -43,8 +35,8 @@ TEST(Variables, ReturnStatement)
 
 TEST(Variables, BuiltinVariables)
 {
-    constexpr auto color{ variable<"color", Type::vec4, value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
-    constexpr auto frag_color{ gl_FragColor<color.name>() };
+    constexpr auto color{ variable<Type::vec4, "color", value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
+    constexpr auto gl_frag_color{ frag_color<color.name>() };
     constexpr auto expected_result{ static_string{ "gl_FragColor = color;\n" } };
-    EXPECT_TRUE(frag_color.declaration == expected_result);
+    EXPECT_TRUE(gl_frag_color.declaration == expected_result);
 }

@@ -1,28 +1,10 @@
 #pragma once
 
 #include "symbols.hpp"
+#include "variable.hpp"
 
 namespace mfl::detail 
 {
-    template <Type output_type>
-    static consteval auto type_or_empty()
-    {
-        if constexpr (output_type == Type::empty) {
-            return static_string{ "" };
-        }
-        else if constexpr (output_type == Type::int_t) {
-            return static_string{ "int" } + space;
-        }
-        else if constexpr (output_type == Type::void_t) {
-            return static_string{ "void" } + space;
-        }
-        else if constexpr (output_type == Type::float_t) {
-            return static_string{ "float" } + space;
-        }
-        else {
-            return to_static_string<output_type>() + space;
-        }
-    }
 
     template <bool is_last, typename Param>
     static consteval auto format_param(Param param) 
@@ -103,9 +85,20 @@ namespace mfl
         static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
     };
 
+    template <static_string body>
+    using main_fn = function<"main", Type::void_t, body>;
+
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
-    template <static_string body>
-    using main_fn = function<"main", Type::void_t, body>;
+    template <uniform map, static_string expression>
+    consteval auto sample() {
+        return builtin_fn<"texture2D", Param<map.name>, Param<expression>>().declaration;
+    }
+
+    template <uniform map, in_var var>
+    consteval auto sample() {
+        return builtin_fn<"texture2D", Param<map.name>, Param<var.name>>().declaration;
+    }
 }
+
