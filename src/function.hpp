@@ -36,7 +36,7 @@ namespace mfl::detail
         }
     }
 
-    template <static_string fn_name, Type output_type, static_string output, static_string input>
+    template <static_string fn_name, Type output_type, static_string output, static_string body, static_string input>
     static consteval auto user_defined_or_builtin() 
     {
         if constexpr (output_type == Type::empty) {
@@ -57,6 +57,9 @@ namespace mfl::detail
                 right_parenthesis,
                 space,
                 left_brace,
+                new_line,
+                body,
+                new_line,
                 right_brace,
                 new_line 
             );
@@ -72,11 +75,17 @@ namespace mfl
         static constexpr auto name{ n };
     };
 
-    template <static_string fn_name, Type output_type, typename... Params>
+    // TODO:
+    // - take body function - string like normal - declarations and whatno
+
+    template <static_string fn_name, Type output_type, static_string body, typename... Params>
     struct [[nodiscard]] function 
     {
         static constexpr auto input{ detail::make_input<Params...>() };
         static constexpr auto output{ detail::type_or_empty<output_type>() };
-        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, input>() };
+        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
     };
+
+    template <static_string fn_name, Type output_type, typename... Params>
+    using builtin_function = function<fn_name, output_type, "", Params...>;
 }

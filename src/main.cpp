@@ -23,7 +23,7 @@ auto main() -> int
     constexpr auto tex_coord{ in_var<"uvTexCoord", Type::vec2>() };
     constexpr auto position{ in_var<"position", Type::vec2>() };
 
-    constexpr auto to_gamma{ function<"toGamma", Type::vec3, Param<Type::vec3, "v">>() };
+    constexpr auto to_gamma{ builtin_function<"toGamma", Type::vec3, Param<Type::vec3, "v">>() };
 
     constexpr auto result{ 
         concat(
