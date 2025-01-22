@@ -14,46 +14,50 @@ auto print(const auto& thing) {
     std::println("");
 }
 
-consteval auto to_gamma_body() 
+// TODO: pass lvalues
+consteval auto main_body()
 {
-    constexpr auto vec{ 
-        builtin_function<"vec3", Param<Type::empty, value(1.0f / 2.2f)>>() 
-    };
-    
-    constexpr auto pow{ 
-        builtin_function<"pow", Param<Type::empty, value(1.0f / 2.2f)>, 
-                                Param<Type::empty, vec.declaration>>() 
+    // TODO: ugly comma fix
+    constexpr auto depth_map_sample{ builtin_fn<"texture2D", Param<"depth_map, ">, Param<"uv_tex_coord">>() };
+    constexpr auto color_map_sample{ builtin_fn<"texture2D", Param<"color_map, ">, Param<"uv_tex_coord + parallax">>() };
+
+    constexpr auto depth_distortion{ variable<"depth_distortion", Type::vec4, depth_map_sample.declaration>() };
+    constexpr auto parallax_multiplier{ variable<"parallax_multiplier", Type::float_t, value(depth_distortion.r)>() };
+    constexpr auto parallax{ variable<"parallax", Type::vec2, value(deflection * parallax_multiplier)>() };
+    constexpr auto original{ variable<"original", Type::vec4, color_map_sample.declaration>() };
+    constexpr auto ret{ gl_FragColor<original.name>() };
+
+    constexpr auto result{ 
+        concat(
+            depth_distortion.declaration,
+            parallax_multiplier.declaration,
+            parallax.declaration,
+            original.declaration,
+            ret.declaration
+        )
     };
 
-    // constexpr auto ret{
-    //     keyword<"return", pow.declaration>()
-    // };
-
-    return variable<"result", Type::vec3, pow.declaration>().declaration;
+    return result;
 }
 
 auto main() -> int 
 {
     constexpr auto colormap{ uniform<"colorMap", Type::sampler2D>() };
-    constexpr auto normalmap{ uniform<"normalMap", Type::sampler2D>() };
-    constexpr auto fog_color{ uniform<"fogColor", Type::vec3>() };
-    constexpr auto fog_density{ uniform<"fogDensity", Type::f32>() };
+    constexpr auto depthmap{ uniform<"depthMap", Type::sampler2D>() };
+    constexpr auto deflection{ uniform<"deflection", Type::vec2>() };
 
     constexpr auto tex_coord{ in_var<"uvTexCoord", Type::vec2>() };
-    constexpr auto position{ in_var<"position", Type::vec2>() };
 
-    constexpr auto to_gamma{ function<"toGamma", Type::vec3, to_gamma_body(), Param<Type::vec3, "v">>() };
+    constexpr auto main_fn_impl{ main_fn<main_body()>() };
 
     constexpr auto result{ 
         concat(
+            deflection.declaration,
             colormap.declaration, 
-            normalmap.declaration, 
-            fog_color.declaration, 
-            fog_density.declaration,
+            depthmap.declaration, 
             tex_coord.declaration,
-            position.declaration,
-            to_gamma.declaration
-        ) 
+            main_fn_impl.declaration
+        )
     };
 
     print(result);

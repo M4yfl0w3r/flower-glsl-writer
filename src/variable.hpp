@@ -11,20 +11,31 @@ namespace mfl::detail
             return static_string{ "" };
         }
         else if constexpr (keyword == Keyword::ret) {
-            return static_string{ "return" };
+            return static_string{ "return" } + space;
         }
         else {
             return to_static_string<keyword>() + space;
         }
     }
 
-    template <static_string name, Type type, static_string keyword, static_string value>
+    template <Type type>
+    static consteval auto type_or_none()
+    {
+        if constexpr (type == Type::empty) {
+            return static_string{ "" };
+        }
+        else {
+            return to_static_string<type>() + space;
+        }
+    }
+
+    template <static_string name, static_string type, static_string keyword, static_string value>
     static consteval auto init_value_or_empty()
     {
-        if constexpr (keyword == "return") {
+        // TODO: space bug
+        if constexpr (keyword == "return ") {
             return concat(
                 keyword,
-                space,
                 value,
                 line_end
             );
@@ -32,17 +43,15 @@ namespace mfl::detail
         else if constexpr (value == "") {
             return concat(
                 keyword,
-                to_static_string<type>(), 
-                space, 
-                name, 
+                type, 
+                name,
                 line_end
             );
         }
         else {
             return concat(
                 keyword,
-                to_static_string<type>(),
-                space,
+                type,
                 name,
                 space,
                 equal,
@@ -56,11 +65,13 @@ namespace mfl::detail
 
 namespace mfl 
 {
-    template <static_string name, Type type, Keyword key, static_string value = static_string{ "" }>
+    template <static_string var_name, Type var_type, Keyword key, static_string val = "">
     struct [[nodiscard]] variable_impl
     {
+        static constexpr auto name{ var_name };
+        static constexpr auto type{ detail::type_or_none<var_type>() };
         static constexpr auto keyword{ detail::keyword_or_none<key>() };
-        static constexpr auto declaration{ detail::init_value_or_empty<name, type, keyword, value>() };
+        static constexpr auto declaration{ detail::init_value_or_empty<name, type, keyword, val>() };
     };
 
     template <static_string st_name, static_string nd_name, Type type, Keyword key>
@@ -78,19 +89,19 @@ namespace mfl
         return concat(dest.name, space, equal, space, src);
     }
 
-    template <static_string name, Type t>
-    using uniform = variable_impl<name, t, Keyword::uniform>;
+    template <static_string name, Type type>
+    using uniform = variable_impl<name, type, Keyword::uniform>;
 
-    template <static_string name, Type t>
-    using in_var = variable_impl<name, t, Keyword::in>;
+    template <static_string name, Type type>
+    using in_var = variable_impl<name, type, Keyword::in>;
 
-    template <static_string name, Type t, static_string value>
-    using variable = variable_impl<name, t, Keyword::none, value>;
+    template <static_string name, Type type, static_string value>
+    using variable = variable_impl<name, type, Keyword::none, value>;
 
-    template <static_string name, static_string value>
-    using keyword = variable_impl<name, Type::empty, Keyword::none, value>;
+    template <static_string value>
+    using gl_FragColor = variable_impl<"gl_FragColor", Type::empty, Keyword::none, value>;
 
-    template <static_string value, Keyword key>
+    template <Keyword key, static_string value>
     using statement = variable_impl<"", Type::empty, key, value>;
 }
 

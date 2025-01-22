@@ -6,7 +6,9 @@ namespace mfl
 {
     enum class Type 
     {
-        f32,
+        int_t,
+        float_t,
+        void_t,
         vec2,
         vec3,
         vec4,

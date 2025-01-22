@@ -5,12 +5,13 @@
 
 using namespace mfl;
 
-// auto print(const auto& thing) {
-//     for (auto e : thing) {
-//         std::print("{}", e);
-//     }
-//     std::println("");
-// }
+#include <print>
+auto print(const auto& thing) {
+    for (auto e : thing) {
+        std::print("{}", e);
+    }
+    std::println("");
+}
 
 TEST(Variables, UniformsDeclaration)
 {
@@ -35,9 +36,15 @@ TEST(Variables, UniformsDeclaration)
 TEST(Variables, ReturnStatement)
 {
     constexpr auto value_to_return{ value(1.0f / 2.0f) };
-    constexpr auto ret{ statement<value_to_return, Keyword::ret>() };
-    
+    constexpr auto ret{ statement<Keyword::ret, value_to_return>() };
     constexpr auto expected_result{ static_string{ "return 1.0f / 2.0f;\n" } };
-
     EXPECT_TRUE(ret.declaration == expected_result);
+}
+
+TEST(Variables, BuiltinVariables)
+{
+    constexpr auto color{ variable<"color", Type::vec4, value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
+    constexpr auto frag_color{ gl_FragColor<color.name>() };
+    constexpr auto expected_result{ static_string{ "gl_FragColor = color;\n" } };
+    EXPECT_TRUE(frag_color.declaration == expected_result);
 }
