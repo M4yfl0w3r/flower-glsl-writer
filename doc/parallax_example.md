@@ -1,11 +1,3 @@
-<table>
-<tr>
-<th> C++ </th>
-<th> GLSL </th>
-</tr>
-<tr>
-<td>
-
 ```c++
 constexpr auto deflection{ uniform<Type::vec2, "deflection">() };
 constexpr auto colormap{ uniform<Type::sampler2D, "colorMap">() };
@@ -59,9 +51,6 @@ constexpr auto result {
 };
 ```
 
-</td>
-<td>
-
 ```glsl
 uniform vec2 deflection;
 uniform sampler2D colorMap;
@@ -77,6 +66,4 @@ void main() {
     gl_FragColor = original;
 }
 ```
-</td>
-</tr>
-</table>
+
