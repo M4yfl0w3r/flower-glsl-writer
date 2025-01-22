@@ -5,7 +5,6 @@
 
 namespace mfl::detail 
 {
-
     template <bool is_last, typename Param>
     static consteval auto format_param(Param param) 
     {
