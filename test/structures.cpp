@@ -46,7 +46,12 @@ TEST(Structs, LightStructAccessMembers)
 {
     constexpr auto light{ create_light_struct() };
     constexpr auto position{ light.get<"position">() };
+    constexpr auto diffuse{ light.get<"diffuse">() };
 
     EXPECT_EQ(position.type, Type::vec4);
     EXPECT_TRUE(position.name == "position");
+    
+    EXPECT_EQ(diffuse.type, Type::vec4);
+    EXPECT_TRUE(diffuse.name == "diffuse");
 }
+

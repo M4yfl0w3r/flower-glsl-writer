@@ -40,12 +40,21 @@ namespace mfl
         {
             if constexpr (index < sizeof...(fields)) {
                 constexpr auto& field{ std::get<index>(members) };
-                if constexpr (field.name == name) {
-                    return field;
-                }  
+
+                if constexpr (field.name.size == name.size) {
+                    if constexpr (field.name == name) {
+                        return field;
+                    }  
+                    else {
+                        return get<name, index+1>();
+                    }
+                }
                 else {
                     return get<name, index+1>();
                 }
+            }
+            else {
+                static_assert(index < sizeof...(fields), "Field not found with the given name.");
             }
         }
     };
