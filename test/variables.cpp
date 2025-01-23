@@ -25,14 +25,6 @@ TEST(Variables, UniformsDeclaration)
     EXPECT_TRUE(result == expected_result);
 } 
 
-TEST(Variables, ReturnStatement)
-{
-    constexpr auto value_to_return{ value(1.0f / 2.0f) };
-    constexpr auto ret{ statement<Keyword::ret, value_to_return>() };
-    constexpr auto expected_result{ static_string{ "return 1.0f / 2.0f;\n" } };
-    EXPECT_TRUE(ret.declaration == expected_result);
-}
-
 TEST(Variables, BuiltinVariables)
 {
     constexpr auto color{ variable<Type::vec4, "color", value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};

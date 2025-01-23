@@ -4,20 +4,6 @@
 
 namespace mfl::detail
 {
-    template <Keyword keyword>
-    static consteval auto keyword_or_none() 
-    {
-        if constexpr (keyword == Keyword::none) {
-            return static_string{ "" };
-        }
-        else if constexpr (keyword == Keyword::ret) {
-            return static_string{ "return" } + space;
-        }
-        else {
-            return to_static_string<keyword>() + space;
-        }
-    }
-
     template <static_string name, static_string type, static_string keyword, static_string value>
     static consteval auto init_value_or_empty()
     {
@@ -92,8 +78,5 @@ namespace mfl
 
     template <static_string value>
     using frag_color = variable_impl<Type::empty, "gl_FragColor", Keyword::none, value>;
-
-    template <Keyword key, static_string value>
-    using statement = variable_impl<Type::empty, "", key, value>;
 }
 

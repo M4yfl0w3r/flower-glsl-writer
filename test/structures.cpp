@@ -47,11 +47,15 @@ TEST(Structs, LightStructAccessMembers)
     constexpr auto light{ create_light_struct() };
     constexpr auto position{ light.get<"position">() };
     constexpr auto diffuse{ light.get<"diffuse">() };
+    constexpr auto const_att{ light.get<"constantAttenuation">() };
 
     EXPECT_EQ(position.type, Type::vec4);
     EXPECT_TRUE(position.name == "position");
     
     EXPECT_EQ(diffuse.type, Type::vec4);
     EXPECT_TRUE(diffuse.name == "diffuse");
+
+    EXPECT_EQ(const_att.type, Type::float_t);
+    EXPECT_TRUE(const_att.name == "constantAttenuation");
 }
 

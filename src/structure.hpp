@@ -1,7 +1,7 @@
 #pragma once
 
 #include "static_string.hpp"
-#include "variable.hpp"
+#include "symbols.hpp"
 
 #include <tuple>
 
@@ -42,12 +42,10 @@ namespace mfl
                 constexpr auto& field{ std::get<index>(members) };
 
                 if constexpr (field.name.size == name.size) {
-                    if constexpr (field.name == name) {
+                    if constexpr (field.name == name)
                         return field;
-                    }  
-                    else {
+                    else
                         return get<name, index+1>();
-                    }
                 }
                 else {
                     return get<name, index+1>();

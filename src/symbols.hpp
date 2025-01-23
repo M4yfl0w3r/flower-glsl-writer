@@ -22,7 +22,9 @@ namespace mfl
     {
         uniform,
         in,
-        ret,
+        gl_FragColor,
+        condition,     // if
+        ret,           // return
         none
     };
 
@@ -71,5 +73,23 @@ namespace mfl::detail
             return to_static_string<output_type>() + space;
         }
     }
+
+    template <Keyword keyword>
+    static consteval auto keyword_or_none() 
+    {
+        if constexpr (keyword == Keyword::none) {
+            return static_string{ "" };
+        }
+        else if constexpr (keyword == Keyword::ret) {
+            return static_string{ "return" } + space;
+        }
+        else if constexpr (keyword == Keyword::condition) {
+            return static_string{ "if" };
+        }
+        else {
+            return to_static_string<keyword>() + space;
+        }
+    }
+
 }
 
