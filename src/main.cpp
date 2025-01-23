@@ -1,14 +1,26 @@
 #include <print>
 
+#include "structure.hpp"
 #include "variable.hpp"
-#include "function.hpp"
-#include "symbols.hpp"
 
 using namespace mfl;
 
 auto main() -> int 
 {
-    constexpr auto colormap{ uniform<Type::sampler2D, "colorMap">() };
-    constexpr auto res{ sample<colormap, static_string{ "test" }>() };
-    print(res);
+    constexpr auto light{
+        make_structure<"Light">(
+            field<Type::vec4, "position">(),
+            field<Type::vec4, "ambient">(),
+            field<Type::vec4, "diffuse">(),
+            field<Type::vec3, "spotDirection">(),
+            field<Type::float_t, "spotCutoff">(),
+            field<Type::float_t, "spotExponent">(),
+            field<Type::float_t, "constantAttenuation">(),
+            field<Type::float_t, "linearAttenuation">(),
+            field<Type::float_t, "quadraticAttenuation">()
+        )
+    };
+
+    print(light.declaration);
 }
+
