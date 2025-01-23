@@ -6,21 +6,24 @@
 
 using namespace mfl;
 
-TEST(Structs, LightStruct)
+consteval auto create_light_struct()
 {
-    constexpr auto light{
-        make_structure<"Light">(
-            field<Type::vec4, "position">(),
-            field<Type::vec4, "ambient">(),
-            field<Type::vec4, "diffuse">(),
-            field<Type::vec3, "spotDirection">(),
-            field<Type::float_t, "spotCutoff">(),
-            field<Type::float_t, "spotExponent">(),
-            field<Type::float_t, "constantAttenuation">(),
-            field<Type::float_t, "linearAttenuation">(),
-            field<Type::float_t, "quadraticAttenuation">()
-        )
-    };
+    return make_structure<"Light">(
+        field<Type::vec4, "position">(),
+        field<Type::vec4, "ambient">(),
+        field<Type::vec4, "diffuse">(),
+        field<Type::vec3, "spotDirection">(),
+        field<Type::float_t, "spotCutoff">(),
+        field<Type::float_t, "spotExponent">(),
+        field<Type::float_t, "constantAttenuation">(),
+        field<Type::float_t, "linearAttenuation">(),
+        field<Type::float_t, "quadraticAttenuation">()
+    );
+}
+
+TEST(Structs, LightStructDeclaration)
+{
+    constexpr auto light{ create_light_struct() };
 
     constexpr auto expected_result {
         static_string{ "struct Light {\n"
@@ -37,4 +40,13 @@ TEST(Structs, LightStruct)
     };
 
     EXPECT_TRUE(light.declaration == expected_result);
+}
+
+TEST(Structs, LightStructAccessMembers)
+{
+    constexpr auto light{ create_light_struct() };
+    constexpr auto position{ light.get<"position">() };
+
+    EXPECT_EQ(position.type, Type::vec4);
+    EXPECT_TRUE(position.name == "position");
 }

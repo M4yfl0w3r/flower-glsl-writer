@@ -1,7 +1,7 @@
 #pragma once
 
 #include "static_string.hpp"
-#include "symbols.hpp"
+#include "variable.hpp"
 
 #include <tuple>
 
@@ -34,6 +34,20 @@ namespace mfl
                 line_end
             ) 
         };
+
+        template <static_string name, std::size_t index = 0>
+        consteval auto get() const 
+        {
+            if constexpr (index < sizeof...(fields)) {
+                constexpr auto& field{ std::get<index>(members) };
+                if constexpr (field.name == name) {
+                    return field;
+                }  
+                else {
+                    return get<name, index+1>();
+                }
+            }
+        }
     };
 
     template <static_string struct_name, typename... Fields>

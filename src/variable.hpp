@@ -58,9 +58,10 @@ namespace mfl
     struct [[nodiscard]] variable_impl
     {
         static constexpr auto name{ var_name };
-        static constexpr auto type{ detail::type_or_empty<var_type>() };
+        static constexpr auto type{ var_type };
+        static constexpr auto str_type{ detail::type_or_empty<var_type>() };
         static constexpr auto keyword{ detail::keyword_or_none<key>() };
-        static constexpr auto declaration{ detail::init_value_or_empty<name, type, keyword, val>() };
+        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, val>() };
 
         static consteval auto r() requires detail::is_vec<var_type> {
             return concat(name, dot, static_string{ "r" } );
