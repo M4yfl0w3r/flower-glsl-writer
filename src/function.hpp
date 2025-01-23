@@ -65,6 +65,9 @@ namespace mfl::detail
             );
         }
     }
+
+    template <typename T>
+    concept is_static_string = std::same_as<T, static_string<T::size + 1>>;
 }
 
 namespace mfl
@@ -90,14 +93,16 @@ namespace mfl
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
-    template <uniform map, static_string expression>
+    template <uniform map, auto expression>
     consteval auto sample() {
-        return builtin_fn<"texture2D", Param<map.name>, Param<expression>>().declaration;
-    }
+        constexpr auto expression_value = [&] {
+            if constexpr (detail::is_static_string<decltype(expression)>)
+                return expression;
+            else 
+                return expression.name;
+        }();
 
-    template <uniform map, in_var var>
-    consteval auto sample() {
-        return builtin_fn<"texture2D", Param<map.name>, Param<var.name>>().declaration;
+        return builtin_fn<"texture2D", Param<map.name>, Param<expression_value>>().declaration;
     }
 }
 
