@@ -86,6 +86,9 @@ namespace mfl
     template <Type type, static_string name, static_string value>
     using variable = variable_impl<type, name, Keyword::none, value>;
 
+    template <Type type, static_string name>
+    using struct_field = variable_impl<type, name, Keyword::none, "">;
+
     template <static_string value>
     using frag_color = variable_impl<Type::empty, "gl_FragColor", Keyword::none, value>;
 

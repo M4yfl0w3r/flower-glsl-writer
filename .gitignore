@@ -8,4 +8,5 @@ src/a.out
 src/test.cpp
 
 test/shader.glsl
+test/light.glsl
 test/parallax.glsl

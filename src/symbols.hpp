@@ -30,7 +30,6 @@ namespace mfl
         for (auto e : thing) {
             std::print("{}", e);
         }
-        std::println("");
     }
 
     inline constexpr auto plus{ static_string{ " + " } };
