@@ -14,6 +14,9 @@ namespace mfl::detail
         else if constexpr (keyword == "#define") {
             return concat(keyword, space, name, space, value, new_line);
         }
+        else if constexpr (keyword == "array") {
+            return concat(type, space, name, left_bracket, value, right_bracket, line_end);
+        }
         else if constexpr (value == "") {
             return concat(keyword, type, name, line_end);
         }
@@ -34,18 +37,18 @@ namespace mfl::detail
 
 namespace mfl 
 {
-     //  The variable class represents variables with types. define statement 
-     //  despite being an actual statement is treated as a variable.
-     //
-     //
-    template <Type var_type, static_string var_name, Keyword key, static_string val = "">
+    //  The variable class represents variables with types. define statement 
+    //  despite being an actual statement is treated as a variable.
+    //
+    template <Type var_type, static_string var_name, Keyword key, static_string var_value = "">
     struct [[nodiscard]] variable_impl
     {
         static constexpr auto name{ var_name };
         static constexpr auto type{ var_type };
+        static constexpr auto value{ var_value };
         static constexpr auto str_type{ detail::stringify<var_type>() };
         static constexpr auto keyword{ detail::stringify<key>() };
-        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, val>() };
+        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, value>() };
         // static constexpr auto definition{ };
 
         static consteval auto r() requires detail::is_vec<var_type> {
@@ -83,5 +86,8 @@ namespace mfl
 
     template <static_string name, static_string value>
     using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
+
+    template <Type type, static_string name, static_string size>
+    using array = variable_impl<Type::gl_light, name, Keyword::gl_array, size>;
 }
 

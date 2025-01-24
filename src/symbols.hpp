@@ -16,6 +16,7 @@ namespace mfl
         gl_vec4,
         gl_sampler2D,
         gl_bool,
+        gl_light, // TODO: ugly hack for now - will have to think how to register custom types (struct instead of enum?)
         empty
     };
 
@@ -29,6 +30,7 @@ namespace mfl
         gl_return,
         gl_continue,
         gl_break,
+        gl_array,
         gl_discard,
         gl_position,
         none
@@ -50,6 +52,8 @@ namespace mfl
     inline constexpr auto dot{ static_string{ "." } };
     inline constexpr auto left_brace{ static_string{ "{" } };
     inline constexpr auto right_brace{ static_string{ "}" } };
+    inline constexpr auto left_bracket{ static_string{ "[" } };
+    inline constexpr auto right_bracket{ static_string{ "]" } };
     inline constexpr auto left_parenthesis{ static_string{ "(" } };
     inline constexpr auto right_parenthesis{ static_string{ ")" } };
 }
@@ -78,6 +82,8 @@ namespace mfl::detail
             return static_string{ "sampler2D" } + space;
         else if constexpr (output_type == Type::gl_bool)
             return static_string{ "bool" } + space;
+        else if constexpr (output_type == Type::gl_light)
+            return static_string{ "Light" };
         else 
             return static_string{ "" };
     }
@@ -103,6 +109,8 @@ namespace mfl::detail
             return static_string{ "continue" };
         else if constexpr (keyword == Keyword::gl_break)
             return static_string{ "break" };
+        else if constexpr (keyword == Keyword::gl_array)
+            return static_string{ "array" };
         else if constexpr (keyword == Keyword::gl_discard)
             return static_string{ "discard" };
         else
