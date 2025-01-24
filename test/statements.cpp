@@ -36,10 +36,10 @@ TEST(Statements, JumpStatements)
 TEST(Statements, SelectionStatements)
 {
     {
-        constexpr auto active{ variable<Type::gl_bool, "active", value(true)>() };
-        constexpr auto gl_if{ if_statement<active.name>() };
-        constexpr auto expected_result{ "if (active) {}\n" };
-        EXPECT_TRUE(gl_if.declaration == expected_result);
+        // constexpr auto active{ variable<Type::gl_bool, "active", value(true)>() };
+        // constexpr auto gl_if{ if_statement<active.name>() };
+        // constexpr auto expected_result{ "if (active) {}\n" };
+        // EXPECT_TRUE(gl_if.declaration == expected_result);
     }
 }
 

@@ -37,15 +37,27 @@ TEST(Functions, BuiltInFunctions)
 {
     // TODO: value(1.0f) for now, float -> static_string conversion in the future
     {
-        constexpr auto vec{ vec3<value(1.0f), value(2.0f), value(3.0f)>() };
+        constexpr auto vec_33{ vec3<value(1.0f), value(2.0f), value(3.0f)>() };
         constexpr auto expected_declaration{ "vec3(1.0f, 2.0f, 3.0f)" };
-        EXPECT_TRUE(vec == expected_declaration);
+        EXPECT_TRUE(vec_33== expected_declaration);
     }
 
     {
-        constexpr auto vec{ vec3<value(1.0f)>() };
-        constexpr auto expected_declaration{ "vec3(1.0f, 1.0f, 1.0f)" };
-        EXPECT_TRUE(vec == expected_declaration);
+        constexpr auto vec_32{ vec3<vec2<value(1.0f), value(2.0f)>(), value(3.0f)>() };
+        constexpr auto expected_declaration{ "vec3(vec2(1.0f, 2.0f), 3.0f)" };
+        EXPECT_TRUE(vec_32 == expected_declaration);
+    }
+
+    {
+        constexpr auto vec_31{ vec3<value(1.0f)>() };
+        constexpr auto expected_declaration{ "vec3(1.0f)" };
+        EXPECT_TRUE(vec_31 == expected_declaration);
+    }
+
+    {
+        constexpr auto vec_21{ vec2<value(1.0f)>() };
+        constexpr auto expected_declaration{ "vec2(1.0f)" };
+        EXPECT_TRUE(vec_21 == expected_declaration);
     }
 
     {

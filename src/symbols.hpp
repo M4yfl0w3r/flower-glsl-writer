@@ -62,6 +62,9 @@ namespace mfl::detail
 {
     template <Type type>
     concept is_vec = (type == Type::gl_vec2 || type == Type::gl_vec3 || type == Type::gl_vec4);
+    
+    template <Type type>
+    concept at_least_vec3 = (type == Type::gl_vec3 || type == Type::gl_vec4);
 
     template <Type output_type>
     static consteval auto stringify()

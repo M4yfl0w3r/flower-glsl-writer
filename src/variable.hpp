@@ -51,8 +51,18 @@ namespace mfl
         static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, value>() };
         // static constexpr auto definition{ };
 
-        static consteval auto r() requires detail::is_vec<var_type> {
-            return concat(name, dot, static_string{ "r" } );
+        static consteval auto r() { return component<"r">(); }
+        static consteval auto a() { return component<"a">(); }
+        static consteval auto x() { return component<"x">(); }
+        
+        static consteval auto rgb() requires detail::at_least_vec3<var_type> {
+            return concat(name, dot, static_string{ "rgb" } );
+        }
+
+    private:    
+        template <static_string access_name>
+        static consteval auto component() {
+            return concat(var_name, dot, access_name);
         }
     };
 

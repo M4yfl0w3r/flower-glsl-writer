@@ -97,16 +97,23 @@ namespace mfl
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
-    template <static_string a, static_string b, static_string c>
-    consteval auto vec3() {
-        return builtin_fn<"vec3", Param<a>, Param<b>, Param<c>>().declaration;
+    // TODO: should take expression to handle variables
+    template <static_string... expressions>
+    consteval auto vec2() {
+        static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 2);
+        return builtin_fn<"vec2", Param<expressions>...>().declaration;
     }
-    
-    // expression is either a regular value or a variable
-    template <auto expression>
+
+    template <static_string... expressions>
     consteval auto vec3() {
-        constexpr auto expr{ detail::expression_value<expression>() };
-        return builtin_fn<"vec3", Param<expr>, Param<expr>, Param<expr>>().declaration;
+        static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 3);
+        return builtin_fn<"vec3", Param<expressions>...>().declaration;
+    }
+
+    template <static_string... expressions>
+    consteval auto vec4() {
+        static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 4);
+        return builtin_fn<"vec4", Param<expressions>...>().declaration;
     }
 
     template <auto expression>

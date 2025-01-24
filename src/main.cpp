@@ -7,6 +7,19 @@
 
 using namespace mfl;
 
+template <variable input, uniform gamma>
+consteval auto to_linear_vec4_body() 
+{
+    constexpr auto lhs{ pow<input.rgb(), vec3<gamma.name>()>() };
+    constexpr auto rhs{ input.a() };
+    return return_value_statement<vec4<lhs, rhs>()>().declaration;
+}
+
+
+// vec4 toLinear(vec4 v) {
+//     return vec4(pow(v.rgb, vec3(gamma)), v.a);
+// }
+
 auto main() -> int 
 {
     constexpr auto colormap{ uniform<Type::gl_sampler2D, "colorMap">() };
@@ -40,6 +53,11 @@ auto main() -> int
     constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
     constexpr auto lights{ array<Type::gl_light, "lights", num_lights.value>() };
 
+    // TODO: Fn should take params differently
+    constexpr auto fn_input_var{ variable<Type::gl_vec4, "v", "">() };
+    constexpr auto fn_body{ to_linear_vec4_body<fn_input_var, gamma>() };
+    constexpr auto to_linear_vec4{ function<"toLinear", Type::gl_vec4, fn_body, Param<fn_input_var.name, fn_input_var.type>>() };
+
     constexpr auto result{
         concat_all(
             colormap,
@@ -54,7 +72,8 @@ auto main() -> int
             tex_coord,
             light_struct,
             num_lights,
-            lights
+            lights,
+            to_linear_vec4
         )
     };
 

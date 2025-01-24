@@ -12,6 +12,9 @@ namespace mfl::detail
         if constexpr (assign == true) { // gl_FragColor = value;
            return concat(stringify<key>(), equal, space, value, line_end);
         }
+        else if constexpr (assign == false && value != "") {
+            return concat(stringify<key>(), space, value, line_end);
+        }
         else if constexpr (assign == false && value == "") { // return; continue;
             return concat(stringify<key>(), line_end);
         }
@@ -53,6 +56,9 @@ namespace mfl
     using continue_statement = statement<Keyword::gl_continue, false, "">;
     using break_statement = statement<Keyword::gl_break, false, "">;
     using discard_statement = statement<Keyword::gl_discard, false, "">;
+
+    template <static_string value>
+    using return_value_statement = statement<Keyword::gl_return, false, value>;
 
     template <variable_impl var>
     using frag_color = statement<Keyword::gl_frag_color, true, var.name>;
