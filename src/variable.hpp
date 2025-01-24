@@ -54,14 +54,20 @@ namespace mfl
         }
     };
 
-    template <variable_impl st, variable_impl nd>
-    consteval auto add() {
-        return concat(st.name, plus, nd.name);
+    template <Type type, static_string st_name, Keyword st_key, static_string st_val,
+                         static_string nd_name, Keyword nd_key, static_string nd_val>
+    consteval auto operator+(const variable_impl<type, st_name, st_key, st_val>&,
+                             const variable_impl<type, nd_name, nd_key, nd_val>&)
+    {
+        return concat(st_name, plus, nd_name);
     }
 
-    template <variable_impl st, variable_impl nd>
-    consteval auto multiply() {
-        return concat(st.name, times, nd.name);
+    template <Type st_type, static_string st_name, Keyword st_key, static_string st_val,
+              Type nd_type, static_string nd_name, Keyword nd_key, static_string nd_val>
+    consteval auto operator*(const variable_impl<st_type, st_name, st_key, st_val>&,
+                             const variable_impl<nd_type, nd_name, nd_key, nd_val>&)
+    {
+        return concat(st_name, times, nd_name);
     }
 
     template <Type type, static_string name>

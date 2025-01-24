@@ -17,11 +17,11 @@ consteval auto parallax_main_body()
     };
 
     constexpr auto parallax{ 
-        variable<Type::gl_vec2, "parallax", multiply<deflection, parallax_multiplier>()>() 
+        variable<Type::gl_vec2, "parallax", deflection * parallax_multiplier>() 
     };
 
     constexpr auto original{ 
-        variable<Type::gl_vec4, "original", sample<colormap, add<tex_coord, parallax>()>()>() 
+        variable<Type::gl_vec4, "original", sample<colormap, tex_coord + parallax>()>() 
     };
 
     constexpr auto ret{ 
