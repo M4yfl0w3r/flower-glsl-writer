@@ -89,6 +89,13 @@ TEST(Functions, BuiltInFunctions)
         constexpr auto expected_declaration{ "radians(st_var)" };
         EXPECT_TRUE(radians_val == expected_declaration);
     }
+
+    {
+        constexpr auto color_map{ uniform<Type::gl_sampler2D, "colorMap">() };
+        constexpr auto tex_size{ texture_size<color_map, value(0)>() };
+        constexpr auto expected_declaration{ "textureSize(colorMap, 0)" };
+        EXPECT_TRUE(tex_size == expected_declaration);
+    }
 }
 
 TEST(Functions, FunctionWithBody)

@@ -142,5 +142,12 @@ namespace mfl
         constexpr auto expr{ detail::expression_value<expression>() };
         return builtin_fn<"texture2D", Param<map.name>, Param<expr>>().declaration;
     }
+
+    template <uniform texture, auto expression>
+    consteval auto texture_size() 
+    {
+        constexpr auto expr{ detail::expression_value<expression>() };
+        return builtin_fn<"textureSize", Param<texture.name>, Param<expr>>().declaration;
+    }
 }
 

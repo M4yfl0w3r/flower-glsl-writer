@@ -15,6 +15,7 @@ namespace mfl
         gl_vec3,
         gl_vec4,
         gl_sampler2D,
+        gl_ivec2,
         gl_bool,
         gl_light, // TODO: ugly hack for now - will have to think how to register custom types (struct instead of enum?)
         empty
@@ -81,6 +82,8 @@ namespace mfl::detail
             return static_string{ "vec3" } + space;
         else if constexpr (output_type == Type::gl_vec4)
             return static_string{ "vec4" } + space;
+        else if constexpr (output_type == Type::gl_ivec2)
+            return static_string{ "ivec2" } + space;
         else if constexpr (output_type == Type::gl_sampler2D)
             return static_string{ "sampler2D" } + space;
         else if constexpr (output_type == Type::gl_bool)

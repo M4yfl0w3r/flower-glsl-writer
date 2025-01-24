@@ -9,6 +9,7 @@ namespace mfl::detail
     template <Keyword key, bool assign, static_string value>
     consteval auto make_declaration()
     {
+        // TODO: Should just judge based on the key 
         if constexpr (assign == true) { // gl_FragColor = value;
            return concat(stringify<key>(), equal, space, value, line_end);
         }

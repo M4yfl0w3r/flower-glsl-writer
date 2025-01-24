@@ -39,7 +39,15 @@ template <uniform colormap, in_var tex_coord>
 consteval auto main_body() 
 {
     static constexpr auto color_with_alpha{ variable<Type::gl_vec4, "colorWithAlpha", sample<colormap, tex_coord>()>() };
-    return color_with_alpha.declaration;
+
+    static constexpr auto if_alpha_statement{ if_statement<color_with_alpha.a()>() }; // TODO: should construct a less than expression 
+
+    // static constexpr auto color{ variable<Type::gl_vec3, "color", "">().rgb() }; // TODO: should return string? 
+
+    return concat_all(
+        color_with_alpha,
+        if_alpha_statement
+    );
 }
 
 auto main() -> int 
@@ -48,8 +56,8 @@ auto main() -> int
     constexpr auto normalmap{ uniform<Type::gl_sampler2D, "normalMap">() };
     constexpr auto depthmap{ uniform<Type::gl_sampler2D, "depthMap">() };
 
-    constexpr auto ambient_strength{ uniform<Type::gl_float, "ambientStrength">() };
-    constexpr auto diffuse_strength{ uniform<Type::gl_float, "diffuseStrength">() };
+    constexpr auto ambient{ uniform<Type::gl_float, "ambientStrength">() };
+    constexpr auto diffuse{ uniform<Type::gl_float, "diffuseStrength">() };
     constexpr auto gamma{ uniform<Type::gl_float, "gamma">() };
     constexpr auto depth_range{ uniform<Type::gl_float, "depthRange">() };
 
@@ -98,8 +106,8 @@ auto main() -> int
             colormap,
             normalmap,
             depthmap,
-            ambient_strength,
-            diffuse_strength, 
+            ambient,
+            diffuse, 
             gamma,
             depth_range,
             fog_color,
