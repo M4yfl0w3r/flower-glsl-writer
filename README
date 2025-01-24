@@ -1,9 +1,36 @@
+GLSL writer
+    
+    The library is not type-safe. It doesn't prevent you to write 
+    uncorrect GLSL code. 
+
+
 TODO
 
     * for loops
-    * custom type register - Light
-    * fix the space issue
-    * fix the f32 enum issue
+    * custom type registration (Light)
+    * fix the spacing / semicolon issue
     * write a compile-time float to string converter
     * named template arguments 
+    * Param should take a variable as an argument
+
+
+VARIABLES
+
+
+
+FUNCTIONS
+
+    * declaration
+
+        vec4 name(type args...) { body }
+    
+
+    * call<args...>() 
+        
+        it takes a string as input and returns a string in the form 
+        name(args, ...) as an output. A function doesn't hold a
+        responsibility of adding a semicolon.
+
+
+
 

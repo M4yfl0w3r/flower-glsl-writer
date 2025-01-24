@@ -113,3 +113,22 @@ TEST(Functions, FunctionWithBody)
 
     EXPECT_TRUE(fn.declaration == expected_declaration);
 }
+
+TEST(Functions, SingleParamFunctionCall)
+{
+    constexpr auto fn{ function<"fn", Type::gl_vec3, "", Param<"v", Type::gl_vec3>>() };
+    constexpr auto test_var{ variable<Type::gl_vec3, "var", vec3<value(1.0f)>()>() };
+    constexpr auto res{ fn.call<test_var.name>() };
+    constexpr auto expected_declaration{ "fn(var)" };
+    EXPECT_TRUE(res == expected_declaration);
+}
+
+TEST(Functions, MultiParamFunctionCall)
+{
+    constexpr auto fn{ function<"fn", Type::gl_vec3, "", Param<"v1", Type::gl_vec3>, Param<"v2", Type::gl_vec3>>() };
+    constexpr auto st_var{ variable<Type::gl_vec3, "st_var", vec3<value(1.0f)>()>() };
+    constexpr auto nd_var{ variable<Type::gl_vec3, "nd_var", vec3<value(2.0f)>()>() };
+    constexpr auto res{ fn.call<st_var.name, nd_var.name>() };
+    constexpr auto expected_declaration{ "fn(st_var, nd_var)" };
+    EXPECT_TRUE(res == expected_declaration);
+}

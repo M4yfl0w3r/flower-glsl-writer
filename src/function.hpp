@@ -89,6 +89,11 @@ namespace mfl
         static constexpr auto input{ detail::make_input<Params...>() };
         static constexpr auto output{ detail::stringify<output_type>() };
         static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
+
+        template <static_string... expressions>
+        consteval auto call() const {
+            return concat(fn_name, detail::enclose_in_parenthesis<detail::make_input<Param<expressions>...>()>());
+        }
     };
 
     template <static_string body>
