@@ -123,10 +123,14 @@ namespace mfl::detail
             return static_string{ "" };
     }
 
-    template <static_string val>
+    template <static_string value>
     consteval auto enclose_in_parenthesis() {
-        return concat(left_parenthesis, val, right_parenthesis);
+        return concat(left_parenthesis, value, right_parenthesis);
     }
 
+    template <static_string value>
+    consteval auto create_body() {
+        return concat(space, left_brace, new_line, value, right_brace, new_line);
+    }
 }
 

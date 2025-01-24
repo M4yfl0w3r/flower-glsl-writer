@@ -1,7 +1,8 @@
 GLSL writer
     
-    The library is not type-safe. It doesn't prevent you to write 
-    uncorrect GLSL code. 
+    The library is not type-safe and does not prevent you from writing incorrect 
+    GLSL code. It generates GLSL code at compile-time using a compile-time string
+    implementation which can be found in src/static_string.hpp.
 
 
 TODO
@@ -16,9 +17,28 @@ TODO
 
 VARIABLES
 
+    * declaration 
+    
+        [keyword] [type] name;
+
+        - in vec2 uvTexCoord;
+        - uniform float fogDensity;
+
+
+    * definition
+
+        [type] name = [value];
+
+        - vec4 colorWithAlpha = texture(colorMap, uvTexCoord);
 
 
 FUNCTIONS
+
+    [type] name [body] [params...]
+
+        vec3 toGamma(vec3 v) { ... }
+        toGamma(var)
+
 
     * declaration
 
@@ -27,10 +47,11 @@ FUNCTIONS
 
     * call<args...>() 
         
-        it takes a string as input and returns a string in the form 
-        name(args, ...) as an output. A function doesn't hold a
-        responsibility of adding a semicolon.
+        it takes a string as input and returns a string in the form name(args, ...) as 
+        output. The call function is not responsible for adding a semicolon, because 
+        the function's output is always assigned somewhere.
 
 
+STATEMENTS
 
-
+    A statement is a thing without a type. Built-in variables are considered statements.

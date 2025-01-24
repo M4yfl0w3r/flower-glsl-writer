@@ -42,25 +42,10 @@ namespace mfl::detail
     template <static_string fn_name, Type output_type, static_string output, static_string body, static_string input>
     static consteval auto user_defined_or_builtin() 
     {
-        if constexpr (output_type == Type::empty) {
-            return concat( 
-                fn_name,
-                enclose_in_parenthesis<input>()
-            );
-        }
-        else {
-            return concat(
-                output,
-                fn_name,
-                enclose_in_parenthesis<input>(),
-                space,
-                left_brace,
-                new_line,
-                body,
-                right_brace,
-                new_line 
-            );
-        }
+        if constexpr (output_type == Type::empty)
+            return concat(fn_name, enclose_in_parenthesis<input>());
+        else
+            return concat(output, fn_name, enclose_in_parenthesis<input>(), create_body<body>());
     }
 
     template <auto expression>
