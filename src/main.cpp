@@ -10,15 +10,37 @@ using namespace mfl;
 template <variable input, uniform gamma>
 consteval auto to_linear_vec4_body() 
 {
-    constexpr auto lhs{ pow<input.rgb(), vec3<gamma.name>()>() };
-    constexpr auto rhs{ input.a() };
+    static constexpr auto lhs{ pow<input.rgb(), vec3<gamma.name>()>() };
+    static constexpr auto rhs{ input.a() };
     return return_value_statement<vec4<lhs, rhs>()>().declaration;
 }
 
+template <variable input, uniform gamma>
+consteval auto to_linear_vec3_body() 
+{
+    static constexpr auto tmp{ pow<input.name, vec3<gamma.name>()>() };
+    return return_value_statement<tmp>().declaration;
+}
+template <variable input, uniform gamma>
+consteval auto to_gamma_body() 
+{
+    static constexpr auto tmp{ pow<input.name, vec3< value(1.0f / gamma)>()>() }; // TODO: super hacky, will change it
+    return return_value_statement<tmp>().declaration;
+}
 
-// vec4 toLinear(vec4 v) {
-//     return vec4(pow(v.rgb, vec3(gamma)), v.a);
+// vec4 colorWithAlpha = texture(colorMap, uvTexCoord);
+// if(colorWithAlpha.a < 0.1){
+//     gl_FragColor = colorWithAlpha;
+//     discard;
 // }
+// vec3 color = toLinear(colorWithAlpha).rgb;
+
+template <uniform colormap, in_var tex_coord>
+consteval auto main_body() 
+{
+    static constexpr auto color_with_alpha{ variable<Type::gl_vec4, "colorWithAlpha", sample<colormap, tex_coord>()>() };
+    return color_with_alpha.declaration;
+}
 
 auto main() -> int 
 {
@@ -53,10 +75,23 @@ auto main() -> int
     constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
     constexpr auto lights{ array<Type::gl_light, "lights", num_lights.value>() };
 
-    // TODO: Fn should take params differently
-    constexpr auto fn_input_var{ variable<Type::gl_vec4, "v", "">() };
-    constexpr auto fn_body{ to_linear_vec4_body<fn_input_var, gamma>() };
-    constexpr auto to_linear_vec4{ function<"toLinear", Type::gl_vec4, fn_body, Param<fn_input_var.name, fn_input_var.type>>() };
+    // TODO: 
+    // - fn should take params differently
+    // - fn.name to use later 
+    constexpr auto st_fn_in{ variable<Type::gl_vec4, "v", "">() };
+    constexpr auto st_fn_body{ to_linear_vec4_body<st_fn_in, gamma>() };
+    constexpr auto to_linear_vec4{ function<"toLinear", Type::gl_vec4, st_fn_body, Param<st_fn_in.name, st_fn_in.type>>() };
+
+    constexpr auto nd_fn_in{ variable<Type::gl_vec3, "v", "">() };
+    constexpr auto nd_fn_body{ to_linear_vec3_body<nd_fn_in, gamma>() };
+    constexpr auto to_linear_vec3{ function<"toLinear", Type::gl_vec3, nd_fn_body, Param<nd_fn_in.name, nd_fn_in.type>>() };
+
+    constexpr auto rd_fn_in{ variable<Type::gl_vec3, "v", "">() };
+    constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
+    constexpr auto to_gamma{ function<"toGamma", Type::gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
+
+    constexpr auto body{ main_body<colormap, tex_coord>() };
+    constexpr auto main_fn_impl{ main_fn<body>() };
 
     constexpr auto result{
         concat_all(
@@ -73,7 +108,10 @@ auto main() -> int
             light_struct,
             num_lights,
             lights,
-            to_linear_vec4
+            to_linear_vec4,
+            to_linear_vec3,
+            to_gamma, 
+            main_fn_impl
         )
     };
 
