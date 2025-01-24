@@ -40,6 +40,9 @@ namespace mfl::detail
 
 namespace mfl 
 {
+     //  The variable class represents variables with types. 
+     //
+     //
     template <Type var_type, static_string var_name, Keyword key, static_string val = "">
     struct [[nodiscard]] variable_impl
     {
@@ -48,6 +51,7 @@ namespace mfl
         static constexpr auto str_type{ detail::stringify<var_type>() };
         static constexpr auto keyword{ detail::stringify<key>() };
         static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, val>() };
+        // static constexpr auto definition{ };
 
         static consteval auto r() requires detail::is_vec<var_type> {
             return concat(name, dot, static_string{ "r" } );
@@ -81,8 +85,5 @@ namespace mfl
 
     template <Type type, static_string name>
     using field = variable_impl<type, name, Keyword::none, "">;
-
-    template <static_string value>
-    using frag_color = variable_impl<Type::empty, "gl_FragColor", Keyword::none, value>;
 }
 

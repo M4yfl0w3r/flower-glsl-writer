@@ -2,6 +2,7 @@
 
 #include "symbols.hpp"
 #include "variable.hpp"
+#include "value.hpp"
 
 namespace mfl::detail 
 {
@@ -44,18 +45,14 @@ namespace mfl::detail
         if constexpr (output_type == Type::empty) {
             return concat( 
                 fn_name,
-                left_parenthesis,
-                input,
-                right_parenthesis
+                enclose_in_parenthesis<input>()
             );
         }
         else {
             return concat(
                 output,
                 fn_name,
-                left_parenthesis,
-                input,
-                right_parenthesis,
+                enclose_in_parenthesis<input>(),
                 space,
                 left_brace,
                 new_line,
@@ -65,9 +62,6 @@ namespace mfl::detail
             );
         }
     }
-
-    template <typename T>
-    concept is_static_string = std::same_as<T, static_string<T::size + 1>>;
 }
 
 namespace mfl
@@ -93,10 +87,20 @@ namespace mfl
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
+    template <static_string a, static_string b, static_string c>
+    consteval auto vec3() {
+        return builtin_fn<"vec3", Param<a>, Param<b>, Param<c>>();
+    }
+    
+    template <static_string a>
+    consteval auto vec3() {
+        return builtin_fn<"vec3", Param<a>, Param<a>, Param<a>>();
+    }
+
     template <uniform map, auto expression>
     consteval auto sample() {
         constexpr auto expression_value = [&] {
-            if constexpr (detail::is_static_string<decltype(expression)>)
+            if constexpr (is_static_string<decltype(expression)>)
                 return expression;
             else 
                 return expression.name;

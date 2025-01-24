@@ -35,9 +35,18 @@ TEST(Functions, MultiParamsFunction)
 
 TEST(Functions, BuiltinFunction)
 {
-    constexpr auto fn{ builtin_fn<"vec3", Param<value(1.0f / 2.0f)>>() };
-    constexpr auto expected_declaration{ static_string{ "vec3(1.0f / 2.0f)" } };
-    EXPECT_TRUE(fn.declaration == expected_declaration);
+    // TODO: value(1.0f) for now, float -> static_string conversion in the future
+    {
+        constexpr auto vec{ vec3<value(1.0f), value(2.0f), value(3.0f)>() };
+        constexpr auto expected_declaration{ "vec3(1.0f, 2.0f, 3.0f)" };
+        EXPECT_TRUE(vec.declaration == expected_declaration);
+    }
+
+    {
+        constexpr auto vec{ vec3<value(1.0f)>() };
+        constexpr auto expected_declaration{ "vec3(1.0f, 1.0f, 1.0f)" };
+        EXPECT_TRUE(vec.declaration == expected_declaration);
+    }
 }
 
 TEST(Functions, FunctionWithBody)

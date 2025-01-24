@@ -15,6 +15,7 @@ namespace mfl
         gl_vec3,
         gl_vec4,
         gl_sampler2D,
+        gl_bool,
         empty
     };
 
@@ -25,6 +26,10 @@ namespace mfl
         gl_frag_color,
         gl_if,
         gl_return,
+        gl_continue,
+        gl_break,
+        gl_discard,
+        gl_position,
         none
     };
 
@@ -70,6 +75,8 @@ namespace mfl::detail
             return static_string{ "vec4" } + space;
         else if constexpr (output_type == Type::gl_sampler2D)
             return static_string{ "sampler2D" } + space;
+        else if constexpr (output_type == Type::gl_bool)
+            return static_string{ "bool" } + space;
         else 
             return static_string{ "" };
     }
@@ -83,12 +90,25 @@ namespace mfl::detail
             return static_string{ "in" } + space;
         else if constexpr (keyword == Keyword::gl_frag_color)
             return static_string{ "gl_FragColor" } + space;
+        else if constexpr (keyword == Keyword::gl_position)
+            return static_string{ "gl_Position" };
         else if constexpr (keyword == Keyword::gl_if)
             return static_string{ "if" };
         else if constexpr (keyword == Keyword::gl_return)
-            return static_string{ "return" } + space;
+            return static_string{ "return" };
+        else if constexpr (keyword == Keyword::gl_continue)
+            return static_string{ "continue" };
+        else if constexpr (keyword == Keyword::gl_break)
+            return static_string{ "break" };
+        else if constexpr (keyword == Keyword::gl_discard)
+            return static_string{ "discard" };
         else
             return static_string{ "" };
+    }
+
+    template <static_string val>
+    consteval auto enclose_in_parenthesis() {
+        return concat(left_parenthesis, val, right_parenthesis);
     }
 
 }

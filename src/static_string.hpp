@@ -60,6 +60,9 @@ namespace mfl
     template <std::size_t N>
     static_string(const char (&str)[N]) -> static_string<N>;
 
+    template <typename T>
+    concept is_static_string = std::same_as<T, static_string<T::size + 1>>;
+
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
     {

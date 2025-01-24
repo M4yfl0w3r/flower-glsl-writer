@@ -2,6 +2,7 @@
 
 #include "variable.hpp"
 #include "function.hpp"
+#include "statement.hpp"
 
 using namespace mfl;
 
@@ -25,7 +26,7 @@ consteval auto parallax_main_body()
     };
 
     constexpr auto ret{ 
-        frag_color<original.name>() 
+        frag_color<original>()
     };
     
     return concat_all(

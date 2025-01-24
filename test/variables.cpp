@@ -25,10 +25,9 @@ TEST(Variables, UniformsDeclaration)
     EXPECT_TRUE(result == expected_result);
 } 
 
-TEST(Variables, BuiltinVariables)
+TEST(Variables, BaseTypeDeclarations)
 {
-    constexpr auto color{ variable<Type::gl_vec4, "color", value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
-    constexpr auto gl_frag_color{ frag_color<color.name>() };
-    constexpr auto expected_result{ static_string{ "gl_FragColor = color;\n" } };
-    EXPECT_TRUE(gl_frag_color.declaration == expected_result);
+    constexpr auto test_float{ variable<Type::gl_float, "test_float", value(1.0f)>() };
+    constexpr auto expected_result{ static_string{ "float test_float = 1.0f;\n"} };
+    EXPECT_TRUE(test_float.declaration == expected_result);
 }
