@@ -9,19 +9,13 @@ namespace mfl::detail
     {
         // TODO: space bug
         if constexpr (keyword == "return ") {
-            return concat(
-                keyword,
-                value,
-                line_end
-            );
+            return concat(keyword, value, line_end);
+        }
+        else if constexpr (keyword == "#define") {
+            return concat(keyword, space, name, space, value, new_line);
         }
         else if constexpr (value == "") {
-            return concat(
-                keyword,
-                type, 
-                name,
-                line_end
-            );
+            return concat(keyword, type, name, line_end);
         }
         else {
             return concat(
@@ -40,7 +34,8 @@ namespace mfl::detail
 
 namespace mfl 
 {
-     //  The variable class represents variables with types. 
+     //  The variable class represents variables with types. define statement 
+     //  despite being an actual statement is treated as a variable.
      //
      //
     template <Type var_type, static_string var_name, Keyword key, static_string val = "">
@@ -85,5 +80,8 @@ namespace mfl
 
     template <Type type, static_string name>
     using field = variable_impl<type, name, Keyword::none, "">;
+
+    template <static_string name, static_string value>
+    using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
 }
 

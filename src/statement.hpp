@@ -6,19 +6,19 @@
 
 namespace mfl::detail
 {
-    template <Keyword key, bool assign, static_string val>
+    template <Keyword key, bool assign, static_string value>
     consteval auto make_declaration()
     {
         if constexpr (assign == true) { // gl_FragColor = value;
-           return concat(stringify<key>(), equal, space, val, line_end);
+           return concat(stringify<key>(), equal, space, value, line_end);
         }
-        else if constexpr (assign == false && val == "") { // return; continue;
+        else if constexpr (assign == false && value == "") { // return; continue;
             return concat(stringify<key>(), line_end);
         }
         else { // if (value) {}
             return concat(stringify<key>(), 
                           space,
-                          enclose_in_parenthesis<val>(), 
+                          enclose_in_parenthesis<value>(), 
                           space, 
                           left_brace, 
                           right_brace, 
@@ -37,17 +37,17 @@ namespace mfl
     //  Args
     //      
     //    * key: return, if, for but also gl_FragColor
-    //    * assign: is variable assignable? return is not, but gl_FragColor is
-    //    * val: value to be assigned, should also be a variable, not only a static_string
+    //    * assign: is the statement assignable? return is not, but gl_FragColor is
+    //    * value: value to be assigned, should also be a variable, not only a static_string
     //
-    template <Keyword key, bool assign, static_string val = "">
+    template <Keyword key, bool assign, static_string value = "">
     struct [[nodiscard]] statement
     {
-        static constexpr auto declaration{ detail::make_declaration<key, assign, val>() };
+        static constexpr auto declaration{ detail::make_declaration<key, assign, value>() };
     };
 
-    template <static_string val>
-    using if_statement = statement<Keyword::gl_if, false, val>;
+    template <static_string value>
+    using if_statement = statement<Keyword::gl_if, false, value>;
 
     using return_statement = statement<Keyword::gl_return, false, "">;
     using continue_statement = statement<Keyword::gl_continue, false, "">;

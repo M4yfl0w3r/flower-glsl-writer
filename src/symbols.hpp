@@ -22,6 +22,7 @@ namespace mfl
     enum class Keyword 
     {
         gl_uniform,
+        gl_define,
         gl_in,
         gl_frag_color,
         gl_if,
@@ -86,6 +87,8 @@ namespace mfl::detail
     {
         if constexpr (keyword == Keyword::gl_uniform)
             return static_string{ "uniform" } + space;
+        else if constexpr (keyword == Keyword::gl_define)
+            return static_string{ "#define" };
         else if constexpr (keyword == Keyword::gl_in)
             return static_string{ "in" } + space;
         else if constexpr (keyword == Keyword::gl_frag_color)

@@ -33,19 +33,49 @@ TEST(Functions, MultiParamsFunction)
     EXPECT_TRUE(fn.declaration == expected_declaration);
 }
 
-TEST(Functions, BuiltinFunction)
+TEST(Functions, BuiltInFunctions)
 {
     // TODO: value(1.0f) for now, float -> static_string conversion in the future
     {
         constexpr auto vec{ vec3<value(1.0f), value(2.0f), value(3.0f)>() };
         constexpr auto expected_declaration{ "vec3(1.0f, 2.0f, 3.0f)" };
-        EXPECT_TRUE(vec.declaration == expected_declaration);
+        EXPECT_TRUE(vec == expected_declaration);
     }
 
     {
         constexpr auto vec{ vec3<value(1.0f)>() };
         constexpr auto expected_declaration{ "vec3(1.0f, 1.0f, 1.0f)" };
-        EXPECT_TRUE(vec.declaration == expected_declaration);
+        EXPECT_TRUE(vec == expected_declaration);
+    }
+
+    {
+        constexpr auto depthmap{ uniform<Type::gl_sampler2D, "depthMap">() };
+        constexpr auto var{ variable<Type::gl_vec3, "var", vec3<value(1.0f)>()>() };
+        constexpr auto sample_val{ sample<depthmap, var>() };
+        constexpr auto expected_declaration{ "texture2D(depthMap, var)" };
+        EXPECT_TRUE(sample_val == expected_declaration);
+    }
+
+    {
+        constexpr auto st_var{ variable<Type::gl_vec3, "st_var", vec3<value(1.0f)>()>() };
+        constexpr auto nd_var{ variable<Type::gl_vec3, "nd_var", vec3<value(3.0f)>()>() };
+        constexpr auto pow_val{ pow<st_var, nd_var>() };
+        constexpr auto expected_declaration{ "pow(st_var, nd_var)" };
+        EXPECT_TRUE(pow_val == expected_declaration);
+    }
+
+    {
+        constexpr auto st_var{ variable<Type::gl_vec3, "st_var", vec3<value(1.0f)>()>() };
+        constexpr auto length_val{ length<st_var>() };
+        constexpr auto expected_declaration{ "length(st_var)" };
+        EXPECT_TRUE(length_val == expected_declaration);
+    }
+    
+    {
+        constexpr auto st_var{ variable<Type::gl_vec3, "st_var", vec3<value(1.0f)>()>() };
+        constexpr auto radians_val{ radians<st_var>() };
+        constexpr auto expected_declaration{ "radians(st_var)" };
+        EXPECT_TRUE(radians_val == expected_declaration);
     }
 }
 

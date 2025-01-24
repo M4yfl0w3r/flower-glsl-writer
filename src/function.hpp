@@ -62,6 +62,16 @@ namespace mfl::detail
             );
         }
     }
+
+    template <auto expression>
+    static consteval auto expression_value() {
+        return [&] { 
+            if constexpr (is_static_string<decltype(expression)>)
+                return expression;
+            else 
+                return expression.name;
+        }();
+    }
 }
 
 namespace mfl
@@ -89,24 +99,41 @@ namespace mfl
 
     template <static_string a, static_string b, static_string c>
     consteval auto vec3() {
-        return builtin_fn<"vec3", Param<a>, Param<b>, Param<c>>();
+        return builtin_fn<"vec3", Param<a>, Param<b>, Param<c>>().declaration;
     }
     
-    template <static_string a>
+    // expression is either a regular value or a variable
+    template <auto expression>
     consteval auto vec3() {
-        return builtin_fn<"vec3", Param<a>, Param<a>, Param<a>>();
+        constexpr auto expr{ detail::expression_value<expression>() };
+        return builtin_fn<"vec3", Param<expr>, Param<expr>, Param<expr>>().declaration;
+    }
+
+    template <auto expression>
+    consteval auto length() {
+        constexpr auto expr{ detail::expression_value<expression>() };
+        return builtin_fn<"length", Param<expr>>().declaration;
+    }
+
+    template <auto expression>
+    consteval auto radians() {
+        constexpr auto expr{ detail::expression_value<expression>() };
+        return builtin_fn<"radians", Param<expr>>().declaration;
+    }
+
+    template <auto st_expression, auto nd_expression>
+    consteval auto pow()
+    {
+        constexpr auto st_expr{ detail::expression_value<st_expression>() };
+        constexpr auto nd_expr{ detail::expression_value<nd_expression>() };
+        return builtin_fn<"pow", Param<st_expr>, Param<nd_expr>>().declaration;
     }
 
     template <uniform map, auto expression>
-    consteval auto sample() {
-        constexpr auto expression_value = [&] {
-            if constexpr (is_static_string<decltype(expression)>)
-                return expression;
-            else 
-                return expression.name;
-        }();
-
-        return builtin_fn<"texture2D", Param<map.name>, Param<expression_value>>().declaration;
+    consteval auto sample() 
+    {
+        constexpr auto expr{ detail::expression_value<expression>() };
+        return builtin_fn<"texture2D", Param<map.name>, Param<expr>>().declaration;
     }
 }
 
