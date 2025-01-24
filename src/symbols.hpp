@@ -8,23 +8,23 @@ namespace mfl
 {
     enum class Type 
     {
-        int_t,
-        float_t,
-        void_t,
-        vec2,
-        vec3,
-        vec4,
-        sampler2D,
+        gl_int,
+        gl_float,
+        gl_void,
+        gl_vec2,
+        gl_vec3,
+        gl_vec4,
+        gl_sampler2D,
         empty
     };
 
     enum class Keyword 
     {
-        uniform,
-        in,
-        gl_FragColor,
-        condition,     // if
-        ret,           // return
+        gl_uniform,
+        gl_in,
+        gl_frag_color,
+        gl_if,
+        gl_return,
         none
     };
 
@@ -46,49 +46,49 @@ namespace mfl
     inline constexpr auto right_brace{ static_string{ "}" } };
     inline constexpr auto left_parenthesis{ static_string{ "(" } };
     inline constexpr auto right_parenthesis{ static_string{ ")" } };
-
 }
 
 namespace mfl::detail
 {
     template <Type type>
-    concept is_vec = (type == Type::vec2 || type == Type::vec3 || type == Type::vec4);
+    concept is_vec = (type == Type::gl_vec2 || type == Type::gl_vec3 || type == Type::gl_vec4);
 
     template <Type output_type>
-    static consteval auto type_or_empty()
+    static consteval auto stringify()
     {
-        if constexpr (output_type == Type::empty) {
-            return static_string{ "" };
-        }
-        else if constexpr (output_type == Type::int_t) {
+        if constexpr (output_type == Type::gl_int)
             return static_string{ "int" } + space;
-        }
-        else if constexpr (output_type == Type::void_t) {
-            return static_string{ "void" } + space;
-        }
-        else if constexpr (output_type == Type::float_t) {
+        else if constexpr (output_type == Type::gl_float)
             return static_string{ "float" } + space;
-        }
-        else {
-            return to_static_string<output_type>() + space;
-        }
+        else if constexpr (output_type == Type::gl_void)
+            return static_string{ "void" } + space;
+        else if constexpr (output_type == Type::gl_vec2)
+            return static_string{ "vec2" } + space;
+        else if constexpr (output_type == Type::gl_vec3)
+            return static_string{ "vec3" } + space;
+        else if constexpr (output_type == Type::gl_vec4)
+            return static_string{ "vec4" } + space;
+        else if constexpr (output_type == Type::gl_sampler2D)
+            return static_string{ "sampler2D" } + space;
+        else 
+            return static_string{ "" };
     }
 
     template <Keyword keyword>
-    static consteval auto keyword_or_none() 
+    static consteval auto stringify() 
     {
-        if constexpr (keyword == Keyword::none) {
-            return static_string{ "" };
-        }
-        else if constexpr (keyword == Keyword::ret) {
-            return static_string{ "return" } + space;
-        }
-        else if constexpr (keyword == Keyword::condition) {
+        if constexpr (keyword == Keyword::gl_uniform)
+            return static_string{ "uniform" } + space;
+        else if constexpr (keyword == Keyword::gl_in)
+            return static_string{ "in" } + space;
+        else if constexpr (keyword == Keyword::gl_frag_color)
+            return static_string{ "gl_FragColor" } + space;
+        else if constexpr (keyword == Keyword::gl_if)
             return static_string{ "if" };
-        }
-        else {
-            return to_static_string<keyword>() + space;
-        }
+        else if constexpr (keyword == Keyword::gl_return)
+            return static_string{ "return" } + space;
+        else
+            return static_string{ "" };
     }
 
 }

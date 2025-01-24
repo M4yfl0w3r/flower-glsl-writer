@@ -7,7 +7,7 @@ using namespace mfl;
 
 TEST(Functions, BasicFunctionSignature)
 {
-    constexpr auto fn{ function<"to_gamma", Type::vec3, "", Param<"v", Type::vec3>>() };
+    constexpr auto fn{ function<"to_gamma", Type::gl_vec3, "", Param<"v", Type::gl_vec3>>() };
 
     constexpr auto expected_declaration{ 
         static_string{ 
@@ -21,7 +21,7 @@ TEST(Functions, BasicFunctionSignature)
 
 TEST(Functions, MultiParamsFunction)
 {
-    constexpr auto fn{ function<"test_multiparam", Type::vec3, "", Param<"a", Type::vec3>, Param<"b", Type::vec3>>() };
+    constexpr auto fn{ function<"test_multiparam", Type::gl_vec3, "", Param<"a", Type::gl_vec3>, Param<"b", Type::gl_vec3>>() };
     
     constexpr auto expected_declaration{ 
         static_string{ 
@@ -42,8 +42,8 @@ TEST(Functions, BuiltinFunction)
 
 TEST(Functions, FunctionWithBody)
 {
-    constexpr auto body{ variable<Type::vec3, "result", value(1.0f / 2.0f)>() };
-    constexpr auto fn{ function<"to_gamma", Type::vec3, body.declaration, Param<"v", Type::vec3>>() };
+    constexpr auto body{ variable<Type::gl_vec3, "result", value(1.0f / 2.0f)>() };
+    constexpr auto fn{ function<"to_gamma", Type::gl_vec3, body.declaration, Param<"v", Type::gl_vec3>>() };
 
     constexpr auto expected_declaration{ 
         static_string{ 

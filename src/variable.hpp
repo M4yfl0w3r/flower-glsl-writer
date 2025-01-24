@@ -45,8 +45,8 @@ namespace mfl
     {
         static constexpr auto name{ var_name };
         static constexpr auto type{ var_type };
-        static constexpr auto str_type{ detail::type_or_empty<var_type>() };
-        static constexpr auto keyword{ detail::keyword_or_none<key>() };
+        static constexpr auto str_type{ detail::stringify<var_type>() };
+        static constexpr auto keyword{ detail::stringify<key>() };
         static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, val>() };
 
         static consteval auto r() requires detail::is_vec<var_type> {
@@ -65,10 +65,10 @@ namespace mfl
     }
 
     template <Type type, static_string name>
-    using uniform = variable_impl<type, name, Keyword::uniform>;
+    using uniform = variable_impl<type, name, Keyword::gl_uniform>;
 
     template <Type type, static_string name>
-    using in_var = variable_impl<type, name, Keyword::in>;
+    using in_var = variable_impl<type, name, Keyword::gl_in>;
 
     template <Type type, static_string name, static_string value>
     using variable = variable_impl<type, name, Keyword::none, value>;

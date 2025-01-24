@@ -9,19 +9,19 @@ template <uniform depthmap, uniform colormap, in_var tex_coord, uniform deflecti
 consteval auto parallax_main_body()
 {
     constexpr auto depth_distortion{ 
-        variable<Type::vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
+        variable<Type::gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
     };
 
     constexpr auto parallax_multiplier{ 
-        variable<Type::float_t, "parallax_multiplier", depth_distortion.r()>() 
+        variable<Type::gl_float, "parallax_multiplier", depth_distortion.r()>() 
     };
 
     constexpr auto parallax{ 
-        variable<Type::vec2, "parallax", multiply<deflection, parallax_multiplier>()>() 
+        variable<Type::gl_vec2, "parallax", multiply<deflection, parallax_multiplier>()>() 
     };
 
     constexpr auto original{ 
-        variable<Type::vec4, "original", sample<colormap, add<tex_coord, parallax>()>()>() 
+        variable<Type::gl_vec4, "original", sample<colormap, add<tex_coord, parallax>()>()>() 
     };
 
     constexpr auto ret{ 
@@ -39,11 +39,11 @@ consteval auto parallax_main_body()
 
 TEST(Effects, Parallax)
 {
-    constexpr auto colormap{ uniform<Type::sampler2D, "colorMap">() };
-    constexpr auto depthmap{ uniform<Type::sampler2D, "depthMap">() };
-    constexpr auto deflection{ uniform<Type::vec2, "deflection">() };
+    constexpr auto colormap{ uniform<Type::gl_sampler2D, "colorMap">() };
+    constexpr auto depthmap{ uniform<Type::gl_sampler2D, "depthMap">() };
+    constexpr auto deflection{ uniform<Type::gl_vec2, "deflection">() };
 
-    constexpr auto tex_coord{ in_var<Type::vec2, "uvTexCoord">() };
+    constexpr auto tex_coord{ in_var<Type::gl_vec2, "uvTexCoord">() };
 
     constexpr auto body{ parallax_main_body<depthmap, colormap, tex_coord, deflection>() };
     constexpr auto main_fn_impl{ main_fn<body>() };

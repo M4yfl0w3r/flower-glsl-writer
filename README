@@ -1,5 +1,6 @@
 TODO
 
+    * for loops
     * fix the space issue
     * fix the f32 enum issue
     * write a compile-time float to string converter

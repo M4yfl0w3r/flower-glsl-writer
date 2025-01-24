@@ -3,7 +3,6 @@
 #include <array>
 #include <algorithm>
 #include <string_view>
-#include <magic_enum/magic_enum.hpp>
 
 namespace mfl::detail 
 {
@@ -85,21 +84,6 @@ namespace mfl
     template <std::size_t st_len, std::size_t nd_len>
     consteval auto operator+(const static_string<st_len>& st, const static_string<nd_len>& nd) {
         return concat(st, nd);
-    }
-
-    template <auto value>
-    consteval auto to_static_string() 
-    {
-        constexpr auto enum_val_str{ magic_enum::enum_name(value) };
-
-        constexpr auto buffer{ 
-            detail::fill_buffer<char>(
-                enum_val_str, 
-                std::make_index_sequence<std::size(enum_val_str)>()
-            )
-        };
-
-        return static_string{ buffer };
     }
 }
 

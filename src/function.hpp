@@ -10,12 +10,12 @@ namespace mfl::detail
     {
         if constexpr (is_last) {
             return concat(
-                type_or_empty<Param::type>(),
+                stringify<Param::type>(),
                 Param::name
             );
         } else {
             return concat(
-                type_or_empty<Param::type>(),
+                stringify<Param::type>(),
                 Param::name,
                 comma,
                 space
@@ -83,12 +83,12 @@ namespace mfl
     {
         static constexpr auto name{ fn_name };
         static constexpr auto input{ detail::make_input<Params...>() };
-        static constexpr auto output{ detail::type_or_empty<output_type>() };
+        static constexpr auto output{ detail::stringify<output_type>() };
         static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
     };
 
     template <static_string body>
-    using main_fn = function<"main", Type::void_t, body>;
+    using main_fn = function<"main", Type::gl_void, body>;
 
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;

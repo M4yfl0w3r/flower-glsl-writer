@@ -9,15 +9,15 @@ using namespace mfl;
 consteval auto create_light_struct()
 {
     return make_structure<"Light">(
-        field<Type::vec4, "position">(),
-        field<Type::vec4, "ambient">(),
-        field<Type::vec4, "diffuse">(),
-        field<Type::vec3, "spotDirection">(),
-        field<Type::float_t, "spotCutoff">(),
-        field<Type::float_t, "spotExponent">(),
-        field<Type::float_t, "constantAttenuation">(),
-        field<Type::float_t, "linearAttenuation">(),
-        field<Type::float_t, "quadraticAttenuation">()
+        field<Type::gl_vec4, "position">(),
+        field<Type::gl_vec4, "ambient">(),
+        field<Type::gl_vec4, "diffuse">(),
+        field<Type::gl_vec3, "spotDirection">(),
+        field<Type::gl_float, "spotCutoff">(),
+        field<Type::gl_float, "spotExponent">(),
+        field<Type::gl_float, "constantAttenuation">(),
+        field<Type::gl_float, "linearAttenuation">(),
+        field<Type::gl_float, "quadraticAttenuation">()
     );
 }
 
@@ -49,13 +49,13 @@ TEST(Structs, LightStructAccessMembers)
     constexpr auto diffuse{ light.get<"diffuse">() };
     constexpr auto const_att{ light.get<"constantAttenuation">() };
 
-    EXPECT_EQ(position.type, Type::vec4);
+    EXPECT_EQ(position.type, Type::gl_vec4);
     EXPECT_TRUE(position.name == "position");
     
-    EXPECT_EQ(diffuse.type, Type::vec4);
+    EXPECT_EQ(diffuse.type, Type::gl_vec4);
     EXPECT_TRUE(diffuse.name == "diffuse");
 
-    EXPECT_EQ(const_att.type, Type::float_t);
+    EXPECT_EQ(const_att.type, Type::gl_float);
     EXPECT_TRUE(const_att.name == "constantAttenuation");
 }
 

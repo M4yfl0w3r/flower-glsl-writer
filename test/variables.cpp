@@ -8,9 +8,9 @@ using namespace mfl;
 TEST(Variables, UniformsDeclaration)
 {
     constexpr auto create_uniforms = []() {
-        constexpr auto color_map{ uniform<Type::sampler2D, "color_map">() };
-        constexpr auto normal_map{ uniform<Type::sampler2D, "normal_map">() };
-        constexpr auto fog_color{ uniform<Type::vec3, "fog_color">() };
+        constexpr auto color_map{ uniform<Type::gl_sampler2D, "color_map">() };
+        constexpr auto normal_map{ uniform<Type::gl_sampler2D, "normal_map">() };
+        constexpr auto fog_color{ uniform<Type::gl_vec3, "fog_color">() };
         return concat(color_map.declaration, normal_map.declaration, fog_color.declaration);
     };
 
@@ -27,7 +27,7 @@ TEST(Variables, UniformsDeclaration)
 
 TEST(Variables, BuiltinVariables)
 {
-    constexpr auto color{ variable<Type::vec4, "color", value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
+    constexpr auto color{ variable<Type::gl_vec4, "color", value(vec4(1.0f, 1.0f, 1.0f, 1.0f))>()};
     constexpr auto gl_frag_color{ frag_color<color.name>() };
     constexpr auto expected_result{ static_string{ "gl_FragColor = color;\n" } };
     EXPECT_TRUE(gl_frag_color.declaration == expected_result);
