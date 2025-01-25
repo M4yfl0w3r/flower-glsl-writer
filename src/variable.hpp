@@ -93,25 +93,27 @@ namespace mfl
         }
     };
 
-    template <Type type, static_string st_name, Keyword st_key, static_string st_val,
-                         static_string nd_name, Keyword nd_key, static_string nd_val>
-    consteval auto operator+(const variable_impl<type, st_name, st_key, st_val>&,
-                             const variable_impl<type, nd_name, nd_key, nd_val>&) 
-    {
-        return concat(st_name, plus, nd_name);
+    // TODO: a better structure for operators
+    template <Type T, static_string N1, Keyword K1, static_string V1,
+                      static_string N2, Keyword K2, static_string V2>
+    consteval auto operator+(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
+        return concat(left_parenthesis, N1, plus, N2, right_parenthesis);
     }
 
-    template <Type st_type, static_string st_name, Keyword st_key, static_string st_val,
-              Type nd_type, static_string nd_name, Keyword nd_key, static_string nd_val>
-    consteval auto operator*(const variable_impl<st_type, st_name, st_key, st_val>&,
-                             const variable_impl<nd_type, nd_name, nd_key, nd_val>&)
-    {
-        return concat(st_name, times, nd_name);
+    template <Type T1, static_string N1, Keyword K1, static_string V1,
+              Type T2, static_string N2, Keyword K2, static_string V2>
+    consteval auto operator*(const variable_impl<T1, N1, K1, V1>&, const variable_impl<T1, N2, K2, V2>&) {
+        return concat(N1, times, N2);
     }
 
-    template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
-    consteval auto operator*(const static_string<len>& str, const variable_impl<t, name, k, val>&) {
-        return concat(left_parenthesis, str, times, name, right_parenthesis);
+    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    consteval auto operator*(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
+        return concat(left_parenthesis, str, times, N, right_parenthesis);
+    }
+
+    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
+        return concat(left_parenthesis, N, times, str, right_parenthesis);
     }
 
     template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
