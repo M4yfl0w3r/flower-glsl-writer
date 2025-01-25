@@ -126,6 +126,13 @@ namespace mfl
         return builtin_fn<"vec4", Param<detail::expression_value<expressions>()>...>().declaration;
     }
 
+    template <auto... expressions>
+    consteval auto mix() 
+    {
+        static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 3);
+        return builtin_fn<"mix", Param<detail::expression_value<expressions>()>...>().declaration;
+    }
+
     template <auto expression>
     consteval auto length() {
         return builtin_fn<"length", Param<detail::expression_value<expression>()>>().declaration;

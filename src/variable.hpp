@@ -67,6 +67,8 @@ namespace mfl
         static consteval auto b() { return component<"b">(); }
         static consteval auto a() { return component<"a">(); }
         static consteval auto x() { return component<"x">(); }
+        static consteval auto y() { return component<"y">(); }
+        static consteval auto z() { return component<"z">(); }
          
         static consteval auto rgb() requires detail::at_least_vec3<var_type> {
             return concat(name, dot, static_string{ "rgb" } );
@@ -86,6 +88,10 @@ namespace mfl
             return concat(name, times, expr);
         }
 
+        static consteval auto negative() {
+            return concat(minus, name);
+        }
+        
     private:    
         template <static_string access_name>
         static consteval auto component() {

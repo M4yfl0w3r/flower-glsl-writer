@@ -136,6 +136,15 @@ TEST(Functions, BuiltInFunctions)
     }
 
     {
+        static constexpr auto st_var{ variable<gl_float, "st_var">() };
+        static constexpr auto nd_var{ variable<gl_float, "nd_var">() };
+        static constexpr auto rd_var{ variable<gl_float, "rd_var">() };
+        static constexpr auto mix_res{ mix<st_var, nd_var, rd_var>() };
+        static constexpr auto expected_declaration{ "mix(st_var, nd_var, rd_var)" };
+        EXPECT_TRUE(mix_res == expected_declaration);
+    }
+
+    {
         static constexpr auto color_map{ uniform<gl_sampler2D, "colorMap">() };
         static constexpr auto tex_size{ texture_size<color_map, value(0)>() };
         static constexpr auto expected_declaration{ "textureSize(colorMap, 0)" };
