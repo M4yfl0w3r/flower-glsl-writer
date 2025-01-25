@@ -39,7 +39,7 @@ consteval auto color_if_body() {
     );
 }
 
-template <uniform colormap, uniform normalmap, in_var tex_coord, function to_linear_vec3>
+template <uniform colormap, uniform normalmap, uniform depthmap, in_var tex_coord, function to_linear_vec3>
 consteval auto main_body() 
 {
     static constexpr auto color_with_alpha{ variable<gl_vec4, "colorWithAlpha", sample<colormap, tex_coord>()>() };
@@ -50,11 +50,14 @@ consteval auto main_body()
             color_if_body<color_with_alpha>()>() 
     };
 
-    static constexpr auto fn_call{ to_linear_vec3.template call<color_with_alpha>() }; // TODO: might change it into a free fn
-    static constexpr auto color{ variable<gl_vec3, "color", fn_call>() }; // TODO: rgb
+    static constexpr auto color{ 
+        variable<
+            gl_vec3, "color", 
+            to_linear_vec3.template call<color_with_alpha>()    // TODO: Might change it into a free fn
+        >() 
+    };
     
     static constexpr auto normal{ variable<gl_vec3, "normal", sample<normalmap, tex_coord>()>() }; // TODO: rgb
-    
     static constexpr auto normalize_op{ 
         normal.template assign<
             normalize<
@@ -62,6 +65,14 @@ consteval auto main_body()
             >()
         >() 
     };
+
+    static constexpr auto rgb_depth{ variable<gl_vec3, "rgbDepth", sample<depthmap, tex_coord>()>() }; // TODO: rgb
+    static constexpr auto norm_depth{ variable<gl_float, "normalizedDepth", (rgb_depth.r() + rgb_depth.g() + rgb_depth.b()) / value(3.0f)>() };
+    static constexpr auto full_range_depth{ variable<gl_float, "fullRangeDepth", norm_depth - value(1.0f) * depth_range>() };
+
+        // vec3 rgbDepth = texture(depthMap, uvTexCoord).rgb;
+        // float normalizedDepth = (rgbDepth.r + rgbDepth.g + rgbDepth.b) / 3.0;
+        // float fullRangeDepth = ( normalizedDepth - 1.0 ) * depthRange;
 
 
     // TODO: concat_all should accept both with declaration and without
@@ -123,7 +134,7 @@ auto main() -> int
     static constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
     static constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
 
-    static constexpr auto body{ main_body<colormap, normalmap, tex_coord, to_linear_vec3>() };
+    static constexpr auto body{ main_body<colormap, normalmap, depthmap, tex_coord, to_linear_vec3>() };
     static constexpr auto main_fn_impl{ main_fn<body>() };
 
     static constexpr auto result{

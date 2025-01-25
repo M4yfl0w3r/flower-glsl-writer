@@ -63,6 +63,8 @@ namespace mfl
         };
 
         static consteval auto r() { return component<"r">(); }
+        static consteval auto g() { return component<"g">(); }
+        static consteval auto b() { return component<"b">(); }
         static consteval auto a() { return component<"a">(); }
         static consteval auto x() { return component<"x">(); }
          

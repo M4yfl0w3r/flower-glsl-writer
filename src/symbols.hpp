@@ -47,6 +47,7 @@ namespace mfl
     inline constexpr auto plus{ static_string{ " + " } };
     inline constexpr auto minus{ static_string{ " - " } };
     inline constexpr auto times{ static_string{ " * " } };
+    inline constexpr auto divide{ static_string{ " / " } };
     inline constexpr auto space{ static_string{ " " } };
     inline constexpr auto equal{ static_string{ " = " } };
     inline constexpr auto less{ static_string{ " < " } };

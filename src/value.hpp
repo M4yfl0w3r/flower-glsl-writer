@@ -12,4 +12,9 @@ namespace mfl
     consteval auto operator-(const static_string<st_len>& a, const static_string<nd_len>& b) {
         return concat(a, minus, b);
     }
+
+    template <std::size_t st_len, std::size_t nd_len>
+    consteval auto operator/(const static_string<st_len>& a, const static_string<nd_len>& b) {
+        return concat(a, divide, b);
+    }
 }

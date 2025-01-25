@@ -6,6 +6,7 @@ compile_commands.json
 
 src/a.out
 src/test.cpp
+src/main.cpp
 
 test/shader.glsl
 test/light.glsl
