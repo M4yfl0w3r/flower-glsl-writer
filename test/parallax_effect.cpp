@@ -61,19 +61,17 @@ TEST(Effects, Parallax)
     };
 
     static constexpr auto expected_result{ 
-        static_string{ 
-            "uniform vec2 deflection;\n"
-            "uniform sampler2D colorMap;\n"
-            "uniform sampler2D depthMap;\n"
-            "in vec2 uvTexCoord;\n"
-            "void main() {\n"
-            "vec4 depth_distortion = texture2D(depthMap, uvTexCoord);\n"
-            "float parallax_multiplier = depth_distortion.r;\n"
-            "vec2 parallax = deflection * parallax_multiplier;\n"
-            "vec4 original = texture2D(colorMap, uvTexCoord + parallax);\n"
-            "gl_FragColor = original;\n"
-            "}\n"
-        }
+        "uniform vec2 deflection;\n"
+        "uniform sampler2D colorMap;\n"
+        "uniform sampler2D depthMap;\n"
+        "in vec2 uvTexCoord;\n"
+        "void main() {\n"
+        "vec4 depth_distortion = texture2D(depthMap, uvTexCoord);\n"
+        "float parallax_multiplier = depth_distortion.r;\n"
+        "vec2 parallax = deflection * parallax_multiplier;\n"
+        "vec4 original = texture2D(colorMap, uvTexCoord + parallax);\n"
+        "gl_FragColor = original;\n"
+        "}\n"
     };
 
     EXPECT_TRUE(result == expected_result);

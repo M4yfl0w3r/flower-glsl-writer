@@ -24,20 +24,20 @@ consteval auto create_light_struct()
 
 TEST(Structs, LightStructDeclaration)
 {
-    constexpr auto light{ create_light_struct() };
+    static constexpr auto light{ create_light_struct() };
 
-    constexpr auto expected_result {
-        static_string{ "struct Light {\n"
-                       "vec4 position;\n"
-                       "vec4 ambient;\n"
-                       "vec4 diffuse;\n"
-                       "vec3 spotDirection;\n"
-                       "float spotCutoff;\n"
-                       "float spotExponent;\n"
-                       "float constantAttenuation;\n"
-                       "float linearAttenuation;\n"
-                       "float quadraticAttenuation;\n" 
-                       "};\n" }
+    static constexpr auto expected_result {
+        "struct Light {\n"
+        "vec4 position;\n"
+        "vec4 ambient;\n"
+        "vec4 diffuse;\n"
+        "vec3 spotDirection;\n"
+        "float spotCutoff;\n"
+        "float spotExponent;\n"
+        "float constantAttenuation;\n"
+        "float linearAttenuation;\n"
+        "float quadraticAttenuation;\n" 
+        "};\n"
     };
 
     EXPECT_TRUE(light.declaration == expected_result);
@@ -45,10 +45,10 @@ TEST(Structs, LightStructDeclaration)
 
 TEST(Structs, LightStructAccessMembers)
 {
-    constexpr auto light{ create_light_struct() };
-    constexpr auto position{ light.get<"position">() };
-    constexpr auto diffuse{ light.get<"diffuse">() };
-    constexpr auto const_att{ light.get<"constantAttenuation">() };
+    static constexpr auto light{ create_light_struct() };
+    static constexpr auto position{ light.get<"position">() };
+    static constexpr auto diffuse{ light.get<"diffuse">() };
+    static constexpr auto const_att{ light.get<"constantAttenuation">() };
 
     EXPECT_EQ(position.type, gl_vec4);
     EXPECT_TRUE(position.name == "position");
