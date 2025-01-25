@@ -122,9 +122,9 @@ TEST(Functions, BuiltInFunctions)
     }
 
     {
-        static constexpr auto st_var{ variable<gl_vec3, "st_var", vec3<value(1.0f)>()>() };
-        static constexpr auto radians_val{ radians<st_var>() };
-        static constexpr auto expected_declaration{ "radians(st_var)" };
+        static constexpr auto var{ variable<gl_vec3, "var", vec3<value(1.0f)>()>() };
+        static constexpr auto radians_val{ radians<var>() };
+        static constexpr auto expected_declaration{ "radians(var)" };
         EXPECT_TRUE(radians_val == expected_declaration);
     }
 
@@ -133,6 +133,13 @@ TEST(Functions, BuiltInFunctions)
         static constexpr auto tex_size{ texture_size<color_map, value(0)>() };
         static constexpr auto expected_declaration{ "textureSize(colorMap, 0)" };
         EXPECT_TRUE(tex_size == expected_declaration);
+    }
+
+    {
+        static constexpr auto var{ variable<gl_vec3, "var", vec3<value(1.0f)>()>() };
+        static constexpr auto norm{ normalize<var>() };
+        static constexpr auto expected_declaration{ "normalize(var)" };
+        EXPECT_TRUE(norm == expected_declaration);
     }
 }
 

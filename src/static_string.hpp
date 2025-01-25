@@ -85,7 +85,7 @@ namespace mfl
     }
 
     template <typename... Vars>
-    constexpr auto concat_all(Vars... vars) {
+    consteval auto concat_all(Vars... vars) {
         return concat(vars.declaration...);
     }
 

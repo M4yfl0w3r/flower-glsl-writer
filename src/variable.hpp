@@ -65,7 +65,7 @@ namespace mfl
         static consteval auto r() { return component<"r">(); }
         static consteval auto a() { return component<"a">(); }
         static consteval auto x() { return component<"x">(); }
-        
+         
         static consteval auto rgb() requires detail::at_least_vec3<var_type> {
             return concat(name, dot, static_string{ "rgb" } );
         }
@@ -75,6 +75,13 @@ namespace mfl
         {
             static constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, equal, expr, line_end);
+        }
+
+        template <auto expression>
+        static consteval auto multiply()
+        {
+            static constexpr auto expr{ detail::expression_value<expression>() };
+            return concat(name, times, expr);
         }
 
     private:    

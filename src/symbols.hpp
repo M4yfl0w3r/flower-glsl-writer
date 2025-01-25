@@ -45,6 +45,7 @@ namespace mfl
     }
 
     inline constexpr auto plus{ static_string{ " + " } };
+    inline constexpr auto minus{ static_string{ " - " } };
     inline constexpr auto times{ static_string{ " * " } };
     inline constexpr auto space{ static_string{ " " } };
     inline constexpr auto equal{ static_string{ " = " } };
@@ -169,5 +170,5 @@ namespace mfl
     DEFINE_COMPARE_TEMPLATE(less_than, less)
     DEFINE_COMPARE_TEMPLATE(less_or_equal_then, less_or_equal)
     DEFINE_COMPARE_TEMPLATE(greater_than, greater)
-    DEFINE_COMPARE_TEMPLATE(greater_or_equal_then, greater_or_equal_then)
+    DEFINE_COMPARE_TEMPLATE(greater_or_equal_then, greater_or_equal)
 }

@@ -136,6 +136,11 @@ namespace mfl
         return builtin_fn<"radians", Param<detail::expression_value<expression>()>>().declaration;
     }
 
+    template <auto expression>
+    consteval auto normalize() {
+        return builtin_fn<"normalize", Param<detail::expression_value<expression>()>>().declaration;
+    }
+
     template <auto st_expression, auto nd_expression>
     consteval auto pow()
     {

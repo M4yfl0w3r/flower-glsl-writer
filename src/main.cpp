@@ -39,7 +39,7 @@ consteval auto color_if_body() {
     );
 }
 
-template <uniform colormap, in_var tex_coord, function to_linear_vec3>
+template <uniform colormap, uniform normalmap, in_var tex_coord, function to_linear_vec3>
 consteval auto main_body() 
 {
     static constexpr auto color_with_alpha{ variable<gl_vec4, "colorWithAlpha", sample<colormap, tex_coord>()>() };
@@ -50,13 +50,27 @@ consteval auto main_body()
             color_if_body<color_with_alpha>()>() 
     };
 
-    static constexpr auto fn_call{ to_linear_vec3.template call<color_with_alpha>() };
-    static constexpr auto color{ variable<gl_vec3, "color", fn_call>() };   // should be rgb
+    static constexpr auto fn_call{ to_linear_vec3.template call<color_with_alpha>() }; // TODO: might change it into a free fn
+    static constexpr auto color{ variable<gl_vec3, "color", fn_call>() }; // TODO: rgb
+    
+    static constexpr auto normal{ variable<gl_vec3, "normal", sample<normalmap, tex_coord>()>() }; // TODO: rgb
+    
+    static constexpr auto normalize_op{ 
+        normal.template assign<
+            normalize<
+                normal.template multiply<value(2.0f)>() - value(1.0f)
+            >()
+        >() 
+    };
 
-    return concat_all(
-        color_with_alpha,
-        if_alpha_statement,
-        color
+
+    // TODO: concat_all should accept both with declaration and without
+    return concat(
+        color_with_alpha.declaration,
+        if_alpha_statement.declaration,
+        color.declaration,
+        normal.declaration,
+        normalize_op
     );
 }
 
@@ -109,7 +123,7 @@ auto main() -> int
     constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
     constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
 
-    constexpr auto body{ main_body<colormap, tex_coord, to_linear_vec3>() };
+    constexpr auto body{ main_body<colormap, normalmap, tex_coord, to_linear_vec3>() };
     constexpr auto main_fn_impl{ main_fn<body>() };
 
     constexpr auto result{
