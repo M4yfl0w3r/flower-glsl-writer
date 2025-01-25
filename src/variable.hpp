@@ -102,7 +102,7 @@ namespace mfl
 
     template <Type T1, static_string N1, Keyword K1, static_string V1,
               Type T2, static_string N2, Keyword K2, static_string V2>
-    consteval auto operator*(const variable_impl<T1, N1, K1, V1>&, const variable_impl<T1, N2, K2, V2>&) {
+    consteval auto operator*(const variable_impl<T1, N1, K1, V1>&, const variable_impl<T2, N2, K2, V2>&) {
         return concat(N1, times, N2);
     }
 
@@ -119,6 +119,11 @@ namespace mfl
     template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
     consteval auto operator-(const variable_impl<t, name, k, val>&, const static_string<len>& str) {
         return concat(left_parenthesis, name, minus, str, right_parenthesis);
+    }
+
+    template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
+    consteval auto operator-(const static_string<len>& str, const variable_impl<t, name, k, val>&) {
+        return concat(left_parenthesis, str, minus, name, right_parenthesis);
     }
 
     template <Type type, static_string name>

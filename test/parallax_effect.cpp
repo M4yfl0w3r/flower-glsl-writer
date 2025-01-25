@@ -69,7 +69,7 @@ TEST(Effects, Parallax)
         "vec4 depth_distortion = texture2D(depthMap, uvTexCoord);\n"
         "float parallax_multiplier = depth_distortion.r;\n"
         "vec2 parallax = deflection * parallax_multiplier;\n"
-        "vec4 original = texture2D(colorMap, uvTexCoord + parallax);\n"
+        "vec4 original = texture2D(colorMap, (uvTexCoord + parallax));\n"
         "gl_FragColor = original;\n"
         "}\n"
     };

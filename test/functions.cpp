@@ -126,6 +126,13 @@ TEST(Functions, BuiltInFunctions)
         static constexpr auto radians_val{ radians<var>() };
         static constexpr auto expected_declaration{ "radians(var)" };
         EXPECT_TRUE(radians_val == expected_declaration);
+    } 
+
+    {
+        static constexpr auto var{ variable<gl_vec3, "var", vec3<value(1.0f)>()>() };
+        static constexpr auto exp_val{ exp<var>() };
+        static constexpr auto expected_declaration{ "exp(var)" };
+        EXPECT_TRUE(exp_val == expected_declaration);
     }
 
     {
