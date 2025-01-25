@@ -10,17 +10,9 @@ namespace mfl::detail
     static consteval auto format_param(Param param) 
     {
         if constexpr (is_last) {
-            return concat(
-                stringify<Param::type>(),
-                Param::name
-            );
+            return concat(stringify<Param::type>(), Param::name);
         } else {
-            return concat(
-                stringify<Param::type>(),
-                Param::name,
-                comma,
-                space
-            );
+            return concat(stringify<Param::type>(), Param::name, comma, space);
         }
     }
 
@@ -32,9 +24,7 @@ namespace mfl::detail
         }
         else {
             return []<auto... Indices>(std::index_sequence<Indices...>) {
-                return concat(
-                    format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...
-                );
+                return concat(format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...);
             } (std::make_index_sequence<sizeof...(Params)>());
         }
     }
@@ -42,14 +32,18 @@ namespace mfl::detail
     template <static_string fn_name, Type output_type, static_string output, static_string body, static_string input>
     static consteval auto user_defined_or_builtin() 
     {
-        if constexpr (output_type == Type::empty)
+        // ?? should think about it
+        if constexpr (output_type == Type::empty) {
             return concat(fn_name, enclose_in_parenthesis<input>());
-        else
+        }
+        else {
             return concat(output, fn_name, enclose_in_parenthesis<input>(), create_body<body>());
+        }
     }
 
     template <auto expression>
-    static consteval auto expression_value() {
+    static consteval auto expression_value() 
+    {
         return [&] { 
             if constexpr (is_static_string<decltype(expression)>)
                 return expression;
@@ -62,7 +56,8 @@ namespace mfl::detail
 namespace mfl
 {
     template <static_string n, Type t = Type::empty>
-    struct Param {
+    struct Param 
+    {
         static constexpr auto type{ t };
         static constexpr auto name{ n };
     };
@@ -87,33 +82,38 @@ namespace mfl
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
-    // TODO: should take expression to handle variables
+    // TODO: should take auto expression to handle variables
     template <static_string... expressions>
-    consteval auto vec2() {
+    consteval auto vec2() 
+    {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 2);
         return builtin_fn<"vec2", Param<expressions>...>().declaration;
     }
 
     template <static_string... expressions>
-    consteval auto vec3() {
+    consteval auto vec3() 
+    {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 3);
         return builtin_fn<"vec3", Param<expressions>...>().declaration;
     }
 
     template <static_string... expressions>
-    consteval auto vec4() {
+    consteval auto vec4() 
+    {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 4);
         return builtin_fn<"vec4", Param<expressions>...>().declaration;
     }
 
     template <auto expression>
-    consteval auto length() {
+    consteval auto length() 
+    {
         constexpr auto expr{ detail::expression_value<expression>() };
         return builtin_fn<"length", Param<expr>>().declaration;
     }
 
     template <auto expression>
-    consteval auto radians() {
+    consteval auto radians() 
+    {
         constexpr auto expr{ detail::expression_value<expression>() };
         return builtin_fn<"radians", Param<expr>>().declaration;
     }

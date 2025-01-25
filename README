@@ -17,6 +17,10 @@ TODO
 
 VARIABLES
 
+    The variable class represents variables with types. define statement despite 
+    being an actual statement is treated as a variable.
+
+
     * declaration 
     
         [keyword] [type] name;
@@ -54,4 +58,11 @@ FUNCTIONS
 
 STATEMENTS
 
-    A statement is a thing without a type. Built-in variables are considered statements.
+    The statement class represents actual statements like return or continue, but also 
+    built-in variables for which we do not define a type like gl_FragColor.
+    
+    Args
+        * key: return, if, for but also gl_FragColor
+        * assign: is the statement assignable? return is not, but gl_FragColor is
+        * value: value to be assigned, should also be a variable, not only a static_string
+

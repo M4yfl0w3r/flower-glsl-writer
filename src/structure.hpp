@@ -11,6 +11,11 @@ namespace mfl::detail
     constexpr auto process_members() {
         return concat((fields::declaration)...);
     }
+
+    template <static_string value>
+    consteval auto create_struct_body() {
+        return concat(space, left_brace, new_line, value, right_brace, line_end);
+    }
 }
 
 namespace mfl
@@ -26,12 +31,7 @@ namespace mfl
                 static_string{ "struct" }, 
                 space, 
                 name, 
-                space,
-                left_brace, 
-                new_line,
-                detail::process_members<fields...>(),
-                right_brace, 
-                line_end
+                detail::create_struct_body<detail::process_members<fields...>()>()
             ) 
         };
 

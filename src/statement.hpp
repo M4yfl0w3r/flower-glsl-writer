@@ -33,17 +33,6 @@ namespace mfl::detail
 
 namespace mfl
 {
-    //
-    //  The statement class represents actual statements like 
-    //  return or continue, but also built-in variables for 
-    //  which we do not define a type like gl_FragColor.
-    //
-    //  Args
-    //      
-    //    * key: return, if, for but also gl_FragColor
-    //    * assign: is the statement assignable? return is not, but gl_FragColor is
-    //    * value: value to be assigned, should also be a variable, not only a static_string
-    //
     template <Keyword key, bool assign, static_string value = "">
     struct [[nodiscard]] statement
     {

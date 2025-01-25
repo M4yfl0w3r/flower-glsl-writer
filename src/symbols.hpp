@@ -37,7 +37,8 @@ namespace mfl
         none
     };
 
-    auto print(const auto& thing) {
+    auto print(const auto& thing) 
+    {
         for (auto e : thing) {
             std::print("{}", e);
         }

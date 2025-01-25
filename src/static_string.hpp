@@ -51,8 +51,13 @@ namespace mfl
             return std::string_view{ value } == other;
         }
 
-        constexpr auto begin() const { return value; }
-        constexpr auto end() const { return value + size; }
+        constexpr auto begin() const { 
+            return value; 
+        }
+
+        constexpr auto end() const { 
+            return value + size; 
+        }
 
         char value[N] {};
     };

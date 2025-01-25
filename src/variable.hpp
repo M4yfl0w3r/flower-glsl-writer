@@ -37,18 +37,18 @@ namespace mfl::detail
 
 namespace mfl 
 {
-    //  The variable class represents variables with types. define statement 
-    //  despite being an actual statement is treated as a variable.
-    //
-    template <Type var_type, static_string var_name, Keyword key, static_string var_value = "">
+    template <Type var_type, static_string var_name, Keyword var_key, static_string var_value = "">
     struct [[nodiscard]] variable_impl
     {
         static constexpr auto name{ var_name };
         static constexpr auto type{ var_type };
         static constexpr auto value{ var_value };
-        static constexpr auto str_type{ detail::stringify<var_type>() };
-        static constexpr auto keyword{ detail::stringify<key>() };
-        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, keyword, value>() };
+        static constexpr auto key{ var_key };
+
+        static constexpr auto str_type{ detail::stringify<type>() };
+        static constexpr auto str_key{ detail::stringify<key>() };
+
+        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, str_key, value>() };
         // static constexpr auto definition{ };
 
         static consteval auto r() { return component<"r">(); }
@@ -69,7 +69,7 @@ namespace mfl
     template <Type type, static_string st_name, Keyword st_key, static_string st_val,
                          static_string nd_name, Keyword nd_key, static_string nd_val>
     consteval auto operator+(const variable_impl<type, st_name, st_key, st_val>&,
-                             const variable_impl<type, nd_name, nd_key, nd_val>&)
+                             const variable_impl<type, nd_name, nd_key, nd_val>&) 
     {
         return concat(st_name, plus, nd_name);
     }
