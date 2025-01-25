@@ -49,6 +49,9 @@ namespace mfl
     inline constexpr auto space{ static_string{ " " } };
     inline constexpr auto equal{ static_string{ " = " } };
     inline constexpr auto less{ static_string{ " < " } };
+    inline constexpr auto less_or_equal{ static_string{ " <= " } };
+    inline constexpr auto greater{ static_string{ " > " } };
+    inline constexpr auto greater_or_equal{ static_string{ " >= " } };
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
@@ -152,14 +155,19 @@ namespace mfl::detail
     }
 }
 
-
 // TODO: Create an utils namespace?
 namespace mfl 
 {
-    template <auto st_expr, auto nd_expr>
-    consteval auto less_than() {
-        static constexpr auto st{ detail::expression_value<st_expr>() };
-        static constexpr auto nd{ detail::expression_value<nd_expr>() };
-        return concat(st, less, nd);
+#define DEFINE_COMPARE_TEMPLATE(func_name, op)                            \
+    template <auto st_expr, auto nd_expr>                                 \
+    consteval auto func_name() {                                          \
+        static constexpr auto st{ detail::expression_value<st_expr>() };  \
+        static constexpr auto nd{ detail::expression_value<nd_expr>() };  \
+        return concat(st, op, nd);                                        \
     }
+
+    DEFINE_COMPARE_TEMPLATE(less_than, less)
+    DEFINE_COMPARE_TEMPLATE(less_or_equal_then, less_or_equal)
+    DEFINE_COMPARE_TEMPLATE(greater_than, greater)
+    DEFINE_COMPARE_TEMPLATE(greater_or_equal_then, greater_or_equal_then)
 }
