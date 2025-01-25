@@ -76,22 +76,22 @@ consteval auto main_body()
 
 auto main() -> int 
 {
-    constexpr auto colormap{ uniform<gl_sampler2D, "colorMap">() };
-    constexpr auto normalmap{ uniform<gl_sampler2D, "normalMap">() };
-    constexpr auto depthmap{ uniform<gl_sampler2D, "depthMap">() };
+    static constexpr auto colormap{ uniform<gl_sampler2D, "colorMap">() };
+    static constexpr auto normalmap{ uniform<gl_sampler2D, "normalMap">() };
+    static constexpr auto depthmap{ uniform<gl_sampler2D, "depthMap">() };
 
-    constexpr auto ambient{ uniform<gl_float, "ambientStrength">() };
-    constexpr auto diffuse{ uniform<gl_float, "diffuseStrength">() };
-    constexpr auto gamma{ uniform<gl_float, "gamma">() };
-    constexpr auto depth_range{ uniform<gl_float, "depthRange">() };
+    static constexpr auto ambient{ uniform<gl_float, "ambientStrength">() };
+    static constexpr auto diffuse{ uniform<gl_float, "diffuseStrength">() };
+    static constexpr auto gamma{ uniform<gl_float, "gamma">() };
+    static constexpr auto depth_range{ uniform<gl_float, "depthRange">() };
 
-    constexpr auto fog_color{ uniform<gl_vec3, "fogColor">() };
-    constexpr auto fog_density{ uniform<gl_float, "fogDensity">() };
+    static constexpr auto fog_color{ uniform<gl_vec3, "fogColor">() };
+    static constexpr auto fog_density{ uniform<gl_float, "fogDensity">() };
 
-    constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
+    static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
 
 
-    constexpr auto light_struct{ 
+    static constexpr auto light_struct{ 
         make_structure<"Light">(
             field<gl_vec4, "position">(),
             field<gl_vec4, "ambient">(),
@@ -105,28 +105,28 @@ auto main() -> int
         )
     };
 
-    constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-    constexpr auto lights{ array<gl_light, "lights", num_lights.value>() };
+    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+    static constexpr auto lights{ array<gl_light, "lights", num_lights.value>() };
 
 //     // TODO: 
 //     // - fn should take params differently
 //     // - fn.name to use later 
-    constexpr auto st_fn_in{ variable<gl_vec4, "v", "">() };
-    constexpr auto st_fn_body{ to_linear_vec4_body<st_fn_in, gamma>() };
-    constexpr auto to_linear_vec4{ function<"toLinear", gl_vec4, st_fn_body, Param<st_fn_in.name, st_fn_in.type>>() };
+    static constexpr auto st_fn_in{ variable<gl_vec4, "v", "">() };
+    static constexpr auto st_fn_body{ to_linear_vec4_body<st_fn_in, gamma>() };
+    static constexpr auto to_linear_vec4{ function<"toLinear", gl_vec4, st_fn_body, Param<st_fn_in.name, st_fn_in.type>>() };
 
-    constexpr auto nd_fn_in{ variable<gl_vec3, "v", "">() };
-    constexpr auto nd_fn_body{ to_linear_vec3_body<nd_fn_in, gamma>() };
-    constexpr auto to_linear_vec3{ function<"toLinear", gl_vec3, nd_fn_body, Param<nd_fn_in.name, nd_fn_in.type>>() };
+    static constexpr auto nd_fn_in{ variable<gl_vec3, "v", "">() };
+    static constexpr auto nd_fn_body{ to_linear_vec3_body<nd_fn_in, gamma>() };
+    static constexpr auto to_linear_vec3{ function<"toLinear", gl_vec3, nd_fn_body, Param<nd_fn_in.name, nd_fn_in.type>>() };
 
-    constexpr auto rd_fn_in{ variable<gl_vec3, "v", "">() };
-    constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
-    constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
+    static constexpr auto rd_fn_in{ variable<gl_vec3, "v", "">() };
+    static constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
+    static constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
 
-    constexpr auto body{ main_body<colormap, normalmap, tex_coord, to_linear_vec3>() };
-    constexpr auto main_fn_impl{ main_fn<body>() };
+    static constexpr auto body{ main_body<colormap, normalmap, tex_coord, to_linear_vec3>() };
+    static constexpr auto main_fn_impl{ main_fn<body>() };
 
-    constexpr auto result{
+    static constexpr auto result{
         concat_all(
             colormap,
             normalmap,
