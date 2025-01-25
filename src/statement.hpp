@@ -11,7 +11,7 @@ namespace mfl::detail
     {
         // TODO: Should just judge based on the key 
         if constexpr (assign == true) { // gl_FragColor = value;
-           return concat(stringify<key>(), equal, space, value, line_end);
+           return concat(stringify<key>(), equal, value, line_end);
         }
         else if constexpr (assign == false && value != "") {
             return concat(stringify<key>(), space, value, line_end);

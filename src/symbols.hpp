@@ -47,7 +47,7 @@ namespace mfl
     inline constexpr auto plus{ static_string{ " + " } };
     inline constexpr auto times{ static_string{ " * " } };
     inline constexpr auto space{ static_string{ " " } };
-    inline constexpr auto equal{ static_string{ "=" } };
+    inline constexpr auto equal{ static_string{ " = " } };
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
@@ -72,23 +72,23 @@ namespace mfl::detail
     static consteval auto stringify()
     {
         if constexpr (output_type == Type::gl_int)
-            return static_string{ "int" } + space;
+            return static_string{ "int" };
         else if constexpr (output_type == Type::gl_float)
-            return static_string{ "float" } + space;
+            return static_string{ "float" };
         else if constexpr (output_type == Type::gl_void)
-            return static_string{ "void" } + space;
+            return static_string{ "void" };
         else if constexpr (output_type == Type::gl_vec2)
-            return static_string{ "vec2" } + space;
+            return static_string{ "vec2" };
         else if constexpr (output_type == Type::gl_vec3)
-            return static_string{ "vec3" } + space;
+            return static_string{ "vec3" };
         else if constexpr (output_type == Type::gl_vec4)
-            return static_string{ "vec4" } + space;
+            return static_string{ "vec4" };
         else if constexpr (output_type == Type::gl_ivec2)
-            return static_string{ "ivec2" } + space;
+            return static_string{ "ivec2" };
         else if constexpr (output_type == Type::gl_sampler2D)
-            return static_string{ "sampler2D" } + space;
+            return static_string{ "sampler2D" };
         else if constexpr (output_type == Type::gl_bool)
-            return static_string{ "bool" } + space;
+            return static_string{ "bool" };
         else if constexpr (output_type == Type::gl_light)
             return static_string{ "Light" };
         else 
@@ -99,13 +99,13 @@ namespace mfl::detail
     static consteval auto stringify() 
     {
         if constexpr (keyword == Keyword::gl_uniform)
-            return static_string{ "uniform" } + space;
+            return static_string{ "uniform" };
         else if constexpr (keyword == Keyword::gl_define)
             return static_string{ "#define" };
         else if constexpr (keyword == Keyword::gl_in)
-            return static_string{ "in" } + space;
+            return static_string{ "in" };
         else if constexpr (keyword == Keyword::gl_frag_color)
-            return static_string{ "gl_FragColor" } + space;
+            return static_string{ "gl_FragColor" };
         else if constexpr (keyword == Keyword::gl_position)
             return static_string{ "gl_Position" };
         else if constexpr (keyword == Keyword::gl_if)
@@ -124,9 +124,25 @@ namespace mfl::detail
             return static_string{ "" };
     }
 
+    template <auto expression>
+    static consteval auto expression_value() 
+    {
+        return [&] { 
+            if constexpr (is_static_string<decltype(expression)>)
+                return expression;
+            else 
+                return expression.name;
+        }();
+    }
+
     template <static_string value>
     consteval auto enclose_in_parenthesis() {
         return concat(left_parenthesis, value, right_parenthesis);
+    }
+
+    template <static_string value>
+    consteval auto enclose_in_brackets() {
+        return concat(left_bracket, value, right_bracket);
     }
 
     template <static_string value>

@@ -2,21 +2,45 @@
 
 #include "symbols.hpp"
 #include "variable.hpp"
-#include "value.hpp"
 
 namespace mfl::detail 
 {
     template <bool is_last, typename Param>
-    static consteval auto format_param(Param param) 
-    {
+    static consteval auto format_no_type_param() {
         if constexpr (is_last) {
-            return concat(stringify<Param::type>(), Param::name);
-        } else {
-            return concat(stringify<Param::type>(), Param::name, comma, space);
+            return concat(Param::name);
+        }
+        else {
+            return concat(Param::name, comma, space);
         }
     }
 
-    template <typename... Params>
+    template <bool is_last, typename Param>
+    static consteval auto format_type_param() {
+        static constexpr auto type_str{ stringify<Param::type>() };
+
+        if constexpr (is_last) {
+            return concat(type_str, space, Param::name);
+        }
+        else {
+            return concat(type_str, space, Param::name, comma, space);
+        }
+    }
+
+    template <bool is_last, bool is_builtin, typename Param>
+    static consteval auto format_param(Param param) 
+    {
+        static constexpr auto is_param_without_type{ is_builtin || Param::type == Type::empty };
+
+        if constexpr (is_param_without_type) {
+            return format_no_type_param<is_last, Param>();
+        }
+        else {
+            return format_type_param<is_last, Param>();
+        }
+    }
+
+    template <bool is_builtin, typename... Params>
     static consteval auto make_input() 
     {
         if constexpr (sizeof...(Params) == 0) {
@@ -24,32 +48,23 @@ namespace mfl::detail
         }
         else {
             return []<auto... Indices>(std::index_sequence<Indices...>) {
-                return concat(format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...);
+                return concat(format_param<(Indices == sizeof...(Params) - 1), is_builtin, Params>(Params{})...);
             } (std::make_index_sequence<sizeof...(Params)>());
         }
     }
 
-    template <static_string fn_name, Type output_type, static_string output, static_string body, static_string input>
+    template <static_string fn_name, Type output_type, static_string body, static_string input>
     static consteval auto user_defined_or_builtin() 
     {
-        // ?? should think about it
-        if constexpr (output_type == Type::empty) {
+        static constexpr auto is_fn_builtin{ output_type == Type::empty };
+        static constexpr auto type_str{ stringify<output_type>() };
+
+        if constexpr (is_fn_builtin) {
             return concat(fn_name, enclose_in_parenthesis<input>());
         }
         else {
-            return concat(output, fn_name, enclose_in_parenthesis<input>(), create_body<body>());
+            return concat(type_str, space, fn_name, enclose_in_parenthesis<input>(), create_body<body>());
         }
-    }
-
-    template <auto expression>
-    static consteval auto expression_value() 
-    {
-        return [&] { 
-            if constexpr (is_static_string<decltype(expression)>)
-                return expression;
-            else 
-                return expression.name;
-        }();
     }
 }
 
@@ -66,13 +81,21 @@ namespace mfl
     struct [[nodiscard]] function 
     {
         static constexpr auto name{ fn_name };
-        static constexpr auto input{ detail::make_input<Params...>() };
-        static constexpr auto output{ detail::stringify<output_type>() };
-        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, output, body, input>() };
+        static constexpr auto is_builtin{ output_type == Type::empty };
+        static constexpr auto input{ detail::make_input<is_builtin, Params...>() };
+        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, body, input>() };
 
-        template <static_string... expressions>
+        template <auto... expressions>
         consteval auto call() const {
-            return concat(fn_name, detail::enclose_in_parenthesis<detail::make_input<Param<expressions>...>()>());
+            return concat(
+                fn_name, 
+                detail::enclose_in_parenthesis<
+                    detail::make_input<
+                        is_builtin, 
+                        Param<detail::expression_value<expressions>()>... 
+                    >()
+                >()
+            );
         }
     };
 
@@ -82,40 +105,35 @@ namespace mfl
     template <static_string fn_name, typename... Params>
     using builtin_fn = function<fn_name, Type::empty, "", Params...>;
 
-    // TODO: should take auto expression to handle variables
-    template <static_string... expressions>
+    template <auto... expressions>
     consteval auto vec2() 
     {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 2);
-        return builtin_fn<"vec2", Param<expressions>...>().declaration;
+        return builtin_fn<"vec2", Param<detail::expression_value<expressions>()>...>().declaration;
     }
 
-    template <static_string... expressions>
+    template <auto... expressions>
     consteval auto vec3() 
     {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 3);
-        return builtin_fn<"vec3", Param<expressions>...>().declaration;
+        return builtin_fn<"vec3", Param<detail::expression_value<expressions>()>...>().declaration;
     }
 
-    template <static_string... expressions>
+    template <auto... expressions>
     consteval auto vec4() 
     {
         static_assert(sizeof...(expressions) > 0 && sizeof...(expressions) <= 4);
-        return builtin_fn<"vec4", Param<expressions>...>().declaration;
+        return builtin_fn<"vec4", Param<detail::expression_value<expressions>()>...>().declaration;
     }
 
     template <auto expression>
-    consteval auto length() 
-    {
-        constexpr auto expr{ detail::expression_value<expression>() };
-        return builtin_fn<"length", Param<expr>>().declaration;
+    consteval auto length() {
+        return builtin_fn<"length", Param<detail::expression_value<expression>()>>().declaration;
     }
 
     template <auto expression>
-    consteval auto radians() 
-    {
-        constexpr auto expr{ detail::expression_value<expression>() };
-        return builtin_fn<"radians", Param<expr>>().declaration;
+    consteval auto radians() {
+        return builtin_fn<"radians", Param<detail::expression_value<expression>()>>().declaration;
     }
 
     template <auto st_expression, auto nd_expression>

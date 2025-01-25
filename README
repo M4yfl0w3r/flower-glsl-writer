@@ -1,68 +1,67 @@
 GLSL writer
-    
-    The library is not type-safe and does not prevent you from writing incorrect 
-    GLSL code. It generates GLSL code at compile-time using a compile-time string
-    implementation which can be found in src/static_string.hpp.
+
+    The library is not type-safe and does not prevent you from writing incorrect GLSL code. 
+    It generates GLSL code at compile-time using a compile-time string implementation which 
+    can be found in src/static_string.hpp.
 
 
 TODO
 
     * for loops
     * custom type registration (Light)
-    * fix the spacing / semicolon issue
-    * write a compile-time float to string converter
-    * named template arguments 
+    * type system validation
+    * a compile-time float to string converter
+    * check if an expression is passable to a function
+    * named template arguments
     * Param should take a variable as an argument
 
 
-VARIABLES
 
-    The variable class represents variables with types. define statement despite 
-    being an actual statement is treated as a variable.
+Expression types 
 
-
-    * declaration 
-    
-        [keyword] [type] name;
-
-        - in vec2 uvTexCoord;
-        - uniform float fogDensity;
+    1. Variables (src/variable.hpp | test/variables.cpp)
 
 
-    * definition
 
-        [type] name = [value];
-
-        - vec4 colorWithAlpha = texture(colorMap, uvTexCoord);
-
-
-FUNCTIONS
-
-    [type] name [body] [params...]
-
-        vec3 toGamma(vec3 v) { ... }
-        toGamma(var)
-
-
-    * declaration
-
-        vec4 name(type args...) { body }
-    
-
-    * call<args...>() 
         
-        it takes a string as input and returns a string in the form name(args, ...) as 
-        output. The call function is not responsible for adding a semicolon, because 
-        the function's output is always assigned somewhere.
+
+    2. Functions (src/function.hpp | test/functions.cpp)
 
 
-STATEMENTS
+        2.1 Methods
 
-    The statement class represents actual statements like return or continue, but also 
-    built-in variables for which we do not define a type like gl_FragColor.
-    
-    Args
-        * key: return, if, for but also gl_FragColor
-        * assign: is the statement assignable? return is not, but gl_FragColor is
-        * value: value to be assigned, should also be a variable, not only a static_string
+            * call<static_string expressions...>()
+                
+                it takes a string as input and returns a string in the form
+                name(args, ...) as output.
 
+                Examples:
+                * test/functions.cpp - SingleParamFunctionCall
+                * test/functions.cpp - MultiParamFunctionCall
+
+
+        2.2 Aliases
+
+            * builtin_fn
+                
+                represents a builtin_fn that is a function for which we don't
+                explicitly pass a type. For example: vec3(), vec4(), length().
+
+
+        2.3 Built-in functions
+
+
+
+    3. Statements (src/statement.hpp | test/statements.cpp)
+
+        The statement class represents actual statements like return or continue,
+        but also built-in variables for which we do not define a type like gl_FragColor.
+
+        Args
+            * key: return, if, for but also gl_FragColor
+            * assign: is the statement assignable? return is not, but gl_FragColor is
+            * value: the value to be assigned, should?? also be a variable, not only a static_string
+
+
+
+    3. Structures (src/structure.hpp | test/structures.cpp)

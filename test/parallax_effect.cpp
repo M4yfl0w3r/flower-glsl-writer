@@ -5,27 +5,28 @@
 #include "statement.hpp"
 
 using namespace mfl;
+using enum mfl::Type;
 
 template <uniform depthmap, uniform colormap, in_var tex_coord, uniform deflection>
 consteval auto parallax_main_body()
 {
-    constexpr auto depth_distortion{ 
-        variable<Type::gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
+    static constexpr auto depth_distortion{ 
+        variable<gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
     };
 
-    constexpr auto parallax_multiplier{ 
-        variable<Type::gl_float, "parallax_multiplier", depth_distortion.r()>() 
+    static constexpr auto parallax_multiplier{ 
+        variable<gl_float, "parallax_multiplier", depth_distortion.r()>() 
     };
 
-    constexpr auto parallax{ 
-        variable<Type::gl_vec2, "parallax", deflection * parallax_multiplier>() 
+    static constexpr auto parallax{ 
+        variable<gl_vec2, "parallax", deflection * parallax_multiplier>() 
     };
 
-    constexpr auto original{ 
-        variable<Type::gl_vec4, "original", sample<colormap, tex_coord + parallax>()>() 
+    static constexpr auto original{ 
+        variable<gl_vec4, "original", sample<colormap, tex_coord + parallax>()>() 
     };
 
-    constexpr auto ret{ 
+    static constexpr auto ret{ 
         frag_color<original>()
     };
     
@@ -40,16 +41,16 @@ consteval auto parallax_main_body()
 
 TEST(Effects, Parallax)
 {
-    constexpr auto colormap{ uniform<Type::gl_sampler2D, "colorMap">() };
-    constexpr auto depthmap{ uniform<Type::gl_sampler2D, "depthMap">() };
-    constexpr auto deflection{ uniform<Type::gl_vec2, "deflection">() };
+    static constexpr auto colormap{ uniform<gl_sampler2D, "colorMap">() };
+    static constexpr auto depthmap{ uniform<gl_sampler2D, "depthMap">() };
+    static constexpr auto deflection{ uniform<gl_vec2, "deflection">() };
 
-    constexpr auto tex_coord{ in_var<Type::gl_vec2, "uvTexCoord">() };
+    static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
 
-    constexpr auto body{ parallax_main_body<depthmap, colormap, tex_coord, deflection>() };
-    constexpr auto main_fn_impl{ main_fn<body>() };
+    static constexpr auto body{ parallax_main_body<depthmap, colormap, tex_coord, deflection>() };
+    static constexpr auto main_fn_impl{ main_fn<body>() };
     
-    constexpr auto result {
+    static constexpr auto result {
         concat_all(
             deflection,
             colormap, 
@@ -59,7 +60,7 @@ TEST(Effects, Parallax)
         )
     };
 
-    constexpr auto expected_result{ 
+    static constexpr auto expected_result{ 
         static_string{ 
             "uniform vec2 deflection;\n"
             "uniform sampler2D colorMap;\n"

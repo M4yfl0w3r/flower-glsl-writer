@@ -4,33 +4,39 @@
 
 namespace mfl::detail
 {
-    template <static_string name, static_string type, static_string keyword, static_string value>
-    static consteval auto init_value_or_empty()
+    template <static_string name, Type type, Keyword key>
+    static consteval auto make_declaration()
     {
-        // TODO: space bug
-        if constexpr (keyword == "return ") {
-            return concat(keyword, value, line_end);
-        }
-        else if constexpr (keyword == "#define") {
-            return concat(keyword, space, name, space, value, new_line);
-        }
-        else if constexpr (keyword == "array") {
-            return concat(type, space, name, left_bracket, value, right_bracket, line_end);
-        }
-        else if constexpr (value == "") {
-            return concat(keyword, type, name, line_end);
+        static constexpr auto type_str{ stringify<type>() };
+        static constexpr auto key_str{ stringify<key>() };
+
+        if constexpr (key == Keyword::none) {
+            return concat(type_str, space, name, line_end);
         }
         else {
-            return concat(
-                keyword,
-                type,
-                name,
-                space,
-                equal,
-                space,
-                value,
-                line_end
-            );
+            return concat(key_str, space, type_str, space, name, line_end);
+        }
+    }
+
+    template <static_string name, Type type, Keyword key, static_string value>
+    static consteval auto make_definition()
+    {
+        static constexpr auto type_str{ stringify<type>() };
+        static constexpr auto key_str{ stringify<key>() };
+
+        if constexpr (key == Keyword::none) {
+            return concat(type_str, space, name, equal, value, line_end);
+        }
+        else if constexpr (key == Keyword::gl_define) {
+            // #define name value\n
+            return concat(key_str, space, name, space, value, new_line);
+        }
+        else if constexpr (key == Keyword::gl_uniform || key == Keyword::gl_in) {
+            return concat(key_str, space, type_str, space, name, line_end);
+        }
+        else if constexpr (key == Keyword::gl_array) {
+            // type name[value];\n
+            return concat(type_str, space, name, enclose_in_brackets<value>(), line_end);
         }
     }
 }
@@ -45,11 +51,16 @@ namespace mfl
         static constexpr auto value{ var_value };
         static constexpr auto key{ var_key };
 
-        static constexpr auto str_type{ detail::stringify<type>() };
-        static constexpr auto str_key{ detail::stringify<key>() };
-
-        static constexpr auto declaration{ detail::init_value_or_empty<name, str_type, str_key, value>() };
-        // static constexpr auto definition{ };
+        static constexpr auto declaration{ 
+            [] {
+                if constexpr (var_value == "") {
+                    return detail::make_declaration<name, type, key>();
+                }
+                else {
+                    return detail::make_definition<name, type, key, value>();
+                }
+            }()
+        };
 
         static consteval auto r() { return component<"r">(); }
         static consteval auto a() { return component<"a">(); }
@@ -57,6 +68,13 @@ namespace mfl
         
         static consteval auto rgb() requires detail::at_least_vec3<var_type> {
             return concat(name, dot, static_string{ "rgb" } );
+        }
+
+        template <auto expression>
+        static consteval auto assign() 
+        {
+            static constexpr auto expr{ detail::expression_value<expression>() };
+            return concat(name, equal, expr, line_end);
         }
 
     private:    
@@ -88,7 +106,7 @@ namespace mfl
     template <Type type, static_string name>
     using in_var = variable_impl<type, name, Keyword::gl_in>;
 
-    template <Type type, static_string name, static_string value>
+    template <Type type, static_string name, static_string value = "">
     using variable = variable_impl<type, name, Keyword::none, value>;
 
     template <Type type, static_string name>
