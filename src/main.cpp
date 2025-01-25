@@ -31,25 +31,32 @@ consteval auto to_gamma_body()
     return return_value_statement<tmp>().declaration;
 }
 
-// vec4 colorWithAlpha = texture(colorMap, uvTexCoord);
-// if(colorWithAlpha.a < 0.1){
-//     gl_FragColor = colorWithAlpha;
-//     discard;
-// }
-// vec3 color = toLinear(colorWithAlpha).rgb;
+template <variable color_with_alpha>
+consteval auto color_if_body() {
+    return concat_all(
+        frag_color<color_with_alpha>(), 
+        discard_statement()
+    );
+}
 
-template <uniform colormap, in_var tex_coord>
+template <uniform colormap, in_var tex_coord, function to_linear_vec3>
 consteval auto main_body() 
 {
     static constexpr auto color_with_alpha{ variable<gl_vec4, "colorWithAlpha", sample<colormap, tex_coord>()>() };
 
-    // static constexpr auto if_alpha_statement{ if_statement<less_than<color_with_alpha.a(), value(0.1f)>()>() };
+    static constexpr auto if_alpha_statement{ 
+        if_statement<
+            less_than<color_with_alpha.a(), value(0.1f)>(), 
+            color_if_body<color_with_alpha>()>() 
+    };
 
-    // static constexpr auto color{ variable<gl_vec3, "color", "">().rgb() }; // TODO: should return string? 
+    static constexpr auto fn_call{ to_linear_vec3.template call<color_with_alpha>() };
+    static constexpr auto color{ variable<gl_vec3, "color", fn_call>() };   // should be rgb
 
     return concat_all(
-        color_with_alpha
-        // if_alpha_statement
+        color_with_alpha,
+        if_alpha_statement,
+        color
     );
 }
 
@@ -90,19 +97,19 @@ auto main() -> int
 //     // TODO: 
 //     // - fn should take params differently
 //     // - fn.name to use later 
-//     constexpr auto st_fn_in{ variable<gl_vec4, "v", "">() };
-//     constexpr auto st_fn_body{ to_linear_vec4_body<st_fn_in, gamma>() };
-//     constexpr auto to_linear_vec4{ function<"toLinear", gl_vec4, st_fn_body, Param<st_fn_in.name, st_fn_in.type>>() };
-//
-//     constexpr auto nd_fn_in{ variable<gl_vec3, "v", "">() };
-//     constexpr auto nd_fn_body{ to_linear_vec3_body<nd_fn_in, gamma>() };
-//     constexpr auto to_linear_vec3{ function<"toLinear", gl_vec3, nd_fn_body, Param<nd_fn_in.name, nd_fn_in.type>>() };
-//
-//     constexpr auto rd_fn_in{ variable<gl_vec3, "v", "">() };
-//     constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
-//     constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
+    constexpr auto st_fn_in{ variable<gl_vec4, "v", "">() };
+    constexpr auto st_fn_body{ to_linear_vec4_body<st_fn_in, gamma>() };
+    constexpr auto to_linear_vec4{ function<"toLinear", gl_vec4, st_fn_body, Param<st_fn_in.name, st_fn_in.type>>() };
 
-    constexpr auto body{ main_body<colormap, tex_coord>() };
+    constexpr auto nd_fn_in{ variable<gl_vec3, "v", "">() };
+    constexpr auto nd_fn_body{ to_linear_vec3_body<nd_fn_in, gamma>() };
+    constexpr auto to_linear_vec3{ function<"toLinear", gl_vec3, nd_fn_body, Param<nd_fn_in.name, nd_fn_in.type>>() };
+
+    constexpr auto rd_fn_in{ variable<gl_vec3, "v", "">() };
+    constexpr auto rd_fn_body{ to_gamma_body<rd_fn_in, gamma>() };
+    constexpr auto to_gamma{ function<"toGamma", gl_vec3, rd_fn_body, Param<rd_fn_in.name, rd_fn_in.type>>() };
+
+    constexpr auto body{ main_body<colormap, tex_coord, to_linear_vec3>() };
     constexpr auto main_fn_impl{ main_fn<body>() };
 
     constexpr auto result{
@@ -120,9 +127,9 @@ auto main() -> int
             light_struct,
             num_lights,
             lights,
-//             to_linear_vec4,
-//             to_linear_vec3,
-//             to_gamma, 
+            to_linear_vec4,
+            to_linear_vec3,
+            to_gamma, 
             main_fn_impl
         )
     };
