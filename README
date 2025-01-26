@@ -7,6 +7,8 @@ GLSL writer
 
 TODO
 
+    * a struct of all declared variables to return lvalues?
+    * lvalue arrays
     * custom type registration (Light)
     * type system validation
     * a compile-time float to string converter

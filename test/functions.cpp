@@ -136,6 +136,13 @@ TEST(Functions, BuiltInFunctions)
     }
 
     {
+        static constexpr auto var{ variable<gl_vec3, "var", vec3<value(1.0f)>()>() };
+        static constexpr auto acos_val{ acos<var>() };
+        static constexpr auto expected_declaration{ "acos(var)" };
+        EXPECT_TRUE(acos_val == expected_declaration);
+    }
+
+    {
         static constexpr auto st_var{ variable<gl_float, "st_var">() };
         static constexpr auto nd_var{ variable<gl_float, "nd_var">() };
         static constexpr auto rd_var{ variable<gl_float, "rd_var">() };
