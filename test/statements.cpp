@@ -62,23 +62,46 @@ TEST(Statements, SelectionStatements)
 
         EXPECT_TRUE(gl_if.declaration == expected_result);
     }
+}
 
+template <auto i>
+static consteval auto for_loop_body() 
+{
+    static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
+    return test_var.declaration;
 }
 
 TEST(Statements, IterationStatements)
 {
-    static constexpr auto init{ variable<gl_int, "i", value(0)>() };
-    static constexpr auto condition{ less_than<init, value(5)>() };
-    static constexpr auto increment{ init.increment() };
+    {
+        static constexpr auto init{ variable<gl_int, "i", value(0)>() };
+        static constexpr auto condition{ less_than<init, value(5)>() };
+        static constexpr auto increment{ init.increment() };
+        static constexpr auto gl_for{ for_loop<init, condition, increment, "">() };
 
-    static constexpr auto gl_for{ for_loop<init, condition, increment, "">() };
+        static constexpr auto expected_result{ 
+            "for (int i = 0; i < 5; ++i) {\n" 
+            "}\n"
+        }; 
 
-    static constexpr auto expected_result{ 
-        "for (int i = 0; i < 5; ++i) {\n" 
-        "}\n"
-    }; 
+        EXPECT_TRUE(gl_for.declaration == expected_result);
+    }
 
-    EXPECT_TRUE(gl_for.declaration == expected_result);
+    {
+        static constexpr auto init{ variable<gl_int, "i", value(0)>() };
+        static constexpr auto condition{ less_than<init, value(5)>() };
+        static constexpr auto increment{ init.increment() };
+
+        static constexpr auto gl_for{ for_loop<init, condition, increment, for_loop_body<init>()>() };
+
+        static constexpr auto expected_result{ 
+            "for (int i = 0; i < 5; ++i) {\n" 
+            "int test = i;\n"
+            "}\n"
+        }; 
+
+        EXPECT_TRUE(gl_for.declaration == expected_result);
+    }
 }
 
 TEST(Statements, BuiltInVariables)

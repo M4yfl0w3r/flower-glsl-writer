@@ -7,7 +7,6 @@ GLSL writer
 
 TODO
 
-    * for loops
     * custom type registration (Light)
     * type system validation
     * a compile-time float to string converter
