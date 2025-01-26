@@ -21,7 +21,6 @@ TODO
 Expression types 
 
     1. Variables (src/variable.hpp | test/variables.cpp)
-
     2. Functions (src/function.hpp | test/functions.cpp)
-
     3. Statements (src/statement.hpp | test/statements.cpp)
+    4. Structures (src/structure.hpp | test/structures.cpp)
