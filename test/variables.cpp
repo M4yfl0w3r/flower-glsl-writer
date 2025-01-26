@@ -18,9 +18,9 @@ TEST(Variables, UniformDeclaration)
     static constexpr auto result{ create_uniforms() };
 
     static constexpr auto expected_result{ 
-        static_string{ "uniform sampler2D color_map;\n"
-                       "uniform sampler2D normal_map;\n"
-                       "uniform vec3 fog_color;\n" } 
+        "uniform sampler2D color_map;\n"
+        "uniform sampler2D normal_map;\n"
+        "uniform vec3 fog_color;\n"
     };
 
     EXPECT_TRUE(result == expected_result);
@@ -29,7 +29,7 @@ TEST(Variables, UniformDeclaration)
 TEST(Variables, InVariableDeclaration)
 {
     static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
-    static constexpr auto expected_result{ static_string{ "in vec2 uvTexCoord;\n"} };
+    static constexpr auto expected_result{ "in vec2 uvTexCoord;\n" };
     EXPECT_TRUE(tex_coord.declaration == expected_result);
 }
 
@@ -37,13 +37,13 @@ TEST(Variables, BaseType)
 {
     {
         static constexpr auto test_float{ variable<gl_float, "test">() };
-        static constexpr auto expected_result{ static_string{ "float test;\n" } };
+        static constexpr auto expected_result{ "float test;\n" };
         EXPECT_TRUE(test_float.declaration == expected_result);
     }
 
     {
         static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
-        static constexpr auto expected_result{ static_string{ "float test = 1.0f;\n" } };
+        static constexpr auto expected_result{ "float test = 1.0f;\n" };
         EXPECT_TRUE(test_float.declaration == expected_result);
     }
 }
@@ -54,7 +54,7 @@ TEST(Variables, Operation)
         static constexpr auto test_var{ variable<gl_float, "test_var", value(1.0f)>() };
         static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
         static constexpr auto assignment_result{ test_float.assign<test_var>() };
-        static constexpr auto expected_result{ static_string{ "test = test_var;\n" } };
+        static constexpr auto expected_result{ "test = test_var;\n" };
         EXPECT_TRUE(assignment_result == expected_result);
     }
 
@@ -62,16 +62,24 @@ TEST(Variables, Operation)
         static constexpr auto test_var{ variable<gl_float, "test_var">() };
         static constexpr auto test_float{ variable<gl_float, "test">() };
         static constexpr auto assignment_result{ test_float.multiply<test_var>() };
-        static constexpr auto expected_result{ static_string{ "test * test_var" } };
+        static constexpr auto expected_result{ "test * test_var" };
         EXPECT_TRUE(assignment_result == expected_result);
     }
 
     {
         static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
         static constexpr auto assignment_result{ test_float.multiply<value(5.0f)>() };
-        static constexpr auto expected_result{ static_string{ "test * 5.0f" } };
+        static constexpr auto expected_result{ "test * 5.0f" };
         EXPECT_TRUE(assignment_result == expected_result);
     }
 }
 
-
+TEST(Variables, Array)
+{
+    {
+        static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+        static constexpr auto lights{ array<gl_light, "lights", num_lights.value>() };
+        static constexpr auto expected_result{ "Light lights[2];\n" };
+        EXPECT_TRUE(lights.declaration == expected_result);
+    }
+}

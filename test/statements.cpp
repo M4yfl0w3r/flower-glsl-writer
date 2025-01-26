@@ -85,7 +85,7 @@ TEST(Statements, IterationStatements)
         static constexpr auto condition{ less_than<init, value(5)>() };
         static constexpr auto increment{ init.increment() };
 
-        static constexpr auto for_loop_body {
+        static constexpr auto for_loop_body{
             [](auto i) {
                 static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
                 return test_var.declaration;

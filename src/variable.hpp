@@ -99,7 +99,7 @@ namespace mfl
         static consteval auto decrement() {
             return concat(minusminus, name);
         }
-        
+
     private:    
         template <static_string access_name>
         static consteval auto component() {

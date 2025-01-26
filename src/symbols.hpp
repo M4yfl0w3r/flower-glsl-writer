@@ -78,6 +78,9 @@ namespace mfl::detail
     template <Type type>
     concept at_least_vec3 = (type == Type::gl_vec3 || type == Type::gl_vec4);
 
+    template <Keyword key>
+    concept is_array = (key == Keyword::gl_array);
+
     template <Type output_type>
     consteval auto stringify()
     {

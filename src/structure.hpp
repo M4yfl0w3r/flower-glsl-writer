@@ -61,5 +61,6 @@ namespace mfl
     static consteval auto make_structure(Fields... fields) {
         return structure<struct_name, Fields...>{};
     }
+
 }
 
