@@ -88,10 +88,5 @@ namespace mfl
     consteval auto concat_all(Vars... vars) {
         return concat(vars.declaration...);
     }
-
-    template <std::size_t st_len, std::size_t nd_len>
-    consteval auto operator+(const static_string<st_len>& st, const static_string<nd_len>& nd) {
-        return concat(st, nd);
-    }
 }
 

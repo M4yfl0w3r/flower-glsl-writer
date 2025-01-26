@@ -141,6 +141,13 @@ TEST(Functions, BuiltInFunctions)
         static constexpr auto expected_declaration{ "acos(var)" };
         EXPECT_TRUE(acos_val == expected_declaration);
     }
+    
+    {
+        static constexpr auto var{ variable<gl_float, "var">() };
+        static constexpr auto clamp_val{ clamp<var, value(0.0f), value(1.0f)>() };
+        static constexpr auto expected_declaration{ "clamp(var, 0.0f, 1.0f)" };
+        EXPECT_TRUE(clamp_val == expected_declaration);
+    }
 
     {
         static constexpr auto st_var{ variable<gl_float, "st_var">() };

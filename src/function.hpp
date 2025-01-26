@@ -157,6 +157,17 @@ namespace mfl
     consteval auto acos() {
         return builtin_fn<"acos", Param<detail::expression_value<expression>()>>().declaration;
     }
+    
+    template <auto st_expression, auto nd_expression, auto rd_expression>
+    consteval auto clamp() 
+    {
+        return builtin_fn<
+            "clamp", 
+            Param<detail::expression_value<st_expression>()>,
+            Param<detail::expression_value<nd_expression>()>,
+            Param<detail::expression_value<rd_expression>()>
+        >().declaration;
+    }
 
     template <auto st_expression, auto nd_expression>
     consteval auto pow()
