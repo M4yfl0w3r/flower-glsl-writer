@@ -31,6 +31,48 @@ TODO
 Expression types 
 
     * Variables (src/variable.hpp | test/variables.cpp)
+
+        uniform<gl_sampler2D, "color_map">()
+        -> "uniform sampler2D color_map;"
+
+        in_var<gl_vec2, "uvTexCoord">()
+        -> "in vec2 uvTexCoord;"
+
+        variable<gl_float, "test">()
+        -> "float test;"
+
+        variable<gl_float, "test", value(1.0f)>()
+        -> "float test = 1.0f;"
+
+        Operations 
+            
+            auto test_var{ variable<gl_float, "test_var">() };
+            auto test_float{ variable<gl_float, "test">() };
+            auto assignment_result{ test_float.multiply<test_var>() };
+            -> "test * test_var"
+
     * Functions (src/function.hpp | test/functions.cpp)
+    
+
     * Statements (src/statement.hpp | test/statements.cpp)
+
+        For loops 
+            
+            auto init{ variable<gl_int, "i", value(0)>() };
+            auto condition{ less_than<init, value(5)>() };
+            auto increment{ init.increment() };
+
+            static constexpr auto for_loop_body{
+                [](auto i) {
+                    static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
+                    return test_var.declaration;
+                }(init)
+            };
+
+            auto gl_for{ for_loop<init, condition, increment, for_loop_body>() };
+            -> "for (int i = 0; i < 5; ++i) {\n" 
+               "int test = i;\n"
+               "}\n"
+
     * Structures (src/structure.hpp | test/structures.cpp)
+
