@@ -7,9 +7,9 @@
 namespace mfl::detail
 {
     template <Keyword key, bool assign, static_string value, static_string body>
-    consteval auto make_declaration()
+    static consteval auto make_declaration()
     {
-        if constexpr (key == Keyword::gl_if) {
+        if constexpr (key == Keyword::gl_if || key == Keyword::gl_for) {
             return concat(stringify<key>(), space, enclose_in_parenthesis<value>(), create_body<body>());
         }
         else if constexpr (assign == true) { // gl_FragColor = value;
@@ -31,6 +31,18 @@ namespace mfl::detail
                           new_line);
         }
     }
+
+    template <auto init_var, static_string condition, static_string increment>
+    static consteval auto make_for_loop() {
+        return concat(
+            stringify<init_var.type>(), 
+            space, 
+            init_var.name, equal, init_var.value, semicolon, 
+            space, 
+            condition, semicolon,
+            space, 
+            increment);
+    }
 }
 
 namespace mfl
@@ -44,6 +56,9 @@ namespace mfl
     template <auto condition, static_string body>
     using if_statement = statement<Keyword::gl_if, false, detail::expression_value<condition>(), body>;
 
+    template <auto init_var, static_string condition, static_string increment, static_string body>
+    using for_loop = statement<Keyword::gl_for, false, detail::make_for_loop<init_var, condition, increment>(), body>;
+
     using return_statement = statement<Keyword::gl_return, false>;
     using continue_statement = statement<Keyword::gl_continue, false>;
     using break_statement = statement<Keyword::gl_break, false>;
@@ -56,7 +71,3 @@ namespace mfl
     using frag_color = statement<Keyword::gl_frag_color, true, var.name>;
 }
 
-// if (colorWithAlpha.w < 0.1f) {
-//     gl_FragColor = colorWithAlpha;
-//     return;
-// }

@@ -28,6 +28,7 @@ namespace mfl
         gl_in,
         gl_frag_color,
         gl_if,
+        gl_for,
         gl_return,
         gl_continue,
         gl_break,
@@ -54,6 +55,9 @@ namespace mfl
     inline constexpr auto less_or_equal{ static_string{ " <= " } };
     inline constexpr auto greater{ static_string{ " > " } };
     inline constexpr auto greater_or_equal{ static_string{ " >= " } };
+    inline constexpr auto semicolon{ static_string{ ";" } };
+    inline constexpr auto plusplus{ static_string{ "++" } };
+    inline constexpr auto minusminus{ static_string{ "--" } };
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
@@ -116,6 +120,8 @@ namespace mfl::detail
             return static_string{ "gl_Position" };
         else if constexpr (keyword == Keyword::gl_if)
             return static_string{ "if" };
+        else if constexpr (keyword == Keyword::gl_for)
+            return static_string{ "for" };
         else if constexpr (keyword == Keyword::gl_return)
             return static_string{ "return" };
         else if constexpr (keyword == Keyword::gl_continue)

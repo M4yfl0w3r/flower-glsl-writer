@@ -91,6 +91,14 @@ namespace mfl
         static consteval auto negative() {
             return concat(minus, name);
         }
+
+        static consteval auto increment() {
+            return concat(plusplus, name);
+        }
+        
+        static consteval auto decrement() {
+            return concat(minusminus, name);
+        }
         
     private:    
         template <static_string access_name>
