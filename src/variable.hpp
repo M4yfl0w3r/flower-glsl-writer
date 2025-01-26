@@ -71,7 +71,11 @@ namespace mfl
         static consteval auto z() { return component<"z">(); }
          
         static consteval auto rgb() requires detail::at_least_vec3<var_type> {
-            return concat(name, dot, static_string{ "rgb" } );
+            return concat(name, sym_dot, static_string{ "rgb" } );
+        }
+        
+        static consteval auto xyz() requires detail::at_least_vec3<var_type> {
+            return concat(name, sym_dot, static_string{ "xyz" } );
         }
 
         template <auto expression>
@@ -103,7 +107,7 @@ namespace mfl
     private:    
         template <static_string access_name>
         static consteval auto component() {
-            return concat(var_name, dot, access_name);
+            return concat(var_name, sym_dot, access_name);
         }
     };
 

@@ -61,7 +61,7 @@ namespace mfl
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };
     inline constexpr auto comma{ static_string{ "," } };
-    inline constexpr auto dot{ static_string{ "." } };
+    inline constexpr auto sym_dot{ static_string{ "." } };
     inline constexpr auto left_brace{ static_string{ "{" } };
     inline constexpr auto right_brace{ static_string{ "}" } };
     inline constexpr auto left_bracket{ static_string{ "[" } };
@@ -178,7 +178,7 @@ namespace mfl
     }
 
     DEFINE_COMPARE_TEMPLATE(less_than, less)
-    DEFINE_COMPARE_TEMPLATE(less_or_equal_then, less_or_equal)
+    DEFINE_COMPARE_TEMPLATE(less_or_equal_to, less_or_equal)
     DEFINE_COMPARE_TEMPLATE(greater_than, greater)
-    DEFINE_COMPARE_TEMPLATE(greater_or_equal_then, greater_or_equal)
+    DEFINE_COMPARE_TEMPLATE(greater_or_equal_to, greater_or_equal)
 }

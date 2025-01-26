@@ -59,12 +59,12 @@ namespace mfl
 
         template <static_string field_name, static_string value>
         static consteval auto assign() {
-            return concat(struct_name, dot, get<field_name>().template assign<value>());
+            return concat(struct_name, sym_dot, get<field_name>().template assign<value>());
         }
 
         template <static_string field_name>
         static consteval auto member_access() {
-            return concat(struct_name, dot, get<field_name>().name);
+            return concat(struct_name, sym_dot, get<field_name>().name);
         }
     };
 

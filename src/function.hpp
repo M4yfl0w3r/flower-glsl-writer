@@ -153,12 +153,25 @@ namespace mfl
         return builtin_fn<"exp", Param<detail::expression_value<expression>()>>().declaration;
     }
 
+    template <auto expression>
+    consteval auto acos() {
+        return builtin_fn<"acos", Param<detail::expression_value<expression>()>>().declaration;
+    }
+
     template <auto st_expression, auto nd_expression>
     consteval auto pow()
     {
         constexpr auto st_expr{ detail::expression_value<st_expression>() };
         constexpr auto nd_expr{ detail::expression_value<nd_expression>() };
         return builtin_fn<"pow", Param<st_expr>, Param<nd_expr>>().declaration;
+    }
+
+    template <auto st_expression, auto nd_expression>
+    consteval auto dot()
+    {
+        constexpr auto st_expr{ detail::expression_value<st_expression>() };
+        constexpr auto nd_expr{ detail::expression_value<nd_expression>() };
+        return builtin_fn<"dot", Param<st_expr>, Param<nd_expr>>().declaration;
     }
 
     template <uniform map, auto expression>
