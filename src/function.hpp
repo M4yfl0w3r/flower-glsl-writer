@@ -6,7 +6,8 @@
 namespace mfl::detail 
 {
     template <bool is_last, typename Param>
-    static consteval auto format_no_type_param() {
+    static consteval auto format_no_type_param() 
+    {
         if constexpr (is_last) {
             return concat(Param::name);
         }
@@ -16,7 +17,8 @@ namespace mfl::detail
     }
 
     template <bool is_last, typename Param>
-    static consteval auto format_type_param() {
+    static consteval auto format_type_param() 
+    {
         static constexpr auto type_str{ stringify<Param::type>() };
 
         if constexpr (is_last) {

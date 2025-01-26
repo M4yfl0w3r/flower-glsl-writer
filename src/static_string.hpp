@@ -9,7 +9,7 @@ namespace mfl::detail
     template <auto N, class Fn>
     consteval auto for_each(Fn&& fn) 
     {
-        [&]<auto... indicies>(std::index_sequence<indicies...>) constexpr {
+        [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
             (fn.template operator()<indicies>(), ...);
         } (std::make_index_sequence<N>());
     }
@@ -71,11 +71,11 @@ namespace mfl
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
     {
-        constexpr std::size_t N{ (... + len) - sizeof...(len) };
-        std::array<char, N+1> result{};
-        std::size_t index{ 0 };
+        static constexpr auto N{ (... + len) - sizeof...(len) };
+        std::array<char, N + 1> result{};
+        std::size_t index{ 0u };
         ([&] {
-            const auto sv{ strings.data() };
+            const auto& sv{ strings.data() };
             std::copy(std::begin(sv), std::end(sv), std::begin(result) + index);
             index += std::size(sv);
         }(), ...);
