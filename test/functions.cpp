@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "function.hpp"
 #include "variable.hpp"
 #include "value.hpp"
@@ -8,7 +9,7 @@ using enum mfl::Type;
 
 TEST(Functions, BasicFunctionSignature)
 {
-    static constexpr auto fn{ function<"to_gamma", gl_vec3, "", Param<"v", gl_vec3>>() };
+    static constexpr auto fn{ function<gl_vec3, "to_gamma", "", Param<"v", gl_vec3>>() };
 
     static constexpr auto expected_declaration{ 
         "vec3 to_gamma(vec3 v) {\n"
@@ -20,7 +21,12 @@ TEST(Functions, BasicFunctionSignature)
 
 TEST(Functions, MultiParamsFunction)
 {
-    static constexpr auto fn{ function<"test_multiparam", gl_vec3, "", Param<"a", gl_vec3>, Param<"b", gl_vec3>>() };
+    static constexpr auto fn{ 
+        function<gl_vec3, 
+                 "test_multiparam", "", 
+                 Param<"a", gl_vec3>, Param<"b", gl_vec3>
+        >() 
+    };
     
     static constexpr auto expected_declaration{ 
         "vec3 test_multiparam(vec3 a, vec3 b) {\n"
@@ -176,7 +182,7 @@ TEST(Functions, BuiltInFunctions)
 TEST(Functions, FunctionWithBody)
 {
     static constexpr auto body{ variable<gl_vec3, "result", value(1.0f / 2.0f)>() };
-    static constexpr auto fn{ function<"to_gamma", gl_vec3, body.declaration, Param<"v", gl_vec3>>() };
+    static constexpr auto fn{ function<gl_vec3, "to_gamma", body.declaration, Param<"v", gl_vec3>>() };
 
     static constexpr auto expected_declaration{ 
         "vec3 to_gamma(vec3 v) {\n"
@@ -189,7 +195,7 @@ TEST(Functions, FunctionWithBody)
 
 TEST(Functions, SingleParamFunctionCall)
 {
-    static constexpr auto fn{ function<"fn", gl_vec3, "", Param<"v", gl_vec3>>() };
+    static constexpr auto fn{ function<gl_vec3, "fn", "", Param<"v", gl_vec3>>() };
     static constexpr auto test_var{ variable<gl_vec3, "var", vec3<value(1.0f)>()>() };
     static constexpr auto res{ fn.call<test_var>() };
     static constexpr auto expected_declaration{ "fn(var)" };
@@ -198,7 +204,7 @@ TEST(Functions, SingleParamFunctionCall)
 
 TEST(Functions, MultiParamFunctionCall)
 {
-    static constexpr auto fn{ function<"fn", gl_vec3, "", Param<"v1", gl_vec3>, Param<"v2", gl_vec3>>() };
+    static constexpr auto fn{ function<gl_vec3, "fn", "", Param<"v1", gl_vec3>, Param<"v2", gl_vec3>>() };
     static constexpr auto st_var{ variable<gl_vec3, "st_var", vec3<value(1.0f)>()>() };
     static constexpr auto nd_var{ variable<gl_vec3, "nd_var", vec3<value(2.0f)>()>() };
     static constexpr auto res{ fn.call<st_var, nd_var>() };

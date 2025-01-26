@@ -55,7 +55,7 @@ namespace mfl::detail
         }
     }
 
-    template <static_string fn_name, Type output_type, static_string body, static_string input>
+    template <Type output_type, static_string fn_name, static_string body, static_string input>
     static consteval auto user_defined_or_builtin() 
     {
         static constexpr auto is_fn_builtin{ output_type == Type::empty };
@@ -79,13 +79,13 @@ namespace mfl
         static constexpr auto name{ n };
     };
 
-    template <static_string fn_name, Type output_type, static_string body, typename... Params>
+    template <Type output_type, static_string fn_name, static_string body, typename... Params>
     struct [[nodiscard]] function 
     {
         static constexpr auto name{ fn_name };
         static constexpr auto is_builtin{ output_type == Type::empty };
         static constexpr auto input{ detail::make_input<is_builtin, Params...>() };
-        static constexpr auto declaration{ detail::user_defined_or_builtin<fn_name, output_type, body, input>() };
+        static constexpr auto declaration{ detail::user_defined_or_builtin<output_type, fn_name, body, input>() };
 
         template <auto... expressions>
         consteval auto call() const {
@@ -102,10 +102,10 @@ namespace mfl
     };
 
     template <static_string body>
-    using main_fn = function<"main", Type::gl_void, body>;
+    using main_fn = function<Type::gl_void, "main", body>;
 
     template <static_string fn_name, typename... Params>
-    using builtin_fn = function<fn_name, Type::empty, "", Params...>;
+    using builtin_fn = function<Type::empty, fn_name, "", Params...>;
 
     template <auto... expressions>
     consteval auto vec2() 
