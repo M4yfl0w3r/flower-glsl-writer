@@ -64,13 +64,6 @@ TEST(Statements, SelectionStatements)
     }
 }
 
-template <auto i>
-static consteval auto for_loop_body() 
-{
-    static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
-    return test_var.declaration;
-}
-
 TEST(Statements, IterationStatements)
 {
     {
@@ -92,7 +85,14 @@ TEST(Statements, IterationStatements)
         static constexpr auto condition{ less_than<init, value(5)>() };
         static constexpr auto increment{ init.increment() };
 
-        static constexpr auto gl_for{ for_loop<init, condition, increment, for_loop_body<init>()>() };
+        static constexpr auto for_loop_body {
+            [](auto i) {
+                static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
+                return test_var.declaration;
+            }(init)
+        };
+
+        static constexpr auto gl_for{ for_loop<init, condition, increment, for_loop_body>() };
 
         static constexpr auto expected_result{ 
             "for (int i = 0; i < 5; ++i) {\n" 
@@ -107,10 +107,10 @@ TEST(Statements, IterationStatements)
 TEST(Statements, BuiltInVariables)
 {
     {
-        // static constexpr auto var{ variable<Type::gl_float, "test_var", value(1.0f)>() };
-        // static constexpr auto gl_frag_color{ frag_color<var>() };
-        // static constexpr auto expected_result{ "gl_FragColor = test_var;\n" };
-        // EXPECT_TRUE(gl_frag_color.declaration == expected_result);
+        static constexpr auto var{ variable<Type::gl_float, "test_var", value(1.0f)>() };
+        static constexpr auto gl_frag_color{ frag_color<var>() };
+        static constexpr auto expected_result{ "gl_FragColor = test_var;\n" };
+        EXPECT_TRUE(gl_frag_color.declaration == expected_result);
     }
 }
 
@@ -118,9 +118,9 @@ TEST(Statements, DefineStatements)
 {
     // The define statement is treated as a variable.
     {
-        // static constexpr auto def{ define_statement<"NUM_LIGHTS", value(2)>() };
-        // static constexpr auto expected_result{ "#define NUM_LIGHTS 2\n" };
-        // EXPECT_TRUE(def.declaration == expected_result);
+        static constexpr auto def{ define_statement<"NUM_LIGHTS", value(2)>() };
+        static constexpr auto expected_result{ "#define NUM_LIGHTS 2\n" };
+        EXPECT_TRUE(def.declaration == expected_result);
     }
 
 }
