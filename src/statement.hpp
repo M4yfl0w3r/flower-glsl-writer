@@ -64,10 +64,10 @@ namespace mfl
     using break_statement = statement<Keyword::gl_break, false>;
     using discard_statement = statement<Keyword::gl_discard, false>;
 
-    template <static_string value>
-    using return_value_statement = statement<Keyword::gl_return, false, value>;
+    template <auto expression>
+    using return_value_statement = statement<Keyword::gl_return, false, detail::expression_value<expression>()>;
 
-    template <variable_impl var>
-    using frag_color = statement<Keyword::gl_frag_color, true, var.name>;
+    template <auto expression>
+    using frag_color = statement<Keyword::gl_frag_color, true, detail::expression_value<expression>()>;
 }
 

@@ -58,6 +58,7 @@ namespace mfl
     inline constexpr auto semicolon{ static_string{ ";" } };
     inline constexpr auto plusplus{ static_string{ "++" } };
     inline constexpr auto plusequal{ static_string{ " += " } };
+    inline constexpr auto timesequal{ static_string{ " *= " } };
     inline constexpr auto minusminus{ static_string{ "--" } };
     inline constexpr auto line_end{ static_string{ ";\n" } };
     inline constexpr auto new_line{ static_string{ "\n" } };

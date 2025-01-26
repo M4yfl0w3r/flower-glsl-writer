@@ -93,6 +93,13 @@ namespace mfl
         }
 
         template <auto expression>
+        static consteval auto multiply_assign() 
+        {
+            static constexpr auto expr{ detail::expression_value<expression>() };
+            return concat(name, timesequal, expr, line_end);
+        }
+
+        template <auto expression>
         static consteval auto multiply()
         {
             static constexpr auto expr{ detail::expression_value<expression>() };

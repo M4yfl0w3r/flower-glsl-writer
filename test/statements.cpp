@@ -2,6 +2,7 @@
 
 #include "static_string.hpp"
 #include "statement.hpp"
+#include "function.hpp"
 #include "value.hpp"
 
 using namespace mfl;
@@ -110,6 +111,12 @@ TEST(Statements, BuiltInVariables)
         static constexpr auto var{ variable<Type::gl_float, "test_var", value(1.0f)>() };
         static constexpr auto gl_frag_color{ frag_color<var>() };
         static constexpr auto expected_result{ "gl_FragColor = test_var;\n" };
+        EXPECT_TRUE(gl_frag_color.declaration == expected_result);
+    }
+
+    {
+        static constexpr auto gl_frag_color{ frag_color<vec3<value(1.0f)>()>() };
+        static constexpr auto expected_result{ "gl_FragColor = vec3(1.0f);\n" };
         EXPECT_TRUE(gl_frag_color.declaration == expected_result);
     }
 }
