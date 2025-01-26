@@ -1,8 +1,18 @@
 GLSL writer
 
-    The library is not type-safe and does not prevent you from writing incorrect GLSL code. 
-    It generates GLSL code at compile-time using a compile-time string implementation which 
-    can be found in src/static_string.hpp.
+    The library is not type-safe and does not prevent you from writing incorrect
+    GLSL code. It generates GLSL code at compile-time using a compile-time
+    string implementation (src/static_string.hpp)
+
+    The most important function in the library is the concat function
+        
+        template <std::size_t... len>
+        consteval auto concat(const static_string<len>&... strings)
+
+    This function forms the basis of every operation. The library is not a GLSL
+    compiler but rather an expression concatenator. It defines types, values,
+    and operations from GLSL as strings and allows you to build code using these
+    strings as building blocks.
 
 
 TODO
@@ -20,7 +30,7 @@ TODO
 
 Expression types 
 
-    1. Variables (src/variable.hpp | test/variables.cpp)
-    2. Functions (src/function.hpp | test/functions.cpp)
-    3. Statements (src/statement.hpp | test/statements.cpp)
-    4. Structures (src/structure.hpp | test/structures.cpp)
+    * Variables (src/variable.hpp | test/variables.cpp)
+    * Functions (src/function.hpp | test/functions.cpp)
+    * Statements (src/statement.hpp | test/statements.cpp)
+    * Structures (src/structure.hpp | test/structures.cpp)
