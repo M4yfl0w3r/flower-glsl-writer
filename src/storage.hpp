@@ -8,9 +8,26 @@
 
 namespace mfl::detail
 {
-    template <typename... fields>
-    static constexpr auto process_members() {
-        return concat((fields::declaration)...);
+    template <auto expression>
+    static consteval auto make_type_expression() 
+    {
+        return [&] { 
+            if constexpr (is_static_string<decltype(expression)>)
+                return expression;
+            else if constexpr (is_glsl_type<decltype(expression)>) {
+                return stringify<expression>();
+            }
+        }();
+    }
+
+    template <typename... Fields>
+    static consteval auto process_members() {
+        return concat((Fields::declaration)...);
+    }
+
+    template <static_string type, static_string name>
+    static consteval auto type_name_declaration() {
+        return concat(type, space, name);
     }
 
     template <static_string value>
@@ -18,18 +35,20 @@ namespace mfl::detail
         return concat(space, left_brace, new_line, value, right_brace, line_end);
     }
 
-    template <Type type, static_string name, typename... fields>
+    template <static_string type, static_string name, static_string size, typename... Fields>
     static consteval auto make_storage_declaration() {
-        if constexpr (type == Type::gl_struct) {
+        if constexpr (enumify<type>() == Type::gl_struct) {
             return concat(
-                stringify<type>(),
-                space,
-                name,
-                make_struct_body<process_members<fields...>()>()
+                type_name_declaration<type, name>(),
+                make_struct_body<process_members<Fields...>()>()
             );
         }
         else {
-            return concat(static_string{""});
+            return concat(
+                type_name_declaration<type, name>(),
+                enclose_in_brackets<size>(),
+                line_end
+            );
         }
     } 
 }
@@ -45,13 +64,13 @@ namespace mfl::detail
 
 namespace mfl
 {
-    template <Type t_type, static_string t_name, typename... t_fields>
+    template <auto t_type, static_string t_name, static_string t_size, typename... t_fields>
     struct [[nodiscard]] storage
     {
         static constexpr auto name{ t_name };
-        static constexpr auto type{ t_type };
+        static constexpr auto type{ detail::make_type_expression<t_type>() };
         static constexpr auto fields{ std::tuple<t_fields...>() };
-        static constexpr auto declaration{ detail::make_storage_declaration<t_type, t_name, t_fields...>() };
+        static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, t_size, t_fields...>() };
 
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
@@ -86,27 +105,24 @@ namespace mfl
     };
 
     template <static_string name, typename... Fields>
-    static consteval auto make_structure(Fields... fields) {
-        return storage<Type::gl_struct, name, Fields...>{};
-    }
+    using structure = storage<Type::gl_struct, name, "", Fields...>;
 
-    template <static_string name, static_string i, typename... Fields>
-    static consteval auto make_array_of_structures(Fields... fields) {
-        return storage<Type::empty, concat(name, left_bracket, i, right_bracket), Fields...>{};
-    }
+    template <auto type, static_string name, static_string size, typename... Fields>
+    using array = storage<type, name, size, Fields...>;
 
     static constexpr auto light_source{ 
-        make_array_of_structures<"gl_LightSource", "i">(
-            field<Type::gl_vec4, "position">(),
-            field<Type::gl_vec4, "ambient">(),
-            field<Type::gl_vec4, "diffuse">(),
-            field<Type::gl_vec3, "spotDirection">(),
-            field<Type::gl_float, "spotCutoff">(),
-            field<Type::gl_float, "spotExponent">(),
-            field<Type::gl_float, "constantAttenuation">(),
-            field<Type::gl_float, "linearAttenuation">(),
-            field<Type::gl_float, "quadraticAttenuation">()
-        )
+        structure<
+            "gl_LightSource",
+            field<Type::gl_vec4, "position">,
+            field<Type::gl_vec4, "ambient">,
+            field<Type::gl_vec4, "diffuse">,
+            field<Type::gl_vec3, "spotDirection">,
+            field<Type::gl_float, "spotCutoff">,
+            field<Type::gl_float, "spotExponent">,
+            field<Type::gl_float, "constantAttenuation">,
+            field<Type::gl_float, "linearAttenuation">,
+            field<Type::gl_float, "quadraticAttenuation">
+        >()
     };
 }
 

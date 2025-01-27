@@ -3,23 +3,25 @@
 #include "static_string.hpp"
 #include "variable.hpp"
 #include "storage.hpp"
+#include "value.hpp"
 
 using namespace mfl;
 using enum mfl::Type;
 
 consteval auto create_light_struct()
 {
-    return make_structure<"Light">(
-        field<gl_vec4, "position">(),
-        field<gl_vec4, "ambient">(),
-        field<gl_vec4, "diffuse">(),
-        field<gl_vec3, "spotDirection">(),
-        field<gl_float, "spotCutoff">(),
-        field<gl_float, "spotExponent">(),
-        field<gl_float, "constantAttenuation">(),
-        field<gl_float, "linearAttenuation">(),
-        field<gl_float, "quadraticAttenuation">()
-    );
+    return structure<
+        "Light",
+        field<gl_vec4, "position">,
+        field<gl_vec4, "ambient">,
+        field<gl_vec4, "diffuse">,
+        field<gl_vec3, "spotDirection">,
+        field<gl_float, "spotCutoff">,
+        field<gl_float, "spotExponent">,
+        field<gl_float, "constantAttenuation">,
+        field<gl_float, "linearAttenuation">,
+        field<gl_float, "quadraticAttenuation">
+    >();
 }
 
 TEST(Structs, LightStructDeclaration)
@@ -46,13 +48,13 @@ TEST(Structs, LightStructDeclaration)
 TEST(Structs, LightStructAccessMembers)
 {
     static constexpr auto light{ create_light_struct() };
-    static constexpr auto position{ light.get<"position">() };
-    static constexpr auto diffuse{ light.get<"diffuse">() };
-    static constexpr auto const_att{ light.get<"constantAttenuation">() };
+    static constexpr auto position{ light.template get<"position">() };
+    static constexpr auto diffuse{ light.template get<"diffuse">() };
+    static constexpr auto const_att{ light.template get<"constantAttenuation">() };
 
     EXPECT_EQ(position.type, gl_vec4);
     EXPECT_TRUE(position.name == "position");
-    
+
     EXPECT_EQ(diffuse.type, gl_vec4);
     EXPECT_TRUE(diffuse.name == "diffuse");
 
@@ -60,6 +62,22 @@ TEST(Structs, LightStructAccessMembers)
     EXPECT_TRUE(const_att.name == "constantAttenuation");
 }
 
-TEST(Arrays, ArrayOfStructs)
+TEST(Structs, GlobalStructs)
 {
+    static constexpr auto position{ light_source.template get<"position">() };
+    static constexpr auto diffuse{ light_source.template get<"diffuse">() };
+
+    EXPECT_EQ(position.type, gl_vec4);
+    EXPECT_TRUE(position.name == "position");
+
+    EXPECT_EQ(diffuse.type, gl_vec4);
+    EXPECT_TRUE(diffuse.name == "diffuse");
 }
+
+TEST(Arrays, ArrayOfInts)
+{
+    static constexpr auto arr{ array<gl_int, "test", value(5)>() };
+    static constexpr auto expected_result{ "int test[5];\n" };
+    EXPECT_TRUE(arr.declaration == expected_result);
+}
+

@@ -18,8 +18,7 @@ namespace mfl
         gl_ivec2,
         gl_struct,
         gl_bool,
-        gl_light, // TODO: ugly hack for now - will have to think how to register custom types (struct instead of enum?)
-        empty
+        empty 
     };
 
     enum class Keyword 
@@ -84,6 +83,9 @@ namespace mfl::detail
     template <Keyword key>
     concept is_array = (key == Keyword::gl_array);
 
+    template <typename T>
+    concept is_glsl_type = std::is_enum_v<T> && std::is_same_v<std::decay_t<T>, Type>;
+
     template <Type output_type>
     consteval auto stringify()
     {
@@ -105,12 +107,37 @@ namespace mfl::detail
             return static_string{ "sampler2D" };
         else if constexpr (output_type == Type::gl_bool)
             return static_string{ "bool" };
-        else if constexpr (output_type == Type::gl_light)
-            return static_string{ "Light" };
         else if constexpr (output_type == Type::gl_struct)
             return static_string{ "struct" };
         else 
             return static_string{ "" };
+    }
+
+    template <static_string str>
+    consteval auto enumify()
+    {
+        if constexpr (str == "int")
+            return Type::gl_int;
+        else if constexpr (str == "float")
+            return Type::gl_float;
+        else if constexpr (str == "void")
+            return Type::gl_void;
+        else if constexpr (str == "vec2")
+            return Type::gl_vec2;
+        else if constexpr (str == "vec3")
+            return Type::gl_vec3;
+        else if constexpr (str == "vec4")
+            return Type::gl_vec4;
+        else if constexpr (str == "ivec2")
+            return Type::gl_ivec2;
+        else if constexpr (str == "sampler2D")
+            return Type::gl_sampler2D;
+        else if constexpr (str == "bool")
+            return Type::gl_bool;
+        else if constexpr (str == "struct")
+            return Type::gl_struct;
+        else
+            return Type::empty;
     }
 
     template <Keyword keyword>

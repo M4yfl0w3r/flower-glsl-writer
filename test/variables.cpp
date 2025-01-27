@@ -74,12 +74,3 @@ TEST(Variables, Operation)
     }
 }
 
-TEST(Variables, Array)
-{
-    {
-        static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-        static constexpr auto lights{ array<gl_light, "lights", num_lights.value>() };
-        static constexpr auto expected_result{ "Light lights[2];\n" };
-        EXPECT_TRUE(lights.declaration == expected_result);
-    }
-}

@@ -172,8 +172,5 @@ namespace mfl
 
     template <static_string name, static_string value>
     using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
-
-    template <Type type, static_string name, static_string size>
-    using array = variable_impl<Type::gl_light, name, Keyword::gl_array, size>;
 }
 
