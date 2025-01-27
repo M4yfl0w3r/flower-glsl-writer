@@ -55,17 +55,19 @@ namespace mfl::detail
         }
     }
 
-    template <Type output_type, static_string fn_name, static_string body, static_string input>
+    template <Type t_output_type, static_string t_name, static_string t_body, static_string t_input>
     static consteval auto user_defined_or_builtin() 
     {
+        static constexpr auto output_type{ t_output_type };
+        static constexpr auto name{ t_name };
         static constexpr auto is_fn_builtin{ output_type == Type::empty };
         static constexpr auto type_str{ stringify<output_type>() };
 
         if constexpr (is_fn_builtin) {
-            return concat(fn_name, enclose_in_parenthesis<input>());
+            return concat(t_name, enclose_in_parenthesis<t_input>());
         }
         else {
-            return concat(type_str, space, fn_name, enclose_in_parenthesis<input>(), create_body<body>());
+            return concat(type_str, space, t_name, enclose_in_parenthesis<t_input>(), create_body<t_body>());
         }
     }
 }

@@ -18,10 +18,11 @@ GLSL writer
 TODO
 
     * a struct of all declared variables to return lvalues?
-    * lvalue arrays
+    * lvalue arrays - structure class - struct + array
     * custom type registration (Light)
     * type system validation
     * a compile-time float to string converter
+    * a simpler definition of a function
     * check if an expression is passable to a function
     * named template arguments
     * Param should take a variable as an argument
@@ -83,5 +84,5 @@ Expression types
                "}\n"
 
 
-    * Structures (src/structure.hpp | test/structures.cpp)
+    * Storage (src/storage.hpp | test/storages.cpp)
 

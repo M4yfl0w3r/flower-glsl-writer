@@ -43,17 +43,17 @@ namespace mfl::detail
 
 namespace mfl 
 {
-    template <Type var_type, static_string var_name, Keyword var_key, static_string var_value = "">
+    template <Type t_type, static_string t_name, Keyword t_key, static_string t_value = "">
     struct [[nodiscard]] variable_impl
     {
-        static constexpr auto name{ var_name };
-        static constexpr auto type{ var_type };
-        static constexpr auto value{ var_value };
-        static constexpr auto key{ var_key };
+        static constexpr auto name{ t_name };
+        static constexpr auto type{ t_type };
+        static constexpr auto value{ t_value };
+        static constexpr auto key{ t_key };
 
         static constexpr auto declaration{ 
             [] {
-                if constexpr (var_value == "") {
+                if constexpr (value == "") {
                     return detail::make_declaration<name, type, key>();
                 }
                 else {
@@ -70,11 +70,11 @@ namespace mfl
         static consteval auto y() { return component<"y">(); }
         static consteval auto z() { return component<"z">(); }
          
-        static consteval auto rgb() requires detail::at_least_vec3<var_type> {
+        static consteval auto rgb() requires detail::at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "rgb" } );
         }
         
-        static consteval auto xyz() requires detail::at_least_vec3<var_type> {
+        static consteval auto xyz() requires detail::at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "xyz" } );
         }
 
@@ -121,7 +121,7 @@ namespace mfl
     private:    
         template <static_string access_name>
         static consteval auto component() {
-            return concat(var_name, sym_dot, access_name);
+            return concat(name, sym_dot, access_name);
         }
     };
 

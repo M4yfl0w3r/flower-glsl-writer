@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "static_string.hpp"
-#include "structure.hpp"
 #include "variable.hpp"
+#include "storage.hpp"
 
 using namespace mfl;
 using enum mfl::Type;
@@ -60,3 +60,6 @@ TEST(Structs, LightStructAccessMembers)
     EXPECT_TRUE(const_att.name == "constantAttenuation");
 }
 
+TEST(Arrays, ArrayOfStructs)
+{
+}

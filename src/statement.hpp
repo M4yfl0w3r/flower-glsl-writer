@@ -47,10 +47,10 @@ namespace mfl::detail
 
 namespace mfl
 {
-    template <Keyword key, bool assign, static_string value = "", static_string body = "">
+    template <Keyword t_key, bool t_assign, static_string t_value = "", static_string t_body = "">
     struct [[nodiscard]] statement
     {
-        static constexpr auto declaration{ detail::make_declaration<key, assign, value, body>() };
+        static constexpr auto declaration{ detail::make_declaration<t_key, t_assign, t_value, t_body>() };
     };
 
     template <auto condition, static_string body>
