@@ -12,6 +12,7 @@ namespace mfl::detail
     template <auto expression>
     static consteval auto make_type_expression() 
     {
+        // TODO: add an option to register a custom type by passing an lvalue
         return [&] { 
             if constexpr (is_static_string<decltype(expression)>)
                 return expression;
@@ -37,7 +38,8 @@ namespace mfl::detail
     }
 
     template <static_string type, static_string name, static_string size, typename... Fields>
-    static consteval auto make_storage_declaration() {
+    static consteval auto make_storage_declaration() 
+    {
         if constexpr (enumify<type>() == Type::gl_struct) {
             return concat(
                 type_name_declaration<type, name>(),

@@ -148,14 +148,14 @@ namespace mfl
         return concat(left_parenthesis, N, times, str, right_parenthesis);
     }
 
-    template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
-    consteval auto operator-(const variable_impl<t, name, k, val>&, const static_string<len>& str) {
-        return concat(left_parenthesis, name, minus, str, right_parenthesis);
+    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
+        return concat(left_parenthesis, N, minus, str, right_parenthesis);
     }
 
-    template <Type t, static_string name, Keyword k, static_string val, std::size_t len>
-    consteval auto operator-(const static_string<len>& str, const variable_impl<t, name, k, val>&) {
-        return concat(left_parenthesis, str, minus, name, right_parenthesis);
+    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    consteval auto operator-(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
+        return concat(left_parenthesis, str, minus, N, right_parenthesis);
     }
 
     template <Type type, static_string name>
