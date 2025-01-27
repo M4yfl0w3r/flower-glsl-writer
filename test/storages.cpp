@@ -74,10 +74,18 @@ TEST(Structs, GlobalStructs)
     EXPECT_TRUE(diffuse.name == "diffuse");
 }
 
-TEST(Arrays, ArrayOfInts)
+TEST(Arrays, ArrayDeclaration)
 {
     static constexpr auto arr{ array<gl_int, "test", value(5)>() };
     static constexpr auto expected_result{ "int test[5];\n" };
+    EXPECT_TRUE(arr.declaration == expected_result);
+}
+
+TEST(Arrays, CustomTypeArrayDeclaration)    
+{
+    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+    static constexpr auto arr{ array<static_string{ "Light" }, "test", num_lights>() };
+    static constexpr auto expected_result{ "Light test[NUM_LIGHTS];\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
 }
 

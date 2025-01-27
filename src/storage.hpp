@@ -3,6 +3,7 @@
 #include "static_string.hpp"
 #include "variable.hpp"
 #include "symbols.hpp"
+#include "value.hpp"
 
 #include <tuple>
 
@@ -53,24 +54,16 @@ namespace mfl::detail
     } 
 }
 
-/*
-*   For array 
-*   -> declaration -> if not fields -> Type name[ size ] 
-*                  -> if fields -> TODO
-*
-*   For struct 
-*   -> declaration -> struct name { fields... };
-*/
-
 namespace mfl
 {
-    template <auto t_type, static_string t_name, static_string t_size, typename... t_fields>
+    template <auto t_type, static_string t_name, auto t_size, typename... t_fields>
     struct [[nodiscard]] storage
     {
         static constexpr auto name{ t_name };
         static constexpr auto type{ detail::make_type_expression<t_type>() };
+        static constexpr auto size{ detail::expression_value<t_size>() };
         static constexpr auto fields{ std::tuple<t_fields...>() };
-        static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, t_size, t_fields...>() };
+        static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, size, t_fields...>() };
 
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
@@ -105,9 +98,9 @@ namespace mfl
     };
 
     template <static_string name, typename... Fields>
-    using structure = storage<Type::gl_struct, name, "", Fields...>;
+    using structure = storage<Type::gl_struct, name, value(0), Fields...>;
 
-    template <auto type, static_string name, static_string size, typename... Fields>
+    template <auto type, static_string name, auto size, typename... Fields>
     using array = storage<type, name, size, Fields...>;
 
     static constexpr auto light_source{ 
