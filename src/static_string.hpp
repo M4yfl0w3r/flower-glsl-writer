@@ -51,11 +51,11 @@ namespace mfl
             return std::string_view{ value } == other;
         }
 
-        consteval auto begin() const { 
+        constexpr auto begin() const { 
             return value; 
         }
 
-        consteval auto end() const { 
+        constexpr auto end() const { 
             return value + size; 
         }
 

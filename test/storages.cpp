@@ -8,7 +8,7 @@
 using namespace mfl;
 using enum mfl::Type;
 
-consteval auto create_light_struct()
+static consteval auto create_light_struct()
 {
     return structure<
         "Light",

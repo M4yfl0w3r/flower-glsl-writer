@@ -92,6 +92,17 @@ namespace mfl
             return concat(name, sym_dot, get<field_name>().template assign<value>());
         }
 
+        template <static_string field_name, static_string value, auto access_expression>
+        static consteval auto assign_at() {
+            return concat(
+                name, 
+                detail::enclose_in_brackets<
+                    detail::expression_value<access_expression>()>(),
+                sym_dot, 
+                get<field_name>().template assign<value>()
+            );
+        }
+
         template <static_string field_name, auto access_expression>
         static consteval auto member_access_at() {
             return concat(
