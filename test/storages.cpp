@@ -83,9 +83,22 @@ TEST(Arrays, ArrayDeclaration)
 
 TEST(Arrays, CustomTypeArrayDeclaration)    
 {
+    static constexpr auto light{ create_light_struct() };
     static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-    static constexpr auto arr{ array<static_string{ "Light" }, "test", num_lights>() };
+    static constexpr auto arr{ array<light.name, "test", num_lights>() };
     static constexpr auto expected_result{ "Light test[NUM_LIGHTS];\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
+}
+
+TEST(Arrays, ArrayOfStructsAccess)
+{
+    static constexpr auto light{ create_light_struct() };
+    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+    static constexpr auto arr{ make_array_with_fields<light.name, "test", num_lights, decltype(light)>() };
+
+    static constexpr auto access_var{ variable<gl_int, "i">() };
+    static constexpr auto test{ arr.member_access_at<"position", access_var>() };
+    
+    EXPECT_TRUE(test == "test[i].position");
 }
 

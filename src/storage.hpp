@@ -12,7 +12,6 @@ namespace mfl::detail
     template <auto expression>
     static consteval auto make_type_expression() 
     {
-        // TODO: add an option to register a custom type by passing an lvalue
         return [&] { 
             if constexpr (is_static_string<decltype(expression)>)
                 return expression;
@@ -34,7 +33,7 @@ namespace mfl::detail
 
     template <static_string value>
     static consteval auto make_struct_body() {
-        return concat(space, left_brace, new_line, value, right_brace, line_end);
+        return concat(space, enclose_in_braces<new_line, value>(), line_end);
     }
 
     template <static_string type, static_string name, static_string size, typename... Fields>
@@ -93,9 +92,15 @@ namespace mfl
             return concat(name, sym_dot, get<field_name>().template assign<value>());
         }
 
-        template <static_string field_name>
-        static consteval auto member_access() {
-            return concat(name, sym_dot, get<field_name>().name);
+        template <static_string field_name, auto access_expression>
+        static consteval auto member_access_at() {
+            return concat(
+                name, 
+                detail::enclose_in_brackets<
+                    detail::expression_value<access_expression>()>(), 
+                sym_dot, 
+                get<field_name>().name
+            );
         }
     };
 
@@ -104,6 +109,13 @@ namespace mfl
 
     template <auto type, static_string name, auto size, typename... Fields>
     using array = storage<type, name, size, Fields...>;
+
+    template <auto type, static_string name, auto size, typename source>
+    static consteval auto make_array_with_fields() {
+        return std::apply([](auto... fields) {
+            return array<type, name, size, decltype(fields)...>{};
+        }, source::fields);
+    }
 
     static constexpr auto light_source{ 
         structure<

@@ -186,14 +186,19 @@ namespace mfl::detail
         }();
     }
 
-    template <static_string value>
+    template <static_string... value>
     consteval auto enclose_in_parenthesis() {
-        return concat(left_parenthesis, value, right_parenthesis);
+        return concat(left_parenthesis, value..., right_parenthesis);
     }
 
-    template <static_string value>
+    template <static_string... value>
     consteval auto enclose_in_brackets() {
-        return concat(left_bracket, value, right_bracket);
+        return concat(left_bracket, value..., right_bracket);
+    }
+
+    template <static_string... value>
+    consteval auto enclose_in_braces() {
+        return concat(left_brace, value..., right_brace);
     }
 
     template <static_string value>
