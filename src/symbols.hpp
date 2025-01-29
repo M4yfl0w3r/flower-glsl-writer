@@ -205,6 +205,11 @@ namespace mfl::detail
     consteval auto create_body() {
         return concat(space, left_brace, new_line, value, right_brace, new_line);
     }
+
+    template <static_string str_type, Type enum_type>
+    static consteval auto are_types_equal() {
+        return enumify<str_type>() == enum_type;
+    }
 }
 
 // TODO: Create an utils namespace?

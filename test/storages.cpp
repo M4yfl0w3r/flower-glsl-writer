@@ -12,15 +12,15 @@ static consteval auto create_light_struct()
 {
     return structure<
         "Light",
-        field<gl_vec4, "position">,
-        field<gl_vec4, "ambient">,
-        field<gl_vec4, "diffuse">,
-        field<gl_vec3, "spotDirection">,
-        field<gl_float, "spotCutoff">,
-        field<gl_float, "spotExponent">,
-        field<gl_float, "constantAttenuation">,
-        field<gl_float, "linearAttenuation">,
-        field<gl_float, "quadraticAttenuation">
+        field<gl_vec4, "position">{},
+        field<gl_vec4, "ambient">{},
+        field<gl_vec4, "diffuse">{},
+        field<gl_vec3, "spotDirection">{},
+        field<gl_float, "spotCutoff">{},
+        field<gl_float, "spotExponent">{},
+        field<gl_float, "constantAttenuation">{},
+        field<gl_float, "linearAttenuation">{},
+        field<gl_float, "quadraticAttenuation">{}
     >();
 }
 
@@ -76,8 +76,18 @@ TEST(Structs, GlobalStructs)
 
 TEST(Arrays, ArrayDeclaration)
 {
-    static constexpr auto arr{ array<gl_int, "test", value(5)>() };
+    static constexpr auto arr{ array<gl_int, value(5), "test">() };
     static constexpr auto expected_result{ "int test[5];\n" };
+    EXPECT_TRUE(arr.declaration == expected_result);
+}
+
+TEST(Arrays, BaseTypeArrayDefinition)
+{
+    static constexpr auto arr{ 
+        array<gl_int, value(4), "test", value(1), value(2), value(3), value(4)>() 
+    };
+
+    static constexpr auto expected_result{ "int test[4] = int[](1, 2, 3, 4);\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
 }
 
@@ -85,7 +95,7 @@ TEST(Arrays, CustomTypeArrayDeclaration)
 {
     static constexpr auto light{ create_light_struct() };
     static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-    static constexpr auto arr{ array<light.name, "test", num_lights>() };
+    static constexpr auto arr{ array<light.name, num_lights, "test">() };
     static constexpr auto expected_result{ "Light test[NUM_LIGHTS];\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
 }
@@ -94,11 +104,12 @@ TEST(Arrays, ArrayOfStructsAccess)
 {
     static constexpr auto light{ create_light_struct() };
     static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-    static constexpr auto arr{ make_array_with_fields<light.name, "test", num_lights, decltype(light)>() };
+    // TODO: a way to pass light.fields
+    static constexpr auto arr{ array<light.name, num_lights, "test", field<gl_vec4, "position">{}>() };
 
     static constexpr auto access_var{ variable<gl_int, "i">() };
-    static constexpr auto test{ arr.member_access_at<"position", access_var>() };
-    
+    static constexpr auto test{ arr.template member_access_at<"position", access_var>() };
+
     EXPECT_TRUE(test == "test[i].position");
 }
 

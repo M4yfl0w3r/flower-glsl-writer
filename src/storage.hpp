@@ -21,9 +21,9 @@ namespace mfl::detail
         }();
     }
 
-    template <typename... Fields>
+    template <auto... fields>
     static consteval auto process_members() {
-        return concat((Fields::declaration)...);
+        return concat((fields.declaration)...);
     }
 
     template <static_string type, static_string name>
@@ -35,14 +35,30 @@ namespace mfl::detail
     static consteval auto make_struct_body() {
         return concat(space, enclose_in_braces<new_line, value>(), line_end);
     }
+    
+    template <static_string value>
+    static consteval auto make_array_body() {
+        return concat(space, enclose_in_parenthesis<value>(), line_end);
+    }
 
-    template <static_string type, static_string name, static_string size, typename... Fields>
+    template <static_string type, static_string name, static_string size, auto... fields>
     static consteval auto make_storage_declaration() 
     {
-        if constexpr (enumify<type>() == Type::gl_struct) {
+        if constexpr (are_types_equal<type, Type::gl_struct>()) {
             return concat(
                 type_name_declaration<type, name>(),
-                make_struct_body<process_members<Fields...>()>()
+                make_struct_body<process_members<fields...>()>()
+            );
+        }
+        else if constexpr ((is_static_string<decltype(fields)> && ...) && sizeof...(fields) != 0) {
+            return concat(
+                type_name_declaration<type, name>(),
+                enclose_in_brackets<size>(),
+                equal, 
+                type,
+                left_bracket,
+                right_bracket,
+                make_aray_body<process_members<fields...>()>()
             );
         }
         else {
@@ -53,24 +69,42 @@ namespace mfl::detail
             );
         }
     } 
+
+    template <static_string type, auto... fields>
+    static consteval auto make_fields() 
+    {
+        static constexpr auto is_custom{ type == "Light" }; // TODO: tmp
+
+        if constexpr (sizeof...(fields) == 0) {
+            return std::tuple<>();
+        }
+        else if constexpr (are_types_equal<type, Type::gl_struct>() || is_custom) {
+            return std::tuple{ fields... };
+        }
+        else if constexpr ((is_static_string<decltype(fields)> && ...)) {
+            return std::tuple{ 
+                field<enumify<type>(), fields, "i">()...
+            };
+        }
+    }
 }
 
 namespace mfl
 {
-    template <auto t_type, static_string t_name, auto t_size, typename... t_fields>
+    template <auto t_type, static_string t_name, auto t_size, auto... t_fields>
     struct [[nodiscard]] storage
     {
         static constexpr auto name{ t_name };
         static constexpr auto type{ detail::make_type_expression<t_type>() };
         static constexpr auto size{ detail::expression_value<t_size>() };
-        static constexpr auto fields{ std::tuple<t_fields...>() };
+        static constexpr auto fields{ detail::make_fields<type, t_fields...>() };
         static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, size, t_fields...>() };
 
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
         {
             if constexpr (index < sizeof...(t_fields)) {
-                constexpr auto& field{ std::get<index>(fields) };
+                static constexpr auto& field{ std::get<index>(fields) };
 
                 if constexpr (field.name.size == field_name.size) {
                     if constexpr (field.name == field_name)
@@ -115,31 +149,24 @@ namespace mfl
         }
     };
 
-    template <static_string name, typename... Fields>
-    using structure = storage<Type::gl_struct, name, value(0), Fields...>;
+    template <static_string name, auto... fields>
+    using structure = storage<Type::gl_struct, name, value(0), fields...>;
 
-    template <auto type, static_string name, auto size, typename... Fields>
-    using array = storage<type, name, size, Fields...>;
-
-    template <auto type, static_string name, auto size, typename source>
-    static consteval auto make_array_with_fields() {
-        return std::apply([](auto... fields) {
-            return array<type, name, size, decltype(fields)...>{};
-        }, source::fields);
-    }
+    template <auto type, auto size, static_string name, auto... fields>
+    using array = storage<type, name, size, fields...>;
 
     static constexpr auto light_source{ 
         structure<
             "gl_LightSource",
-            field<Type::gl_vec4, "position">,
-            field<Type::gl_vec4, "ambient">,
-            field<Type::gl_vec4, "diffuse">,
-            field<Type::gl_vec3, "spotDirection">,
-            field<Type::gl_float, "spotCutoff">,
-            field<Type::gl_float, "spotExponent">,
-            field<Type::gl_float, "constantAttenuation">,
-            field<Type::gl_float, "linearAttenuation">,
-            field<Type::gl_float, "quadraticAttenuation">
+            field<Type::gl_vec4, "position">{},
+            field<Type::gl_vec4, "ambient">{},
+            field<Type::gl_vec4, "diffuse">{},
+            field<Type::gl_vec3, "spotDirection">{},
+            field<Type::gl_float, "spotCutoff">{},
+            field<Type::gl_float, "spotExponent">{},
+            field<Type::gl_float, "constantAttenuation">{},
+            field<Type::gl_float, "linearAttenuation">{},
+            field<Type::gl_float, "quadraticAttenuation">{}
         >()
     };
 }

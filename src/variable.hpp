@@ -167,8 +167,8 @@ namespace mfl
     template <Type type, static_string name, static_string value = "">
     using variable = variable_impl<type, name, Keyword::none, value>;
 
-    template <Type type, static_string name>
-    using field = variable_impl<type, name, Keyword::none, "">;
+    template <Type type, static_string name, static_string value = "">
+    using field = variable_impl<type, name, Keyword::none, value>;
 
     template <static_string name, static_string value>
     using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
