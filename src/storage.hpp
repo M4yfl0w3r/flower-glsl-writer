@@ -21,6 +21,25 @@ namespace mfl::detail
         }();
     }
 
+    template <bool is_last, typename Param>
+    static consteval auto format_param(Param param) 
+    {
+        if constexpr (is_last) {
+            return concat(Param::value);
+        }
+        else {
+            return concat(Param::value, comma, space);
+        }
+    }
+
+    template <typename... Params>
+    static consteval auto format_array_members() 
+    {
+        return []<auto... Indices>(std::index_sequence<Indices...>) {
+            return concat(format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...);
+        } (std::make_index_sequence<sizeof...(Params)>());
+    }
+
     template <static_string type, static_string name>
     static consteval auto type_name_declaration() {
         return concat(type, space, name);
@@ -38,7 +57,9 @@ namespace mfl::detail
     static consteval auto process_rvalue_array_members(const Fields& fields)
     {
         return std::apply([](auto... elems) consteval {
-            return concat((elems.name)...);
+            return concat( 
+                format_array_members<decltype(elems)...>()
+            );
         }, fields);
     }
 
