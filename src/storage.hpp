@@ -113,7 +113,7 @@ namespace mfl::detail
             return std::tuple{ fields... };
         }
         else if constexpr ((is_static_string<decltype(fields)> && ...)) {
-            return std::tuple{ field<enumify<type>(), fields, "i">()... };
+            return std::tuple{ field<enumify<type>(), "", fields>()... };
         }
     }
 }
@@ -132,6 +132,8 @@ namespace mfl
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
         {
+            // TODO: Handle the situation in which fields are made out of static_strings
+            // and by passing i return the element at the ith position.
             if constexpr (index < sizeof...(t_fields)) {
                 static constexpr auto& field{ std::get<index>(fields) };
 
