@@ -78,6 +78,7 @@ TEST(Arrays, ArrayDeclaration)
 {
     static constexpr auto arr{ array<gl_int, value(5), "test">() };
     static constexpr auto expected_result{ "int test[5];\n" };
+    print(arr.declaration);
     EXPECT_TRUE(arr.declaration == expected_result);
 }
 
@@ -86,6 +87,8 @@ TEST(Arrays, BaseTypeArrayDefinition)
     static constexpr auto arr{ 
         array<gl_int, value(4), "test", value(1), value(2), value(3), value(4)>() 
     };
+
+    print(arr.declaration);
 
     static constexpr auto expected_result{ "int test[4] = int[](1, 2, 3, 4);\n" };
     EXPECT_TRUE(arr.declaration == expected_result);

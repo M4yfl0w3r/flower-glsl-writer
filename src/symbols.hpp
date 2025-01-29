@@ -201,6 +201,10 @@ namespace mfl::detail
         return concat(left_brace, value..., right_brace);
     }
 
+    consteval auto empty_brackets() {
+        return enclose_in_brackets();
+    }
+
     template <static_string value>
     consteval auto create_body() {
         return concat(space, left_brace, new_line, value, right_brace, new_line);

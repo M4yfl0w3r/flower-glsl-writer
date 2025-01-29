@@ -21,14 +21,25 @@ namespace mfl::detail
         }();
     }
 
-    template <auto... fields>
-    static consteval auto process_members() {
-        return concat((fields.declaration)...);
-    }
-
     template <static_string type, static_string name>
     static consteval auto type_name_declaration() {
         return concat(type, space, name);
+    }
+
+    template <typename Fields>
+    static consteval auto process_struct_members(const Fields& fields) 
+    {
+        return std::apply([](auto... elems) consteval {
+            return concat((elems.declaration)...);
+        }, fields);
+    }
+
+    template <typename Fields>
+    static consteval auto process_rvalue_array_members(const Fields& fields)
+    {
+        return std::apply([](auto... elems) consteval {
+            return concat((elems.name)...);
+        }, fields);
     }
 
     template <static_string value>
@@ -38,34 +49,33 @@ namespace mfl::detail
     
     template <static_string value>
     static consteval auto make_array_body() {
-        return concat(space, enclose_in_parenthesis<value>(), line_end);
+        return concat(enclose_in_parenthesis<value>(), line_end);
     }
 
-    template <static_string type, static_string name, static_string size, auto... fields>
-    static consteval auto make_storage_declaration() 
+    template <static_string type, static_string name, static_string size, typename... Args>
+    static consteval auto make_storage_declaration(std::tuple<Args...> fields) 
     {
-        if constexpr (are_types_equal<type, Type::gl_struct>()) {
-            return concat(
-                type_name_declaration<type, name>(),
-                make_struct_body<process_members<fields...>()>()
-            );
-        }
-        else if constexpr ((is_static_string<decltype(fields)> && ...) && sizeof...(fields) != 0) {
-            return concat(
-                type_name_declaration<type, name>(),
-                enclose_in_brackets<size>(),
-                equal, 
-                type,
-                left_bracket,
-                right_bracket,
-                make_aray_body<process_members<fields...>()>()
-            );
-        }
-        else {
+        if constexpr (sizeof...(Args) == 0) {
             return concat(
                 type_name_declaration<type, name>(),
                 enclose_in_brackets<size>(),
                 line_end
+            );
+        }
+        else if constexpr (are_types_equal<type, Type::gl_struct>()) {
+            return concat(
+                type_name_declaration<type, name>(),
+                make_struct_body<process_struct_members(fields)>()
+            );
+        }
+        else if constexpr (is_glsl_type<decltype(enumify<type>())>) {
+            return concat(
+                type_name_declaration<type, name>(),
+                enclose_in_brackets<size>(),
+                equal,
+                type,
+                empty_brackets(),
+                make_array_body<process_rvalue_array_members(fields)>()
             );
         }
     } 
@@ -76,15 +86,13 @@ namespace mfl::detail
         static constexpr auto is_custom{ type == "Light" }; // TODO: tmp
 
         if constexpr (sizeof...(fields) == 0) {
-            return std::tuple<>();
+            return std::tuple{};
         }
         else if constexpr (are_types_equal<type, Type::gl_struct>() || is_custom) {
             return std::tuple{ fields... };
         }
         else if constexpr ((is_static_string<decltype(fields)> && ...)) {
-            return std::tuple{ 
-                field<enumify<type>(), fields, "i">()...
-            };
+            return std::tuple{ field<enumify<type>(), fields, "i">()... };
         }
     }
 }
@@ -98,7 +106,7 @@ namespace mfl
         static constexpr auto type{ detail::make_type_expression<t_type>() };
         static constexpr auto size{ detail::expression_value<t_size>() };
         static constexpr auto fields{ detail::make_fields<type, t_fields...>() };
-        static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, size, t_fields...>() };
+        static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, size>(fields) };
 
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
