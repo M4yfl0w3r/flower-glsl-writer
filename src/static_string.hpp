@@ -7,7 +7,7 @@
 namespace mfl::detail 
 {
     template <auto N, class Fn>
-    consteval auto for_each(Fn&& fn) 
+    static consteval auto for_each(Fn&& fn) 
     {
         [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
             (fn.template operator()<indicies>(), ...);
@@ -15,7 +15,7 @@ namespace mfl::detail
     }
 
     template <typename T, std::size_t... Indices>
-    consteval auto fill_buffer(std::string_view str, std::index_sequence<Indices...>) {
+    static consteval auto fill_buffer(std::string_view str, std::index_sequence<Indices...>) {
         return std::array{ str.at(Indices)..., '\0' };
     }
 }
@@ -43,11 +43,11 @@ namespace mfl
             return value[i];
         }
 
-        consteval bool operator==(const static_string& other) const {
+        consteval auto operator==(const static_string& other) const {
             return std::equal(std::begin(value), std::end(value), std::begin(other.value));
         }
         
-        consteval bool operator==(const char* other) const {
+        consteval auto operator==(const char* other) const {
             return std::string_view{ value } == other;
         }
 

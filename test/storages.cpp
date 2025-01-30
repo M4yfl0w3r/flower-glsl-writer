@@ -97,10 +97,8 @@ TEST(Arrays, BaseTypeArrayGetElement)
         array<gl_int, value(4), "test", value(1), value(2), value(3), value(4)>() 
     };
     
-    static constexpr auto expected_result{ "2" };
-    static constexpr auto value_at_index{ arr.at<1>() };
-    
-    EXPECT_TRUE(value_at_index == expected_result);
+    EXPECT_TRUE(arr.at<1>() == value(2));
+    EXPECT_TRUE(arr.at<3>() == value(4));
 }
 
 TEST(Arrays, CustomTypeArrayDeclaration)

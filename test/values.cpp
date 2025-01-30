@@ -1,0 +1,26 @@
+#include <gtest/gtest.h>
+
+#include "value.hpp"
+
+using namespace mfl;
+
+TEST(Values, compile_time_static_string_to_int_convertion)
+{
+    {
+        static constexpr auto test_str{ value(2) };
+        static constexpr auto test_int{ convert_to_int<test_str>() };
+        EXPECT_EQ(test_int, 2);
+    }
+
+    {
+        static constexpr auto test_str{ value(12) };
+        static constexpr auto test_int{ convert_to_int<test_str>() };
+        EXPECT_EQ(test_int, 12);
+    }
+
+    {
+        static constexpr auto test_str{ value(122) };
+        static constexpr auto test_int{ convert_to_int<test_str>() };
+        EXPECT_EQ(test_int, 122);
+    }
+}
