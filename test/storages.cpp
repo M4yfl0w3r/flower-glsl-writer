@@ -91,7 +91,19 @@ TEST(Arrays, BaseTypeArrayDefinition)
     EXPECT_TRUE(arr.declaration == expected_result);
 }
 
-TEST(Arrays, CustomTypeArrayDeclaration)    
+TEST(Arrays, BaseTypeArrayGetElement)
+{
+    static constexpr auto arr{ 
+        array<gl_int, value(4), "test", value(1), value(2), value(3), value(4)>() 
+    };
+    
+    static constexpr auto expected_result{ "2" };
+    static constexpr auto value_at_index{ arr.at<1>() };
+    
+    EXPECT_TRUE(value_at_index == expected_result);
+}
+
+TEST(Arrays, CustomTypeArrayDeclaration)
 {
     static constexpr auto light{ create_light_struct() };
     static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };

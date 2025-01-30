@@ -132,24 +132,28 @@ namespace mfl
         template <static_string field_name, std::size_t index = 0>
         static consteval auto get()
         {
-            // TODO: Handle the situation in which fields are made out of static_strings
-            // and by passing i return the element at the ith position.
-            if constexpr (index < sizeof...(t_fields)) {
-                static constexpr auto& field{ std::get<index>(fields) };
+            static_assert(index < sizeof...(t_fields), "Field not found with the given name.");
 
-                if constexpr (field.name.size == field_name.size) {
-                    if constexpr (field.name == field_name)
-                        return field;
-                    else
-                        return get<field_name, index+1>();
+            static constexpr auto& field{ std::get<index>(fields) };
+
+            if constexpr (field.name.size == field_name.size) {
+                if constexpr (field.name == field_name) {
+                    return field;
                 }
                 else {
                     return get<field_name, index+1>();
                 }
             }
             else {
-                static_assert(index < sizeof...(t_fields), "Field not found with the given name.");
+                return get<field_name, index+1>();
             }
+        }
+
+        template <auto index>
+        static consteval auto at()
+        {
+            static_assert(index < sizeof...(t_fields), "Index out of range.");
+            return std::get<index>(fields).value;
         }
 
         template <static_string field_name, static_string value>
