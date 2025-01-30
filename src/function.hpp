@@ -19,7 +19,7 @@ namespace mfl::detail
     template <bool is_last, typename Param>
     static consteval auto format_type_param() 
     {
-        static constexpr auto type_str{ stringify<Param::type>() };
+        constexpr auto type_str{ stringify<Param::type>() };
 
         if constexpr (is_last) {
             return concat(type_str, space, Param::name);
@@ -32,7 +32,7 @@ namespace mfl::detail
     template <bool is_last, bool is_builtin, typename Param>
     static consteval auto format_param(Param param) 
     {
-        static constexpr auto is_param_without_type{ is_builtin || Param::type == Type::empty };
+        constexpr auto is_param_without_type{ is_builtin || Param::type == Type::empty };
 
         if constexpr (is_param_without_type) {
             return format_no_type_param<is_last, Param>();
@@ -58,10 +58,10 @@ namespace mfl::detail
     template <Type t_output_type, static_string t_name, static_string t_body, static_string t_input>
     static consteval auto user_defined_or_builtin() 
     {
-        static constexpr auto output_type{ t_output_type };
-        static constexpr auto name{ t_name };
-        static constexpr auto is_fn_builtin{ output_type == Type::empty };
-        static constexpr auto type_str{ stringify<output_type>() };
+        constexpr auto output_type{ t_output_type };
+        constexpr auto name{ t_name };
+        constexpr auto is_fn_builtin{ output_type == Type::empty };
+        constexpr auto type_str{ stringify<output_type>() };
 
         if constexpr (is_fn_builtin) {
             return concat(t_name, enclose_in_parenthesis<t_input>());

@@ -7,8 +7,8 @@ namespace mfl::detail
     template <static_string name, Type type, Keyword key>
     static consteval auto make_declaration()
     {
-        static constexpr auto type_str{ stringify<type>() };
-        static constexpr auto key_str{ stringify<key>() };
+        constexpr auto type_str{ stringify<type>() };
+        constexpr auto key_str{ stringify<key>() };
 
         if constexpr (key == Keyword::none) {
             return concat(type_str, space, name, line_end);
@@ -21,8 +21,8 @@ namespace mfl::detail
     template <static_string name, Type type, Keyword key, static_string value>
     static consteval auto make_definition()
     {
-        static constexpr auto type_str{ stringify<type>() };
-        static constexpr auto key_str{ stringify<key>() };
+        constexpr auto type_str{ stringify<type>() };
+        constexpr auto key_str{ stringify<key>() };
 
         if constexpr (key == Keyword::none) {
             return concat(type_str, space, name, equal, value, line_end);
@@ -81,28 +81,28 @@ namespace mfl
         template <auto expression>
         static consteval auto assign() 
         {
-            static constexpr auto expr{ detail::expression_value<expression>() };
+            constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, equal, expr, line_end);
         }
 
         template <auto expression>
         static consteval auto add_assign() 
         {
-            static constexpr auto expr{ detail::expression_value<expression>() };
+            constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, plusequal, expr, line_end);
         }
 
         template <auto expression>
         static consteval auto multiply_assign() 
         {
-            static constexpr auto expr{ detail::expression_value<expression>() };
+            constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, timesequal, expr, line_end);
         }
 
         template <auto expression>
         static consteval auto multiply()
         {
-            static constexpr auto expr{ detail::expression_value<expression>() };
+            constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, times, expr);
         }
 

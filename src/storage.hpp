@@ -104,7 +104,7 @@ namespace mfl::detail
     template <static_string type, auto... fields>
     static consteval auto make_fields() 
     {
-        static constexpr auto is_custom{ type == "Light" }; // TODO: tmp
+        constexpr auto is_custom{ type == "Light" }; // TODO: tmp
 
         if constexpr (sizeof...(fields) == 0) {
             return std::tuple{};
@@ -134,7 +134,7 @@ namespace mfl
         {
             static_assert(index < sizeof...(t_fields), "Field not found with the given name.");
 
-            static constexpr auto& field{ std::get<index>(fields) };
+            constexpr auto& field{ std::get<index>(fields) };
 
             if constexpr (field.name.size == field_name.size) {
                 if constexpr (field.name == field_name) {

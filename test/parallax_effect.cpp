@@ -10,23 +10,23 @@ using enum mfl::Type;
 template <uniform depthmap, uniform colormap, in_var tex_coord, uniform deflection>
 consteval auto parallax_main_body()
 {
-    static constexpr auto depth_distortion{ 
+    constexpr auto depth_distortion{ 
         variable<gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
     };
 
-    static constexpr auto parallax_multiplier{ 
+    constexpr auto parallax_multiplier{ 
         variable<gl_float, "parallax_multiplier", depth_distortion.r()>() 
     };
 
-    static constexpr auto parallax{ 
+    constexpr auto parallax{ 
         variable<gl_vec2, "parallax", deflection * parallax_multiplier>() 
     };
 
-    static constexpr auto original{ 
+    constexpr auto original{ 
         variable<gl_vec4, "original", sample<colormap, tex_coord + parallax>()>() 
     };
 
-    static constexpr auto ret{ 
+    constexpr auto ret{ 
         frag_color<original>()
     };
     

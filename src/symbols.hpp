@@ -2,7 +2,9 @@
 
 #include "static_string.hpp"
 
+#if __cplusplus >= 202302L
 #include <print>
+#endif
 
 namespace mfl
 {
@@ -38,12 +40,14 @@ namespace mfl
         none
     };
 
+#if __cplusplus >= 202302L
     auto print(const auto& thing) 
     {
         for (auto e : thing) {
             std::print("{}", e);
         }
     }
+#endif
 
     inline constexpr auto plus{ static_string{ " + " } };
     inline constexpr auto minus{ static_string{ " - " } };
@@ -222,8 +226,8 @@ namespace mfl
 #define DEFINE_COMPARE_TEMPLATE(func_name, op)                            \
     template <auto st_expr, auto nd_expr>                                 \
     consteval auto func_name() {                                          \
-        static constexpr auto st{ detail::expression_value<st_expr>() };  \
-        static constexpr auto nd{ detail::expression_value<nd_expr>() };  \
+        constexpr auto st{ detail::expression_value<st_expr>() };  \
+        constexpr auto nd{ detail::expression_value<nd_expr>() };  \
         return concat(st, op, nd);                                        \
     }
 

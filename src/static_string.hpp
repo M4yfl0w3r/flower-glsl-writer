@@ -71,7 +71,7 @@ namespace mfl
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
     {
-        static constexpr auto N{ (... + len) - sizeof...(len) };
+        constexpr auto N{ (... + len) - sizeof...(len) };
         std::array<char, N + 1> result{};
         std::size_t index{ 0u };
         ([&] {
