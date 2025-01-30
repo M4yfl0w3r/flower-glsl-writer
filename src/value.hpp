@@ -27,6 +27,11 @@ namespace mfl
         return detail::convert_to_int_impl(str.value);
     }
 
+    template <static_string glsl_version>
+    static consteval auto set_version() {
+        return concat(static_string{ "#version " }, glsl_version);
+    }
+
     template <std::size_t N1, std::size_t N2>
     consteval auto operator+(const static_string<N1>& a, const static_string<N2>& b) {
         return concat(a, plus, b);

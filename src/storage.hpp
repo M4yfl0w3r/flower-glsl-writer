@@ -141,11 +141,11 @@ namespace mfl
                     return field;
                 }
                 else {
-                    return get<field_name, index+1>();
+                    return get<field_name, index + 1>();
                 }
             }
             else {
-                return get<field_name, index+1>();
+                return get<field_name, index + 1>();
             }
         }
 
