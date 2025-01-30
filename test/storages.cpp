@@ -114,8 +114,7 @@ TEST(Arrays, ArrayOfStructsAccess)
 {
     static constexpr auto light{ create_light_struct() };
     static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
-    // TODO: a way to pass light.fields
-    static constexpr auto arr{ array<light.name, num_lights, "test", field<gl_vec4, "position">{}>() };
+    static constexpr auto arr{ make_array_of_structs<light, num_lights, "test">() };
 
     static constexpr auto access_var{ variable<gl_int, "i">() };
     static constexpr auto test{ arr.template member_access_at<"position", access_var>() };

@@ -162,7 +162,8 @@ namespace mfl
         }
 
         template <static_string field_name, static_string value, auto access_expression>
-        static consteval auto assign_at() {
+        static consteval auto assign_at() 
+        {
             return concat(
                 name, 
                 detail::enclose_in_brackets<
@@ -173,7 +174,8 @@ namespace mfl
         }
 
         template <static_string field_name, auto access_expression>
-        static consteval auto member_access_at() {
+        static consteval auto member_access_at() 
+        {
             return concat(
                 name, 
                 detail::enclose_in_brackets<
@@ -189,6 +191,13 @@ namespace mfl
 
     template <auto type, auto size, static_string name, auto... fields>
     using array = storage<type, name, size, fields...>;
+
+    template <structure type, auto size, static_string name>
+    consteval auto make_array_of_structs() {
+        return std::apply([](auto... elems) consteval {
+            return array<type.name, size, name, elems...>{};
+        }, type.fields);
+    }
 
     static constexpr auto light_source{ 
         structure<
