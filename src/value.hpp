@@ -29,7 +29,7 @@ namespace mfl
 
     template <static_string glsl_version>
     static consteval auto set_version() {
-        return concat(static_string{ "#version " }, glsl_version);
+        return concat(static_string{ "#version " }, glsl_version, new_line);
     }
 
     template <std::size_t N1, std::size_t N2>

@@ -28,6 +28,7 @@ namespace mfl
         gl_uniform,
         gl_define,
         gl_in,
+        gl_out,
         gl_frag_color,
         gl_if,
         gl_for,
@@ -37,6 +38,8 @@ namespace mfl
         gl_array,
         gl_discard,
         gl_position,
+        gl_model_view_proj,
+        gl_vertex,
         none
     };
 
@@ -153,6 +156,8 @@ namespace mfl::detail
             return static_string{ "#define" };
         else if constexpr (keyword == Keyword::gl_in)
             return static_string{ "in" };
+        else if constexpr (keyword == Keyword::gl_out)
+            return static_string{ "out" };
         else if constexpr (keyword == Keyword::gl_frag_color)
             return static_string{ "gl_FragColor" };
         else if constexpr (keyword == Keyword::gl_position)
@@ -171,6 +176,10 @@ namespace mfl::detail
             return static_string{ "array" };
         else if constexpr (keyword == Keyword::gl_discard)
             return static_string{ "discard" };
+        else if constexpr (keyword == Keyword::gl_model_view_proj)
+            return static_string{ "gl_ModelViewProjectionMatrix" };
+        else if constexpr (keyword == Keyword::gl_vertex)
+            return static_string{ "gl_Vertex" };
         else
             return static_string{ "" };
     }

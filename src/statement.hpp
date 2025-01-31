@@ -18,7 +18,7 @@ namespace mfl::detail
         else if constexpr (assign == false && value != "") {
             return concat(stringify<key>(), space, value, line_end);
         }
-        else if constexpr (assign == false && value == "") { // return; continue;
+        else if constexpr (assign == false && value == "") { // return; continue; gl_model_view_proj
             return concat(stringify<key>(), line_end);
         }
         else { // if (value) {}
@@ -33,7 +33,8 @@ namespace mfl::detail
     }
 
     template <auto init_var, static_string condition, static_string increment>
-    static consteval auto make_for_loop() {
+    static consteval auto make_for_loop() 
+    {
         return concat(
             stringify<init_var.type>(), 
             space, 
@@ -68,6 +69,17 @@ namespace mfl
     using return_value_statement = statement<Keyword::gl_return, false, detail::expression_value<expression>()>;
 
     template <auto expression>
-    using frag_color = statement<Keyword::gl_frag_color, true, detail::expression_value<expression>()>;
+    using gl_frag_color = statement<Keyword::gl_frag_color, true, detail::expression_value<expression>()>;
+    
+    template <auto expression>
+    using gl_position = statement<Keyword::gl_position, true, detail::expression_value<expression>()>;
+
+    static constexpr auto gl_model_view_proj_matrix{ statement<Keyword::gl_model_view_proj, false, "", "">{} };
+    static constexpr auto gl_vertex{ statement<Keyword::gl_vertex, false, "", "">{} };
+
+    template <Keyword K1, bool A1, Keyword K2, bool A2> 
+    static consteval auto operator*(const statement<K1, A1>&, const statement<K2, A2>&) {
+        return concat(detail::stringify<K1>(), times, detail::stringify<K2>());
+    }
 }
 

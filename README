@@ -18,6 +18,7 @@ GLSL writer
 TODO
 
     * a struct of all declared variables to return lvalues?
+    * struct uniforms
     * lvalue arrays - structure class - struct + array
     * custom type registration (Light)
     * type system validation

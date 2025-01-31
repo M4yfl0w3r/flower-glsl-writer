@@ -163,6 +163,9 @@ namespace mfl
 
     template <Type type, static_string name>
     using in_var = variable_impl<type, name, Keyword::gl_in>;
+    
+    template <Type type, static_string name>
+    using out_var = variable_impl<type, name, Keyword::gl_out>;
 
     template <Type type, static_string name, static_string value = "">
     using variable = variable_impl<type, name, Keyword::none, value>;

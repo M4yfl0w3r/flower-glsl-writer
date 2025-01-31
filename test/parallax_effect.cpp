@@ -8,26 +8,26 @@ using namespace mfl;
 using enum mfl::Type;
 
 template <uniform depthmap, uniform colormap, in_var tex_coord, uniform deflection>
-consteval auto parallax_main_body()
+static consteval auto parallax_main_body()
 {
     constexpr auto depth_distortion{ 
-        variable<gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>()
+        variable<gl_vec4, "depth_distortion", sample<depthmap, tex_coord>()>{}
     };
 
     constexpr auto parallax_multiplier{ 
-        variable<gl_float, "parallax_multiplier", depth_distortion.r()>() 
+        variable<gl_float, "parallax_multiplier", depth_distortion.r()>{}
     };
 
     constexpr auto parallax{ 
-        variable<gl_vec2, "parallax", deflection * parallax_multiplier>() 
+        variable<gl_vec2, "parallax", deflection * parallax_multiplier>{}
     };
 
     constexpr auto original{ 
-        variable<gl_vec4, "original", sample<colormap, tex_coord + parallax>()>() 
+        variable<gl_vec4, "original", sample<colormap, tex_coord + parallax>()>{}
     };
 
     constexpr auto ret{ 
-        frag_color<original>()
+        gl_frag_color<original>{}
     };
     
     return concat_all(
@@ -41,14 +41,14 @@ consteval auto parallax_main_body()
 
 TEST(Effects, Parallax)
 {
-    static constexpr auto colormap{ uniform<gl_sampler2D, "colorMap">() };
-    static constexpr auto depthmap{ uniform<gl_sampler2D, "depthMap">() };
-    static constexpr auto deflection{ uniform<gl_vec2, "deflection">() };
+    static constexpr auto colormap{ uniform<gl_sampler2D, "colorMap">{} };
+    static constexpr auto depthmap{ uniform<gl_sampler2D, "depthMap">{} };
+    static constexpr auto deflection{ uniform<gl_vec2, "deflection">{} };
 
-    static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
+    static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">{} };
 
     static constexpr auto body{ parallax_main_body<depthmap, colormap, tex_coord, deflection>() };
-    static constexpr auto main_fn_impl{ main_fn<body>() };
+    static constexpr auto main_fn_impl{ main_fn<body>{} };
     
     static constexpr auto result {
         concat_all(
