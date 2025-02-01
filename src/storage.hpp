@@ -149,11 +149,22 @@ namespace mfl
             }
         }
 
-        template <auto index>
+        template <std::size_t index>
         static consteval auto at()
         {
             static_assert(index < sizeof...(t_fields), "Index out of range.");
             return std::get<index>(fields).value;
+        }
+
+        template <auto access_expression>
+        static consteval auto at_expression()
+        {
+            return concat(
+                name,
+                detail::enclose_in_brackets<
+                    detail::expression_value<access_expression>()
+                >()
+            );
         }
 
         template <static_string field_name, static_string value>

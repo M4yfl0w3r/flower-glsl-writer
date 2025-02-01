@@ -41,6 +41,7 @@ namespace mfl
         gl_model_view_proj,
         gl_vertex,
         gl_multi_tex_coord_0,
+        gl_tex_coord,
         none
     };
 
@@ -186,6 +187,8 @@ namespace mfl::detail
             return static_string{ "gl_Vertex" };
         else if constexpr (keyword == Keyword::gl_multi_tex_coord_0)
             return static_string{ "gl_MultiTexCoord0" }; 
+        else if constexpr (keyword == Keyword::gl_tex_coord)
+            return static_string{ "gl_TexCoord" };
         else
             return static_string{ "" };
     }

@@ -2,6 +2,7 @@
 
 #include "statement.hpp"
 #include "function.hpp"
+#include "storage.hpp"
 #include "value.hpp"
 
 using namespace mfl;
@@ -30,4 +31,11 @@ TEST(BuiltIn, ReadOnlyBuiltInVariables)
     EXPECT_TRUE(gl_vertex.declaration == "gl_Vertex");
 }
 
+TEST(BuiltIn, Access)
+{
+    static constexpr auto tex_coord{ gl_tex_coord };
+    static constexpr auto access_expression{ tex_coord.at_expression<value(0)>() };
+    static constexpr auto expected_result{ "gl_TexCoord[0]" };
+    EXPECT_TRUE(access_expression == expected_result);
+}
 
