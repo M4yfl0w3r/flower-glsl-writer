@@ -101,6 +101,18 @@ TEST(Arrays, BaseTypeArrayGetElement)
     EXPECT_TRUE(arr.at<3>() == value(4));
 }
 
+TEST(Arrays, BaseTypeArrayAccessExpression)
+{
+    static constexpr auto arr{ 
+        array<gl_int, value(4), "array", value(1), value(2)>{}
+    };
+
+    static constexpr auto access_var{ variable<gl_int, "i">{} };
+
+    EXPECT_TRUE(arr.at_expression<value(1)>() == "array[1]");
+    EXPECT_TRUE(arr.at_expression<access_var>() == "array[i]");
+}
+
 TEST(Arrays, CustomTypeArrayDeclaration)
 {
     static constexpr auto light{ create_light_struct() };

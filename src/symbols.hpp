@@ -199,8 +199,11 @@ namespace mfl::detail
         return [&] { 
             if constexpr (is_static_string<decltype(expression)>)
                 return expression;
-            else if constexpr (requires { expression.name; } ) {
+            else if constexpr (requires { expression.name; }) {
                 return expression.name;
+            }
+            else if constexpr (requires { expression.declaration; }) {
+                return expression.declaration;
             }
             else {
                 static_assert(false, "Unsupported expression type in expression_value");

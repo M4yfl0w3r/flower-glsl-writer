@@ -172,7 +172,7 @@ namespace mfl
             return concat(name, sym_dot, get<field_name>().template assign<value>());
         }
 
-        template <static_string field_name, static_string value, auto access_expression>
+        template <static_string field_name, auto value, auto access_expression>
         static consteval auto assign_at() 
         {
             return concat(
@@ -180,7 +180,20 @@ namespace mfl
                 detail::enclose_in_brackets<
                     detail::expression_value<access_expression>()>(),
                 sym_dot, 
-                get<field_name>().template assign<value>()
+                get<field_name>().template assign<detail::expression_value<value>()>()
+            );
+        }
+
+        template <auto value, auto access_expression>
+        static constexpr auto assign_at()
+        {
+            return concat(
+                name, 
+                detail::enclose_in_brackets<
+                    detail::expression_value<access_expression>()>(),
+                equal,
+                detail::expression_value<value>(),
+                line_end
             );
         }
 

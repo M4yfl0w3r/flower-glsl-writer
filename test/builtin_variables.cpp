@@ -39,3 +39,11 @@ TEST(BuiltIn, Access)
     EXPECT_TRUE(access_expression == expected_result);
 }
 
+TEST(BuiltIn, Assign)
+{
+    static constexpr auto tex_coord{ gl_tex_coord };
+    static constexpr auto assign_expression{ tex_coord.assign_at<gl_multi_tex_coord_0, value(0)>() };
+    static constexpr auto expected_result{ "gl_TexCoord[0] = gl_MultiTexCoord0;\n" };
+    EXPECT_TRUE(assign_expression == expected_result);
+}
+
