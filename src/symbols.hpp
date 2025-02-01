@@ -40,6 +40,7 @@ namespace mfl
         gl_position,
         gl_model_view_proj,
         gl_vertex,
+        gl_multi_tex_coord_0,
         none
     };
 
@@ -89,6 +90,9 @@ namespace mfl::detail
 
     template <Keyword key>
     concept is_array = (key == Keyword::gl_array);
+
+    template <Keyword key>
+    concept is_built_in_var = (key == Keyword::gl_multi_tex_coord_0 || key == Keyword::gl_vertex || key == Keyword::gl_model_view_proj);
 
     template <typename T>
     concept is_glsl_type = std::is_enum_v<T> && std::is_same_v<std::decay_t<T>, Type>;
@@ -180,6 +184,8 @@ namespace mfl::detail
             return static_string{ "gl_ModelViewProjectionMatrix" };
         else if constexpr (keyword == Keyword::gl_vertex)
             return static_string{ "gl_Vertex" };
+        else if constexpr (keyword == Keyword::gl_multi_tex_coord_0)
+            return static_string{ "gl_MultiTexCoord0" }; 
         else
             return static_string{ "" };
     }

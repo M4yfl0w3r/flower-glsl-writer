@@ -43,11 +43,11 @@ namespace mfl
             return value[i];
         }
 
-        consteval auto operator==(const static_string& other) const {
+        consteval auto operator==(const static_string& other) const -> bool {
             return std::equal(std::begin(value), std::end(value), std::begin(other.value));
         }
         
-        consteval auto operator==(const char* other) const {
+        consteval auto operator==(const char* other) const -> bool {
             return std::string_view{ value } == other;
         }
 

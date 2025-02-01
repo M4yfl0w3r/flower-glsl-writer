@@ -12,13 +12,16 @@ namespace mfl::detail
         if constexpr (key == Keyword::gl_if || key == Keyword::gl_for) {
             return concat(stringify<key>(), space, enclose_in_parenthesis<value>(), create_body<body>());
         }
+        else if constexpr (is_built_in_var<key>) {
+           return concat(stringify<key>());
+        }
         else if constexpr (assign == true) { // gl_FragColor = value;
            return concat(stringify<key>(), equal, value, line_end);
         }
         else if constexpr (assign == false && value != "") {
             return concat(stringify<key>(), space, value, line_end);
         }
-        else if constexpr (assign == false && value == "") { // return; continue; gl_model_view_proj
+        else if constexpr (assign == false && value == "") { // return; continue
             return concat(stringify<key>(), line_end);
         }
         else { // if (value) {}
@@ -76,6 +79,7 @@ namespace mfl
 
     static constexpr auto gl_model_view_proj_matrix{ statement<Keyword::gl_model_view_proj, false, "", "">{} };
     static constexpr auto gl_vertex{ statement<Keyword::gl_vertex, false, "", "">{} };
+    static constexpr auto gl_multi_tex_coord_0{ statement<Keyword::gl_multi_tex_coord_0, false, "", "">{} };
 
     template <Keyword K1, bool A1, Keyword K2, bool A2> 
     static consteval auto operator*(const statement<K1, A1>&, const statement<K2, A2>&) {

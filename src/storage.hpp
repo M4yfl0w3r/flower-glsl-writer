@@ -213,5 +213,9 @@ namespace mfl
             field<Type::gl_float, "quadraticAttenuation">{}
         >()
     };
+
+    static constexpr auto gl_tex_coord{
+        array<Type::gl_vec4, value(32), "gl_TexCoord">{}
+    };
 }
 

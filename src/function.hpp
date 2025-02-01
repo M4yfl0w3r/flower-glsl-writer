@@ -64,10 +64,10 @@ namespace mfl::detail
         constexpr auto type_str{ stringify<output_type>() };
 
         if constexpr (is_fn_builtin) {
-            return concat(t_name, enclose_in_parenthesis<t_input>());
+            return concat(name, enclose_in_parenthesis<t_input>());
         }
         else {
-            return concat(type_str, space, t_name, enclose_in_parenthesis<t_input>(), create_body<t_body>());
+            return concat(type_str, space, name, enclose_in_parenthesis<t_input>(), create_body<t_body>());
         }
     }
 }
