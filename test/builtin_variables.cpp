@@ -24,6 +24,12 @@ TEST(BuiltIn, gl_FragColor)
     }
 }
 
+TEST(BuiltIn, OperationsOnBuiltInVariables)
+{
+    static constexpr auto res{ gl_position<gl_model_view_proj_matrix * gl_vertex>{} };
+    EXPECT_TRUE(res.declaration == "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n");
+}
+
 TEST(BuiltIn, ReadOnlyBuiltInVariables)
 {
     EXPECT_TRUE(gl_model_view_proj_matrix.declaration == "gl_ModelViewProjectionMatrix");
@@ -42,8 +48,9 @@ TEST(BuiltIn, Access)
 TEST(BuiltIn, Assign)
 {
     static constexpr auto tex_coord{ gl_tex_coord };
-    static constexpr auto assign_expression{ tex_coord.assign_at<gl_multi_tex_coord_0, value(0)>() };
-    static constexpr auto expected_result{ "gl_TexCoord[0] = gl_MultiTexCoord0;\n" };
+    static constexpr auto test_var{ variable<gl_int, "test">{} };
+    static constexpr auto assign_expression{ tex_coord.assign_at<test_var, value(0)>() };
+    static constexpr auto expected_result{ "gl_TexCoord[0] = test;\n" };
     EXPECT_TRUE(assign_expression == expected_result);
 }
 

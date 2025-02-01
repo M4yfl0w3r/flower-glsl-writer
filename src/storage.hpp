@@ -239,7 +239,7 @@ namespace mfl
     };
 
     static constexpr auto gl_tex_coord{
-        array<Type::gl_vec4, value(32), "gl_TexCoord">{}
+        structure<"gl_TexCoord", field<Type::empty, "st">{}>{}
     };
 }
 
