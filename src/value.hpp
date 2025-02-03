@@ -8,11 +8,55 @@ namespace mfl::detail
         return c >= '0' && c <= '9';
     }
 
-    static consteval int convert_to_int_impl(const char* str, int value = 0) 
+    static consteval auto convert_to_int_impl(const char* str, int value = 0) -> int
     {
         return is_digit(*str) 
                ? convert_to_int_impl(str + 1, (*str - '0') + value * 10)
                : value;
+    }
+
+    static consteval auto num_digits(int num, int count = 0) -> unsigned {
+        return num == 0 
+               ? (count == 0 ? 1 : count) 
+               : num_digits(num / 10, count + 1);
+    }
+
+    template <int num, int... digits>
+    struct to_digit_seq : to_digit_seq<num / 10, num % 10, digits...> {};
+
+    template <int... digits>
+    struct to_digit_seq<0, digits...> {
+        using type = std::integer_sequence<int, digits...>;
+    };
+    
+    template <>
+    struct to_digit_seq<0> {
+        using type = std::integer_sequence<int, 0>;
+    };
+
+    template <int num>
+    using make_digit_seq = typename to_digit_seq<(num < 0 ? -num : num)>::type;
+
+    template <int... digits>
+    constexpr auto make_digit_array(std::integer_sequence<int, digits...>) {
+        return std::array{ digits... };
+    }
+
+    template <int num>
+    static consteval auto convert_to_static_string_impl()
+    {
+        // TODO: Handle negative values 
+        char buffer[num_digits(num) + 1] {};
+        buffer[num_digits(num)] = '\0';
+
+        static constexpr auto chars{ std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' } };
+        static constexpr auto digits{ make_digit_array(make_digit_seq<num>{}) };
+
+        [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
+            ((buffer[indicies] = chars.at(digits.at(indicies))), ...);
+        } (std::make_index_sequence<num_digits(num)>());
+        
+        return static_string{ buffer };
     }
 }
 
@@ -24,6 +68,11 @@ namespace mfl
     template <static_string str>
     consteval auto convert_to_int() {
         return detail::convert_to_int_impl(str.value);
+    }
+
+    template <int num>
+    consteval auto convert_to_string() {
+        return detail::convert_to_static_string_impl<num>();
     }
 
     template <static_string glsl_version>

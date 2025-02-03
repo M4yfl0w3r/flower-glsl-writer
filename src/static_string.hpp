@@ -6,14 +6,6 @@
 
 namespace mfl::detail 
 {
-    template <auto N, class Fn>
-    static consteval auto for_each(Fn&& fn) 
-    {
-        [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
-            (fn.template operator()<indicies>(), ...);
-        } (std::make_index_sequence<N>());
-    }
-
     template <typename T, std::size_t... Indices>
     static consteval auto fill_buffer(std::string_view str, std::index_sequence<Indices...>) {
         return std::array{ str.at(Indices)..., '\0' };

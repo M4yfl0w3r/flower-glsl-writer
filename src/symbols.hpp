@@ -98,6 +98,14 @@ namespace mfl::detail
     template <typename T>
     concept is_glsl_type = std::is_enum_v<T> && std::is_same_v<std::decay_t<T>, Type>;
 
+    template <auto N, class Fn>
+    consteval auto for_each(Fn&& fn) 
+    {
+        [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
+            (fn.template operator()<indicies>(), ...);
+        } (std::make_index_sequence<N>());
+    }
+
     template <Type output_type>
     consteval auto stringify()
     {
