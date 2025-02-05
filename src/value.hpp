@@ -38,7 +38,7 @@ namespace mfl::detail
     using make_digit_seq = typename to_digit_seq<(num < 0 ? -num : num)>::type;
 
     template <int... digits>
-    constexpr auto make_digit_array(std::integer_sequence<int, digits...>) {
+    static consteval auto make_digit_array(std::integer_sequence<int, digits...>) {
         return std::array{ digits... };
     }
 
@@ -76,7 +76,7 @@ namespace mfl
     }
 
     template <static_string glsl_version>
-    static consteval auto set_version() {
+    consteval auto set_version() {
         return concat(static_string{ "#version " }, glsl_version, static_string{ "\n" });
     }
 

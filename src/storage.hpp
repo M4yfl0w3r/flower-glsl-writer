@@ -116,6 +116,17 @@ namespace mfl::detail
             return std::tuple{ field<enumify<type>(), "", fields>()... };
         }
     }
+    // TODO: each file should handle its conversions
+    template <auto value>
+    static consteval auto convert_if_integral() 
+    {
+        if constexpr (std::is_integral_v<decltype(value)>) {
+            return convert_to_string<value>();
+        }
+        else {
+            return value;
+        }
+    }
 }
 
 namespace mfl
@@ -214,7 +225,7 @@ namespace mfl
     using structure = storage<Type::gl_struct, name, value(0), fields...>;
 
     template <auto type, auto size, static_string name, auto... fields>
-    using array = storage<type, name, size, fields...>;
+    using array = storage<type, name, detail::convert_if_integral<size>(), fields...>;
 
     template <structure type, auto size, static_string name>
     consteval auto make_array_of_structs() {
