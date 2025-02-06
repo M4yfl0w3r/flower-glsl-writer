@@ -45,6 +45,12 @@ namespace mfl::detail
         return std::array{ digits... };
     }
 
+    static consteval auto pow(int num, unsigned n) -> int {
+        return n == 0
+               ? 1 
+               : num * pow(num, n - 1);
+    }
+
     template <int num>
     static consteval auto convert_int_to_string_impl()
     {
@@ -62,11 +68,11 @@ namespace mfl::detail
         return static_string{ buffer };
     }
 
-    template <float num>
+    template <float num, int precision = 2>
     static consteval auto convert_float_to_string_impl()
     {
         constexpr auto whole{ num_digits(static_cast<int>(num)) };
-        constexpr auto multiplied{ num * precision_multiplier };
+        constexpr auto multiplied{ num * pow(10, precision)};
         constexpr auto full_number{ convert_int_to_string_impl<static_cast<int>(multiplied)>() };
         constexpr auto result{ insert_delimiter_at<full_number, whole, '.'>() };
         return result;
