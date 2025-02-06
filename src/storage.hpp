@@ -109,6 +109,9 @@ namespace mfl::detail
         if constexpr (sizeof...(fields) == 0) {
             return std::tuple{};
         }
+        else if constexpr ((is_supported_base_type<decltype(fields)> && ...)) {
+            return std::tuple{ field<enumify<type>(), "", convert_to_string<fields>()>()... };
+        }
         else if constexpr (are_types_equal<type, Type::gl_struct>() || is_custom) {
             return std::tuple{ fields... };
         }

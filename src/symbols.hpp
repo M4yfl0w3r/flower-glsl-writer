@@ -98,6 +98,9 @@ namespace mfl::detail
     template <typename T>
     concept is_glsl_type = std::is_enum_v<T> && std::is_same_v<std::decay_t<T>, Type>;
 
+    template <typename T>
+    concept is_supported_base_type = std::is_integral_v<T> || std::is_floating_point_v<T>;
+
     template <auto N, class Fn>
     consteval auto for_each(Fn&& fn) 
     {

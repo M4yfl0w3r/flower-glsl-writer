@@ -83,18 +83,23 @@ TEST(Arrays, ArrayDeclaration)
 
 TEST(Arrays, BaseTypeArrayDefinition)
 {
-    static constexpr auto arr{ 
-        array<gl_int, 4, "test", value(1), value(2), value(3), value(4)>() 
-    };
+    {
+        static constexpr auto arr{ array<gl_int, 4, "test", 1, 2, 3, 4>() };
+        static constexpr auto expected_result{ "int test[4] = int[](1, 2, 3, 4);\n" };
+        EXPECT_TRUE(arr.declaration == expected_result);
+    }
 
-    static constexpr auto expected_result{ "int test[4] = int[](1, 2, 3, 4);\n" };
-    EXPECT_TRUE(arr.declaration == expected_result);
+    {
+        static constexpr auto arr{ array<gl_float, 3, "test", 1.0f, 2.0f, 3.0f>() };
+        static constexpr auto expected_result{ "float test[3] = float[](1.0, 2.0, 3.0);\n" };
+        EXPECT_TRUE(arr.declaration == expected_result);
+    }
 }
 
 TEST(Arrays, BaseTypeArrayGetElement)
 {
     static constexpr auto arr{ 
-        array<gl_int, 4, "test", value(1), value(2), value(3), value(4)>() 
+        array<gl_int, 4, "test", 1, 2, 3, 4>() 
     };
     
     EXPECT_TRUE(arr.at<1>() == value(2));
@@ -104,7 +109,7 @@ TEST(Arrays, BaseTypeArrayGetElement)
 TEST(Arrays, BaseTypeArrayAccessExpression)
 {
     static constexpr auto arr{ 
-        array<gl_int, 4, "array", value(1), value(2)>{}
+        array<gl_int, 4, "array", 1, 2>{}
     };
 
     static constexpr auto access_var{ variable<gl_int, "i">{} };

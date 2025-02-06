@@ -68,7 +68,7 @@ namespace mfl::detail
         return static_string{ buffer };
     }
 
-    template <float num, int precision = 2>
+    template <float num, int precision = 1>
     static consteval auto convert_float_to_string_impl()
     {
         constexpr auto whole{ num_digits(static_cast<int>(num)) };
