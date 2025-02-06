@@ -4,14 +4,17 @@
 
 namespace mfl::detail
 {
+    static constexpr auto default_float_precision{ 6 };
+    static constexpr auto precision_multiplier{ 1000000 };
+
     static consteval auto is_digit(char c) {
         return c >= '0' && c <= '9';
     }
 
-    static consteval auto convert_to_int_impl(const char* str, int value = 0) -> int
+    static consteval auto convert_string_to_int_impl(const char* str, int value = 0) -> int
     {
         return is_digit(*str) 
-               ? convert_to_int_impl(str + 1, (*str - '0') + value * 10)
+               ? convert_string_to_int_impl(str + 1, (*str - '0') + value * 10)
                : value;
     }
 
@@ -43,20 +46,30 @@ namespace mfl::detail
     }
 
     template <int num>
-    static consteval auto convert_to_static_string_impl()
+    static consteval auto convert_int_to_string_impl()
     {
         // TODO: Handle negative values 
         char buffer[num_digits(num) + 1] {};
         buffer[num_digits(num)] = '\0';
 
-        static constexpr auto chars{ std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' } };
-        static constexpr auto digits{ make_digit_array(make_digit_seq<num>{}) };
+        constexpr auto chars{ std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' } };
+        constexpr auto digits{ make_digit_array(make_digit_seq<num>{}) };
 
         [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
             ((buffer[indicies] = chars.at(digits.at(indicies))), ...);
         } (std::make_index_sequence<num_digits(num)>());
         
         return static_string{ buffer };
+    }
+
+    template <float num>
+    static consteval auto convert_float_to_string_impl()
+    {
+        constexpr auto whole{ num_digits(static_cast<int>(num)) };
+        constexpr auto multiplied{ num * precision_multiplier };
+        constexpr auto full_number{ convert_int_to_string_impl<static_cast<int>(multiplied)>() };
+        constexpr auto result{ insert_delimiter_at<full_number, whole, '.'>() };
+        return result;
     }
 }
 
@@ -67,12 +80,16 @@ namespace mfl
 
     template <static_string str>
     consteval auto convert_to_int() {
-        return detail::convert_to_int_impl(str.value);
+        return detail::convert_string_to_int_impl(str.value);
     }
 
-    template <int num>
-    consteval auto convert_to_string() {
-        return detail::convert_to_static_string_impl<num>();
+    template <auto number>
+    consteval auto convert_to_string() 
+    {
+        if constexpr (std::is_integral_v<decltype(number)>)
+            return detail::convert_int_to_string_impl<number>();
+        else if constexpr (std::is_floating_point_v<decltype(number)>)
+            return detail::convert_float_to_string_impl<number>();
     }
 
     template <static_string glsl_version>

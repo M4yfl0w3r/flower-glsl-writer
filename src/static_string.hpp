@@ -10,6 +10,16 @@ namespace mfl::detail
     static consteval auto fill_buffer(std::string_view str, std::index_sequence<Indices...>) {
         return std::array{ str.at(Indices)..., '\0' };
     }
+
+    template <class Fn, std::size_t... Indices>
+    static consteval auto unroll_impl(Fn&& fn, std::index_sequence<Indices...>) {
+        ((fn(std::integral_constant<std::size_t, Indices>{})), ...);
+    }
+
+    template <std::size_t N, class Fn>
+    static consteval auto unroll(Fn&& fn) {
+       unroll_impl(std::forward<Fn>(fn), std::make_index_sequence<N>());
+    }
 }
 
 namespace mfl
@@ -59,6 +69,20 @@ namespace mfl
 
     template <typename T>
     concept is_static_string = std::same_as<T, static_string<T::size + 1>>;
+
+    template <static_string string, std::size_t index, char delimiter>
+    consteval auto insert_delimiter_at() 
+    {
+        constexpr auto N{ string.size + 1 };
+        std::array<char, N+1> result{};
+
+        detail::unroll<index>([&](std::size_t i){ result.at(i) = string.at(i); });
+        result.at(index) = delimiter;
+        detail::unroll<N - index>([&](std::size_t i){ result.at(i + index + 1) = string.at(i + index); });
+
+        result[N] = '\0';
+        return static_string{ result };
+    }
 
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
