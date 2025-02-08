@@ -69,18 +69,21 @@ namespace mfl::detail
     static consteval auto convert_float_to_string_impl()
     {
         constexpr auto whole{ num_digits(static_cast<int>(num)) };
-        constexpr auto multiplied{ num * pow(10, precision)};
-        constexpr auto full_number{ convert_int_to_string_impl<static_cast<int>(multiplied)>() };
-        constexpr auto result{ insert_delimiter_at<full_number, whole, '.'>() };
-        return result;
+        constexpr auto multiplied_num{ num * pow(10, precision)};
+
+        if constexpr (multiplied_num != 0) {
+            constexpr auto full_num{ convert_int_to_string_impl<static_cast<int>(multiplied_num)>() };
+            constexpr auto num_with_delim{ insert_delimiter_at<full_num, whole, '.'>() };
+            return insert_at_back<num_with_delim, 'f'>();
+        }
+        else {
+            return static_string{ "0.0f" }; // TODO: what if the precision is different?
+        }
     }
 }
 
 namespace mfl
 {
-// TODO: An ugly macro for now, will change it later to compile-time convertion
-#define value(x) static_string(#x)
-
     template <static_string str>
     consteval auto convert_to_int() {
         return detail::convert_string_to_int_impl(str.value);

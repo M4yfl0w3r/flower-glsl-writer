@@ -14,8 +14,8 @@ static consteval auto main_body()
 {
     return concat(
         gl_position<gl_model_view_proj_matrix * gl_vertex>{}.declaration,
-        gl_tex_coord.assign_at<gl_multi_tex_coord_0, value(0)>(),
-        tex_coord.template assign<gl_tex_coord.member_access_at<"st", value(0)>()>()
+        gl_tex_coord.assign_at<gl_multi_tex_coord_0, 0>(),
+        tex_coord.template assign<gl_tex_coord.member_access_at<"st", 0>()>()
     );
 }
 

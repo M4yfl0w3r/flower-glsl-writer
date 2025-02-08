@@ -44,22 +44,20 @@ namespace mfl::detail
 
 namespace mfl 
 {
-    template <Type t_type, static_string t_name, Keyword t_key, static_string t_value = "">
+    template <Type t_type, static_string t_name, Keyword t_key, auto t_value = static_string{ "" }>
     struct [[nodiscard]] variable_impl
     {
         static constexpr auto name{ t_name };
         static constexpr auto type{ t_type };
-        static constexpr auto value{ t_value };
+        static constexpr auto value{ detail::expression_value<t_value>() };
         static constexpr auto key{ t_key };
 
-        static constexpr auto declaration{ 
+        static constexpr auto declaration{
             [] {
-                if constexpr (value == "") {
+                if constexpr (value == "")
                     return detail::make_declaration<name, type, key>();
-                }
-                else {
+                else
                     return detail::make_definition<name, type, key, value>();
-                }
             }()
         };
 
@@ -127,34 +125,34 @@ namespace mfl
     };
 
     // TODO: a better structure for operators
-    template <Type T, static_string N1, Keyword K1, static_string V1,
-                      static_string N2, Keyword K2, static_string V2>
+    template <Type T, static_string N1, Keyword K1, auto V1,
+                      static_string N2, Keyword K2, auto V2>
     consteval auto operator+(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
         return concat(left_parenthesis, N1, plus, N2, right_parenthesis);
     }
 
-    template <Type T1, static_string N1, Keyword K1, static_string V1,
-              Type T2, static_string N2, Keyword K2, static_string V2>
+    template <Type T1, static_string N1, Keyword K1, auto V1,
+              Type T2, static_string N2, Keyword K2, auto V2>
     consteval auto operator*(const variable_impl<T1, N1, K1, V1>&, const variable_impl<T2, N2, K2, V2>&) {
         return concat(N1, times, N2);
     }
 
-    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
     consteval auto operator*(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
         return concat(left_parenthesis, str, times, N, right_parenthesis);
     }
 
-    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
     consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
         return concat(left_parenthesis, N, times, str, right_parenthesis);
     }
 
-    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
     consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
         return concat(left_parenthesis, N, minus, str, right_parenthesis);
     }
 
-    template <Type T, static_string N, Keyword K, static_string V, std::size_t len>
+    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
     consteval auto operator-(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
         return concat(left_parenthesis, str, minus, N, right_parenthesis);
     }
@@ -168,13 +166,13 @@ namespace mfl
     template <Type type, static_string name>
     using out_var = variable_impl<type, name, Keyword::gl_out>;
 
-    template <Type type, static_string name, static_string value = "">
+    template <Type type, static_string name, auto value = static_string{ "" }>
     using variable = variable_impl<type, name, Keyword::none, value>;
 
-    template <Type type, static_string name, static_string value = "">
+    template <Type type, static_string name, auto value = static_string{ "" }>
     using field = variable_impl<type, name, Keyword::none, value>;
 
-    template <static_string name, static_string value>
+    template <static_string name, auto value>
     using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
 }
 

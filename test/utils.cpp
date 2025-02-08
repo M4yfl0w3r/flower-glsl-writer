@@ -19,7 +19,7 @@ TEST(Utils, expression_value)
     EXPECT_TRUE("5" == expression_value<st_expr>());
 
     static constexpr auto nd_expr{ 6.5f };
-    EXPECT_TRUE("6.5" == expression_value<nd_expr>());
+    EXPECT_TRUE("6.5f" == expression_value<nd_expr>());
 
     static constexpr auto rd_expr{ static_string{ "test" } };
     EXPECT_TRUE("test" == expression_value<rd_expr>());

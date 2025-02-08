@@ -216,7 +216,7 @@ namespace mfl
     };
 
     template <static_string name, auto... fields>
-    using structure = storage<Type::gl_struct, name, value(0), fields...>;
+    using structure = storage<Type::gl_struct, name, 0, fields...>;
 
     template <auto type, auto size, static_string name, auto... fields>
     using array = storage<type, name, detail::expression_value<size>(), fields...>;

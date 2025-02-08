@@ -8,7 +8,7 @@
 using namespace mfl;
 using enum mfl::Type;
 
-TEST(Statements, JumpStatements)
+TEST(Statements, jump_statements)
 {
     {
         static constexpr auto gl_return{ return_statement() };
@@ -35,7 +35,7 @@ TEST(Statements, JumpStatements)
     }
 }
 
-TEST(Statements, SelectionStatements)
+TEST(Statements, selection_statements)
 {
     {
         static constexpr auto active{ variable<gl_bool, "active">() };
@@ -51,7 +51,7 @@ TEST(Statements, SelectionStatements)
 
     {
         static constexpr auto var{ variable<gl_float, "var">() };
-        static constexpr auto condition{ less_than<var, value(1.0f)>() };
+        static constexpr auto condition{ less_than<var, 1.0f>() };
         static constexpr auto body{ return_statement().declaration };
         static constexpr auto gl_if{ if_statement<condition, body>() };
         
@@ -65,11 +65,11 @@ TEST(Statements, SelectionStatements)
     }
 }
 
-TEST(Statements, IterationStatements)
+TEST(Statements, iteration_statements)
 {
     {
-        static constexpr auto init{ variable<gl_int, "i", value(0)>() };
-        static constexpr auto condition{ less_than<init, value(5)>() };
+        static constexpr auto init{ variable<gl_int, "i", 0>() };
+        static constexpr auto condition{ less_than<init, 5>() };
         static constexpr auto increment{ init.increment() };
         static constexpr auto gl_for{ for_loop<init, condition, increment, "">() };
 
@@ -82,8 +82,8 @@ TEST(Statements, IterationStatements)
     }
 
     {
-        static constexpr auto init{ variable<gl_int, "i", value(0)>() };
-        static constexpr auto condition{ less_than<init, value(5)>() };
+        static constexpr auto init{ variable<gl_int, "i", 0>() };
+        static constexpr auto condition{ less_than<init, 5>() };
         static constexpr auto increment{ init.increment() };
 
         static constexpr auto for_loop_body{
@@ -105,11 +105,11 @@ TEST(Statements, IterationStatements)
     }
 }
 
-TEST(Statements, DefineStatements)
+TEST(Statements, define_statement)
 {
     // The define statement is treated as a variable.
     {
-        static constexpr auto def{ define_statement<"NUM_LIGHTS", value(2)>() };
+        static constexpr auto def{ define_statement<"NUM_LIGHTS", 2>() };
         static constexpr auto expected_result{ "#define NUM_LIGHTS 2\n" };
         EXPECT_TRUE(def.declaration == expected_result);
     }

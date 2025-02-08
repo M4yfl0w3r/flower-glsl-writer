@@ -6,7 +6,7 @@
 using namespace mfl;
 using enum mfl::Type;
 
-TEST(Variables, UniformDeclaration)
+TEST(Variables, uniform_declaration)
 {
     constexpr auto create_uniforms = []() {
         static constexpr auto color_map{ uniform<gl_sampler2D, "color_map">() };
@@ -26,14 +26,14 @@ TEST(Variables, UniformDeclaration)
     EXPECT_TRUE(result == expected_result);
 } 
 
-TEST(Variables, InVariableDeclaration)
+TEST(Variables, in_variable_declaration)
 {
     static constexpr auto tex_coord{ in_var<gl_vec2, "uvTexCoord">() };
     static constexpr auto expected_result{ "in vec2 uvTexCoord;\n" };
     EXPECT_TRUE(tex_coord.declaration == expected_result);
 }
 
-TEST(Variables, BaseType)
+TEST(Variables, base_type)
 {
     {
         static constexpr auto test_float{ variable<gl_float, "test">() };
@@ -42,17 +42,17 @@ TEST(Variables, BaseType)
     }
 
     {
-        static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
+        static constexpr auto test_float{ variable<gl_float, "test", 1.0f>() };
         static constexpr auto expected_result{ "float test = 1.0f;\n" };
         EXPECT_TRUE(test_float.declaration == expected_result);
     }
 }
 
-TEST(Variables, Operation)
+TEST(Variables, operations)
 {
     {
-        static constexpr auto test_var{ variable<gl_float, "test_var", value(1.0f)>() };
-        static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
+        static constexpr auto test_var{ variable<gl_float, "test_var", 1.0f>() };
+        static constexpr auto test_float{ variable<gl_float, "test", 1.0f>() };
         static constexpr auto assignment_result{ test_float.assign<test_var>() };
         static constexpr auto expected_result{ "test = test_var;\n" };
         EXPECT_TRUE(assignment_result == expected_result);
@@ -67,8 +67,8 @@ TEST(Variables, Operation)
     }
 
     {
-        static constexpr auto test_float{ variable<gl_float, "test", value(1.0f)>() };
-        static constexpr auto assignment_result{ test_float.multiply<value(5.0f)>() };
+        static constexpr auto test_float{ variable<gl_float, "test", 1.0f>() };
+        static constexpr auto assignment_result{ test_float.multiply<5.0f>() };
         static constexpr auto expected_result{ "test * 5.0f" };
         EXPECT_TRUE(assignment_result == expected_result);
     }

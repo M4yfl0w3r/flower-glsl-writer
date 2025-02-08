@@ -74,13 +74,24 @@ namespace mfl
     consteval auto insert_delimiter_at() 
     {
         constexpr auto N{ string.size + 1 };
-        std::array<char, N+1> result{};
+        std::array<char, N + 1> result{};
 
         detail::unroll<index>([&](std::size_t i){ result.at(i) = string.at(i); });
         result.at(index) = delimiter;
         detail::unroll<N - index>([&](std::size_t i){ result.at(i + index + 1) = string.at(i + index); });
 
-        result[N] = '\0';
+        result.at(N) = '\0';
+        return static_string{ result };
+    }
+
+    template <static_string string, char character>
+    consteval auto insert_at_back()
+    {
+        constexpr auto N{ string.size + 1 };
+        std::array<char, N + 1> result{};
+        detail::unroll<N - 1>([&](std::size_t i){ result.at(i) = string.at(i); });
+        result.at(N - 1) = character;
+        result.at(N) = '\0';
         return static_string{ result };
     }
 

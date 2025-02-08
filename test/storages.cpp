@@ -102,8 +102,8 @@ TEST(Arrays, BaseTypeArrayGetElement)
         array<gl_int, 4, "test", 1, 2, 3, 4>() 
     };
     
-    EXPECT_TRUE(arr.at<1>() == value(2));
-    EXPECT_TRUE(arr.at<3>() == value(4));
+    EXPECT_TRUE(arr.at<1>() == static_string{ "2" });   // TODO: should return int
+    EXPECT_TRUE(arr.at<3>() == static_string{ "4" });
 }
 
 TEST(Arrays, BaseTypeArrayAccessExpression)
@@ -114,14 +114,14 @@ TEST(Arrays, BaseTypeArrayAccessExpression)
 
     static constexpr auto access_var{ variable<gl_int, "i">{} };
 
-    EXPECT_TRUE(arr.at_expression<value(1)>() == "array[1]");
+    EXPECT_TRUE(arr.at_expression<1>() == "array[1]");
     EXPECT_TRUE(arr.at_expression<access_var>() == "array[i]");
 }
 
 TEST(Arrays, CustomTypeArrayDeclaration)
 {
     static constexpr auto light{ create_light_struct() };
-    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", 2>() };
     static constexpr auto arr{ array<light.name, num_lights, "test">() };
     static constexpr auto expected_result{ "Light test[NUM_LIGHTS];\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
@@ -130,7 +130,7 @@ TEST(Arrays, CustomTypeArrayDeclaration)
 TEST(Arrays, ArrayOfStructsAccess)
 {
     static constexpr auto light{ create_light_struct() };
-    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", value(2)>() };
+    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", static_string{ "2" }>() };
     static constexpr auto arr{ make_array_of_structs<light, num_lights, "test">() };
 
     static constexpr auto access_var{ variable<gl_int, "i">() };
