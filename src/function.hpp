@@ -2,6 +2,7 @@
 
 #include "symbols.hpp"
 #include "variable.hpp"
+#include "utils.hpp"
 
 namespace mfl::detail 
 {

@@ -3,6 +3,7 @@
 #include "static_string.hpp"
 #include "variable.hpp"
 #include "symbols.hpp"
+#include "utils.hpp"
 #include "value.hpp"
 
 #include <tuple>
@@ -10,9 +11,9 @@
 namespace mfl::detail
 {
     template <auto expression>
-    static consteval auto make_type_expression() 
+    static consteval auto make_type_expression()
     {
-        return [&] { 
+        return [&] {
             if constexpr (is_static_string<decltype(expression)>)
                 return expression;
             else if constexpr (is_glsl_type<decltype(expression)>) {
@@ -20,9 +21,10 @@ namespace mfl::detail
             }
         }();
     }
+#pragma once
 
     template <bool is_last, typename Param>
-    static consteval auto format_param(Param param) 
+    static consteval auto format_param(Param param)
     {
         if constexpr (is_last) {
             return concat(Param::value);
@@ -33,7 +35,7 @@ namespace mfl::detail
     }
 
     template <typename... Params>
-    static consteval auto format_array_members() 
+    static consteval auto format_array_members()
     {
         return []<auto... Indices>(std::index_sequence<Indices...>) {
             return concat(format_param<(Indices == sizeof...(Params) - 1), Params>(Params{})...);
@@ -46,7 +48,7 @@ namespace mfl::detail
     }
 
     template <typename Fields>
-    static consteval auto process_struct_members(const Fields& fields) 
+    static consteval auto process_struct_members(const Fields& fields)
     {
         return std::apply([](auto... elems) consteval {
             return concat((elems.declaration)...);
@@ -57,7 +59,7 @@ namespace mfl::detail
     static consteval auto process_rvalue_array_members(const Fields& fields)
     {
         return std::apply([](auto... elems) consteval {
-            return concat( 
+            return concat(
                 format_array_members<decltype(elems)...>()
             );
         }, fields);
@@ -67,14 +69,14 @@ namespace mfl::detail
     static consteval auto make_struct_body() {
         return concat(space, enclose_in_braces<new_line, value>(), line_end);
     }
-    
+
     template <static_string value>
     static consteval auto make_array_body() {
         return concat(enclose_in_parenthesis<value>(), line_end);
     }
 
     template <static_string type, static_string name, static_string size, typename... Args>
-    static consteval auto make_storage_declaration(std::tuple<Args...> fields) 
+    static consteval auto make_storage_declaration(std::tuple<Args...> fields)
     {
         if constexpr (sizeof...(Args) == 0) {
             return concat(
@@ -99,10 +101,10 @@ namespace mfl::detail
                 make_array_body<process_rvalue_array_members(fields)>()
             );
         }
-    } 
+    }
 
     template <static_string type, auto... fields>
-    static consteval auto make_fields() 
+    static consteval auto make_fields()
     {
         constexpr auto is_custom{ type == "Light" }; // TODO: tmp
 
@@ -117,17 +119,6 @@ namespace mfl::detail
         }
         else if constexpr ((is_static_string<decltype(fields)> && ...)) {
             return std::tuple{ field<enumify<type>(), "", fields>()... };
-        }
-    }
-    // TODO: each file should handle its conversions
-    template <auto value>
-    static consteval auto convert_if_integral() 
-    {
-        if constexpr (std::is_integral_v<decltype(value)>) {
-            return convert_to_string<value>();
-        }
-        else {
-            return value;
         }
     }
 }
@@ -187,13 +178,13 @@ namespace mfl
         }
 
         template <static_string field_name, auto value, auto access_expression>
-        static consteval auto assign_at() 
+        static consteval auto assign_at()
         {
             return concat(
-                name, 
+                name,
                 detail::enclose_in_brackets<
                     detail::expression_value<access_expression>()>(),
-                sym_dot, 
+                sym_dot,
                 get<field_name>().template assign<detail::expression_value<value>()>()
             );
         }
@@ -202,7 +193,7 @@ namespace mfl
         static constexpr auto assign_at()
         {
             return concat(
-                name, 
+                name,
                 detail::enclose_in_brackets<
                     detail::expression_value<access_expression>()>(),
                 equal,
@@ -212,13 +203,13 @@ namespace mfl
         }
 
         template <static_string field_name, auto access_expression>
-        static consteval auto member_access_at() 
+        static consteval auto member_access_at()
         {
             return concat(
-                name, 
+                name,
                 detail::enclose_in_brackets<
-                    detail::expression_value<access_expression>()>(), 
-                sym_dot, 
+                    detail::expression_value<access_expression>()>(),
+                sym_dot,
                 get<field_name>().name
             );
         }
@@ -228,7 +219,7 @@ namespace mfl
     using structure = storage<Type::gl_struct, name, value(0), fields...>;
 
     template <auto type, auto size, static_string name, auto... fields>
-    using array = storage<type, name, detail::convert_if_integral<size>(), fields...>;
+    using array = storage<type, name, detail::expression_value<size>(), fields...>;
 
     template <structure type, auto size, static_string name>
     consteval auto make_array_of_structs() {
@@ -237,7 +228,7 @@ namespace mfl
         }, type.fields);
     }
 
-    static constexpr auto light_source{ 
+    static constexpr auto light_source{
         structure<
             "gl_LightSource",
             field<Type::gl_vec4, "position">{},
@@ -256,4 +247,3 @@ namespace mfl
         structure<"gl_TexCoord", field<Type::empty, "st">{}>{}
     };
 }
-

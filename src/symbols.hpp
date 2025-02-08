@@ -79,10 +79,7 @@ namespace mfl
     inline constexpr auto right_bracket{ static_string{ "]" } };
     inline constexpr auto left_parenthesis{ static_string{ "(" } };
     inline constexpr auto right_parenthesis{ static_string{ ")" } };
-}
 
-namespace mfl::detail
-{
     template <Type type>
     concept is_vec = (type == Type::gl_vec2 || type == Type::gl_vec3 || type == Type::gl_vec4);
     
@@ -100,7 +97,10 @@ namespace mfl::detail
 
     template <typename T>
     concept is_supported_base_type = std::is_integral_v<T> || std::is_floating_point_v<T>;
+}
 
+namespace mfl::detail
+{
     template <auto N, class Fn>
     consteval auto for_each(Fn&& fn) 
     {
@@ -204,24 +204,6 @@ namespace mfl::detail
             return static_string{ "" };
     }
 
-    template <auto expression>
-    consteval auto expression_value() 
-    {
-        return [&] { 
-            if constexpr (is_static_string<decltype(expression)>)
-                return expression;
-            else if constexpr (requires { expression.name; }) {
-                return expression.name;
-            }
-            else if constexpr (requires { expression.declaration; }) {
-                return expression.declaration;
-            }
-            else {
-                static_assert(false, "Unsupported expression type in expression_value");
-            }
-        }();
-    }
-
     template <static_string... value>
     consteval auto enclose_in_parenthesis() {
         return concat(left_parenthesis, value..., right_parenthesis);
@@ -250,21 +232,4 @@ namespace mfl::detail
     static consteval auto are_types_equal() {
         return enumify<str_type>() == enum_type;
     }
-}
-
-// TODO: Create an utils namespace?
-namespace mfl 
-{
-#define DEFINE_COMPARE_TEMPLATE(func_name, op)                            \
-    template <auto st_expr, auto nd_expr>                                 \
-    consteval auto func_name() {                                          \
-        constexpr auto st{ detail::expression_value<st_expr>() };  \
-        constexpr auto nd{ detail::expression_value<nd_expr>() };  \
-        return concat(st, op, nd);                                        \
-    }
-
-    DEFINE_COMPARE_TEMPLATE(less_than, less)
-    DEFINE_COMPARE_TEMPLATE(less_or_equal_to, less_or_equal)
-    DEFINE_COMPARE_TEMPLATE(greater_than, greater)
-    DEFINE_COMPARE_TEMPLATE(greater_or_equal_to, greater_or_equal)
 }

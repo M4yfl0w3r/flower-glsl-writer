@@ -1,6 +1,7 @@
 #pragma once
 
 #include "symbols.hpp"
+#include "utils.hpp"
 
 namespace mfl::detail
 {
@@ -70,11 +71,11 @@ namespace mfl
         static consteval auto y() { return component<"y">(); }
         static consteval auto z() { return component<"z">(); }
          
-        static consteval auto rgb() requires detail::at_least_vec3<type> {
+        static consteval auto rgb() requires at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "rgb" } );
         }
         
-        static consteval auto xyz() requires detail::at_least_vec3<type> {
+        static consteval auto xyz() requires at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "xyz" } );
         }
 

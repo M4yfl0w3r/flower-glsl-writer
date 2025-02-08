@@ -105,22 +105,22 @@ namespace mfl
 
     template <std::size_t N1, std::size_t N2>
     consteval auto operator+(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, value(+), b);
+        return concat(a, static_string{ "+" }, b);
     }
 
     template <std::size_t N1, std::size_t N2>
     consteval auto operator-(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, value(-), b);
+        return concat(a, static_string{ "-" }, b);
     }
 
     template <std::size_t N1, std::size_t N2>
     consteval auto operator/(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, value(/), b);
+        return concat(a, static_string{ "/" }, b);
     }
 
     template <std::size_t N1, std::size_t N2>
     consteval auto operator*(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, value(*), b);
+        return concat(a, static_string{ "*" }, b);
     }
 }
 
