@@ -17,6 +17,9 @@ namespace mfl::detail
             else if constexpr (std::is_integral_v<decltype(expression)>) {
                 return convert_to_string<expression>();
             }
+            else if constexpr (std::is_floating_point_v<decltype(expression)>) {
+                return convert_to_string<expression>();
+            }
             else if constexpr (requires { expression.declaration; }) {
                 return expression.declaration;
             }

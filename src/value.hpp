@@ -4,9 +4,6 @@
 
 namespace mfl::detail
 {
-    static constexpr auto default_float_precision{ 6 };
-    static constexpr auto precision_multiplier{ 1000000 };
-
     static consteval auto is_digit(char c) {
         return c >= '0' && c <= '9';
     }
