@@ -19,7 +19,7 @@ static consteval auto main_body()
     );
 }
 
-TEST(Shaders, VertexShader)
+TEST(Shaders, vertex_shader)
 {
     static constexpr auto version{ set_version<"130">() };
     static constexpr auto tex_coord{ out_var<gl_vec2, "uvTexCoord">{} };

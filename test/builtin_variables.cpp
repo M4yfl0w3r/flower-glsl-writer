@@ -45,7 +45,7 @@ TEST(Builtin, access)
     EXPECT_TRUE(access_expression == expected_result);
 }
 
-TEST(Builtin, Assign)
+TEST(Builtin, assign)
 {
     static constexpr auto tex_coord{ gl_tex_coord };
     static constexpr auto test_var{ variable<gl_int, "test">{} };
