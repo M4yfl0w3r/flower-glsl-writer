@@ -178,14 +178,12 @@ TEST(Functions, builtin_functions)
 
 TEST(Functions, function_with_body)
 {
-    static constexpr auto body{ variable<gl_vec3, "result", 1.0f / 2.0f>() };
+    static constexpr auto body{ variable<gl_vec3, "result", vec3<1.0f / 2.0f>()>() };
     static constexpr auto fn{ function<gl_vec3, "to_gamma", body.declaration, Param<"v", gl_vec3>>() };
-
-    print(fn.declaration);
 
     static constexpr auto expected_declaration{ 
         "vec3 to_gamma(vec3 v) {\n"
-        "vec3 result = 0.5f;\n"
+        "vec3 result = vec3(0.5f);\n"
         "}\n" 
     };
 

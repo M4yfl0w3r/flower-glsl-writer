@@ -2,6 +2,8 @@
 
 #include "static_string.hpp"
 
+#include <tuple>
+
 namespace mfl::detail
 {
     static consteval auto is_digit(char c) {
@@ -65,20 +67,28 @@ namespace mfl::detail
         return static_string{ buffer };
     }
 
+    template <float num, int precision>
+    static consteval auto extract_frac() -> int 
+    {
+        auto val{ num };
+        constexpr auto whole{ static_cast<int>(num) };
+        val -= whole;
+        val *= pow(10, precision);
+        return static_cast<int>(val);
+    }
+
     template <float num, int precision = 1>
     static consteval auto convert_float_to_string_impl()
     {
-        constexpr auto whole{ num_digits(static_cast<int>(num)) };
-        constexpr auto multiplied_num{ num * pow(10, precision)};
+        constexpr auto whole{ static_cast<int>(num) };
+        constexpr auto frac{ extract_frac<num, precision>() };
 
-        if constexpr (multiplied_num != 0) {
-            constexpr auto full_num{ convert_int_to_string_impl<static_cast<int>(multiplied_num)>() };
-            constexpr auto num_with_delim{ insert_delimiter_at<full_num, whole, '.'>() };
-            return insert_at_back<num_with_delim, 'f'>();
-        }
-        else {
-            return static_string{ "0.0f" }; // TODO: what if the precision is different?
-        }
+        return concat(
+            convert_int_to_string_impl<whole>(),    
+            static_string{ "." }, 
+            convert_int_to_string_impl<frac>(),
+            static_string{ "f" }
+        );
     }
 }
 

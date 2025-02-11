@@ -6,12 +6,11 @@ docs
 build
 compile_commands.json
 
+a.out
 src/a.out
 src/test.cpp
 src/main.cpp
 src/test.hpp
 
-test/shader.glsl
-test/light.glsl
-test/parallax.glsl
+test/*.glsl
 

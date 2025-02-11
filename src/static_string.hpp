@@ -95,6 +95,17 @@ namespace mfl
         return static_string{ result };
     }
 
+    template <static_string string, char character>
+    consteval auto insert_at_front()
+    {
+        constexpr auto N{ string.size + 1 };
+        std::array<char, N + 1> result{};
+        result.at(0) = character;
+        detail::unroll<N - 1>([&](std::size_t i){ result.at(i + 1) = string.at(i + 1); });
+        result.at(N) = '\0';
+        return static_string{ result };
+    }
+
     template <std::size_t... len>
     consteval auto concat(const static_string<len>&... strings)
     {

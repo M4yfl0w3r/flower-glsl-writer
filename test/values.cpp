@@ -49,6 +49,12 @@ TEST(Values, compile_time_int_to_static_string_conversion)
 TEST(Values, compile_time_float_to_static_string_conversion)
 {
     {
+        static constexpr auto test_float{ 0.1f };
+        static constexpr auto test_str{ convert_to_string<test_float>() };
+        EXPECT_TRUE(test_str == "0.1f");
+    }
+
+    {
         static constexpr auto test_float{ 12.431f };
         static constexpr auto test_str{ convert_to_string<test_float>() };
         EXPECT_TRUE(test_str == "12.4f");
