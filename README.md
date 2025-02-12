@@ -1,9 +1,6 @@
 GLSL writer is a library for generating GLSL shaders at compile time.
 
-It is not a GLSL compiler and does not prevent you from writing 
-incorrect GLSL code. It does not check types or function parameters.
-The library provides GLSL expressions represented as strings and 
-allows you to concatenate them.
+It is not a GLSL compiler and does not prevent you from writing incorrect GLSL code. It does not check types or function parameters. The library provides GLSL expressions represented as strings and allows you to concatenate them.
 
 Example 
 
