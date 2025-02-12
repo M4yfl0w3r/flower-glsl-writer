@@ -1,89 +1,29 @@
 GLSL writer
+***********
 
-    The library is not type-safe and does not prevent you from writing incorrect
-    GLSL code. It generates GLSL code at compile-time using a compile-time
-    string implementation (src/static_string.hpp)
+    GLSL writer is a library for generating GLSL shaders at compile time.
 
-    The most important function in the library is the concat function
-        
-        template <std::size_t... len>
-        consteval auto concat(const static_string<len>&... strings)
+    It is not a GLSL compiler and does not prevent you from writing 
+    incorrect GLSL code. It does not check types or function parameters.
+    The library provides GLSL expressions represented as strings and 
+    allows you to concatenate them.
 
-    This function forms the basis of every operation. The library is not a GLSL
-    compiler but rather an expression concatenator. It defines types, values,
-    and operations from GLSL as strings and allows you to build code using these
-    strings as building blocks.
+    Examples can be found in the test directory.
 
 
-TODO
+    TODO
+    ****
 
-    * a struct of all declared variables to return lvalues?
-    * struct uniforms
-    * lvalue arrays - structure class - struct + array
-    * custom type registration (Light)
-    * type system validation
-    * a compile-time float to string converter
-    * a simpler definition of a function
-    * check if an expression is passable to a function
-    * named template arguments
-    * Param should take a variable as an argument
-
-
-
-Expression types 
-
-    * Variables (src/variable.hpp | test/variables.cpp)
-
-        uniform<gl_sampler2D, "color_map">()
-        -> "uniform sampler2D color_map;\n"
-
-        in_var<gl_vec2, "uvTexCoord">()
-        -> "in vec2 uvTexCoord;\n"
-
-        variable<gl_float, "test">()
-        -> "float test;\n"
-
-        variable<gl_float, "test", value(1.0f)>()
-        -> "float test = 1.0f;\n"
-
-        Operations 
-            
-            auto test_var{ variable<gl_float, "test_var">() };
-            auto test_float{ variable<gl_float, "test">() };
-            auto assignment_result{ test_float.multiply<test_var>() };
-            -> "test * test_var"
+        * a struct of all declared variables to return lvalues?
+        * struct uniforms
+        * lvalue arrays - structure class - struct + array
+        * custom type registration (Light)
+        * type system validation
+        * a compile-time float to string converter
+        * a simpler definition of a function
+        * check if an expression is passable to a function
+        * named template arguments
+        * Param should take a variable as an argument
 
 
-    * Functions (src/function.hpp | test/functions.cpp)
-
-            auto body{ variable<gl_vec3, "result", value(1.0f / 2.0f)>() };
-            auto fn{ function<gl_vec3, "test_fn", body.declaration, Param<"v", gl_vec3>>() };
-            -> "vec3 to_gamma(vec3 v) {\n"
-               "vec3 result = 1.0f / 2.0f;\n"
-               "}\n"
-    
-
-    * Statements (src/statement.hpp | test/statements.cpp)
-
-        For loops 
-            
-            auto init{ variable<gl_int, "i", value(0)>() };
-            auto condition{ less_than<init, value(5)>() };
-            auto increment{ init.increment() };
-
-            static constexpr auto for_loop_body{
-                [](auto i) {
-                    static constexpr auto test_var{ variable<gl_int, "test", i.name>() };
-                    return test_var.declaration;
-                }(init)
-            };
-
-            auto gl_for{ for_loop<init, condition, increment, for_loop_body>() };
-
-            -> "for (int i = 0; i < 5; ++i) {\n" 
-               "int test = i;\n"
-               "}\n"
-
-
-    * Storage (src/storage.hpp | test/storages.cpp)
 
