@@ -134,7 +134,7 @@ namespace mfl
         static constexpr auto fields{ detail::make_fields<type, t_fields...>() };
         static constexpr auto declaration{ detail::make_storage_declaration<type, t_name, size>(fields) };
 
-        template <static_string field_name, std::size_t index = 0>
+        template <static_string field_name, std::size_t index = 0u>
         static consteval auto get()
         {
             static_assert(index < sizeof...(t_fields), "Field not found with the given name.");
@@ -146,11 +146,11 @@ namespace mfl
                     return field;
                 }
                 else {
-                    return get<field_name, index + 1>();
+                    return get<field_name, index + 1u>();
                 }
             }
             else {
-                return get<field_name, index + 1>();
+                return get<field_name, index + 1u>();
             }
         }
 

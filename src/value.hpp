@@ -2,8 +2,6 @@
 
 #include "static_string.hpp"
 
-#include <tuple>
-
 namespace mfl::detail
 {
     static consteval auto is_digit(char c) {
@@ -15,6 +13,12 @@ namespace mfl::detail
         return is_digit(*str) 
                ? convert_string_to_int_impl(str + 1, (*str - '0') + value * 10)
                : value;
+    }
+
+    static consteval auto convert_string_to_float_impl(const char* str, float value = 0.0f) -> float 
+    {
+        // "0.523f";
+        return 0.5f;
     }
 
     static consteval auto num_digits(int num, int count = 0) -> unsigned {
@@ -97,6 +101,11 @@ namespace mfl
     template <static_string str>
     consteval auto convert_to_int() {
         return detail::convert_string_to_int_impl(str.value);
+    }
+    
+    template <static_string str>
+    consteval auto convert_to_float() {
+        return detail::convert_string_to_float_impl(str.value);
     }
 
     template <auto number>

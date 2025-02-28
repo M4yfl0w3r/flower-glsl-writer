@@ -2,6 +2,7 @@
 
 #include "symbols.hpp"
 #include "utils.hpp"
+#include "value.hpp"
 
 namespace mfl::detail
 {
@@ -49,6 +50,7 @@ namespace mfl
     {
         static constexpr auto name{ t_name };
         static constexpr auto type{ t_type };
+        static constexpr auto original_value{ t_value };
         static constexpr auto value{ detail::expression_value<t_value>() };
         static constexpr auto key{ t_key };
 
@@ -123,7 +125,7 @@ namespace mfl
             return concat(name, sym_dot, access_name);
         }
     };
-
+    
     // TODO: a better structure for operators
     template <Type T, static_string N1, Keyword K1, auto V1,
                       static_string N2, Keyword K2, auto V2>
@@ -155,6 +157,11 @@ namespace mfl
     template <Type T, static_string N, Keyword K, auto V, std::size_t len>
     consteval auto operator-(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
         return concat(left_parenthesis, str, minus, N, right_parenthesis);
+    }
+
+    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+    consteval auto operator-(auto num, const variable_impl<T, N, K, V>& var) {
+        return num - var.original_value;
     }
 
     template <Type type, static_string name>
