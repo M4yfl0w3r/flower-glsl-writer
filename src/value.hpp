@@ -8,18 +8,18 @@ namespace mfl::detail
         return c >= '0' && c <= '9';
     }
 
-    static consteval auto pow(int num, unsigned n) -> int
+    static consteval auto pow(int number, unsigned n) -> int
     {
         return n == 0
                ? 1 
-               : num * pow(num, n - 1);
+               : number * pow(number, n - 1);
     }
 
-    static consteval auto num_digits(int num, int count = 0) -> unsigned 
+    static consteval auto num_digits(int number, int count = 0) -> unsigned 
     {
-        return num == 0 
+        return number == 0 
                ? (count == 0 ? 1 : count) 
-               : num_digits(num / 10, count + 1);
+               : num_digits(number / 10, count + 1);
     }
 
     static consteval auto convert_string_to_int_impl(const char* string, int value = 0) -> int
@@ -47,8 +47,8 @@ namespace mfl::detail
         return whole + (static_cast<float>(frac) / pow(10, digits));
     }
 
-    template <int num, int... digits>
-    struct to_digit_seq : to_digit_seq<num / 10, num % 10, digits...> {};
+    template <int number, int... digits>
+    struct to_digit_seq : to_digit_seq<number / 10, number % 10, digits...> {};
 
     template <int... digits>
     struct to_digit_seq<0, digits...> {
@@ -60,47 +60,47 @@ namespace mfl::detail
         using type = std::integer_sequence<int, 0>;
     };
 
-    template <int num>
-    using make_digit_seq = typename to_digit_seq<(num < 0 ? -num : num)>::type;
+    template <int number>
+    using make_digit_seq = typename to_digit_seq<(number < 0 ? -number : number)>::type;
 
     template <int... digits>
     static consteval auto make_digit_array(std::integer_sequence<int, digits...>) {
         return std::array{ digits... };
     }
 
-    template <float num, int precision>
-    static consteval auto extract_frac() -> int 
+    template <float number, int precision>
+    static consteval auto extract_frac()
     {
-        auto val{ num };
-        constexpr auto whole{ static_cast<int>(num) };
+        constexpr auto whole{ static_cast<int>(number) };
+        auto val{ number };
         val -= whole;
         val *= pow(10, precision);
         return static_cast<int>(val);
     }
 
-    template <int num>
+    template <int number>
     static consteval auto convert_int_to_string_impl()
     {
         /* TODO: Handle negative values */
 
-        char buffer[num_digits(num) + 1] {};
-        buffer[num_digits(num)] = '\0';
+        char buffer[num_digits(number) + 1] {};
+        buffer[num_digits(number)] = '\0';
 
         constexpr auto chars{ std::array{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' } };
-        constexpr auto digits{ make_digit_array(make_digit_seq<num>{}) };
+        constexpr auto digits{ make_digit_array(make_digit_seq<number>{}) };
 
         [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
             ((buffer[indicies] = chars.at(digits.at(indicies))), ...);
-        } (std::make_index_sequence<num_digits(num)>());
+        } (std::make_index_sequence<num_digits(number)>());
         
         return static_string{ buffer };
     }
 
-    template <float num, int precision = 1>
+    template <float number, int precision = 1>
     static consteval auto convert_float_to_string_impl()
     {
-        constexpr auto whole{ static_cast<int>(num) };
-        constexpr auto frac{ extract_frac<num, precision>() };
+        constexpr auto whole{ static_cast<int>(number) };
+        constexpr auto frac{ extract_frac<number, precision>() };
 
         return concat(
             convert_int_to_string_impl<whole>(),    
@@ -113,14 +113,14 @@ namespace mfl::detail
 
 namespace mfl
 {
-    template <static_string str>
+    template <static_string string>
     consteval auto convert_to_int() {
-        return detail::convert_string_to_int_impl(str.value);
+        return detail::convert_string_to_int_impl(string.value);
     }
     
-    template <static_string str>
+    template <static_string string>
     consteval auto convert_to_float() {
-        return detail::convert_string_to_float_impl(str.value);
+        return detail::convert_string_to_float_impl(string.value);
     }
 
     template <auto number>
