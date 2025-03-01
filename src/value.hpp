@@ -29,7 +29,7 @@ namespace mfl::detail
                : value;
     }
 
-    static consteval auto extract_frac(const char* string) -> int 
+    static consteval auto extract_frac(const char* string) -> int
     {
         const std::string_view number{ string };
         const auto dot_it_pos{ std::ranges::find(number, '.') };
@@ -69,7 +69,7 @@ namespace mfl::detail
     }
 
     template <float number, int precision>
-    static consteval auto extract_frac()
+    static consteval auto extract_frac() -> int
     {
         constexpr auto whole{ static_cast<int>(number) };
         auto val{ number };
@@ -155,6 +155,11 @@ namespace mfl
     template <std::size_t N1, std::size_t N2>
     consteval auto operator*(const static_string<N1>& a, const static_string<N2>& b) {
         return concat(a, static_string{ "*" }, b);
+    }
+
+    template <std::size_t N>
+    consteval auto operator/(auto value, const static_string<N>& string) {
+        return value / detail::convert_string_to_float_impl(string.value);
     }
 }
 

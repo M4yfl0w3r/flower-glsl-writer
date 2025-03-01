@@ -109,7 +109,7 @@ TEST(Statements, define_statement)
 {
     // The define statement is treated as a variable.
     {
-        static constexpr auto def{ define_statement<"NUM_LIGHTS", 2>() };
+        static constexpr auto def{ define<"NUM_LIGHTS", 2>() };
         static constexpr auto expected_result{ "#define NUM_LIGHTS 2\n" };
         EXPECT_TRUE(def.declaration == expected_result);
     }

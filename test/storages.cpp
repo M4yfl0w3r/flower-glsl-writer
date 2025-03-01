@@ -121,7 +121,7 @@ TEST(Arrays, base_type_access_expression)
 TEST(Arrays, custom_type_declaration)
 {
     static constexpr auto light{ create_light_struct() };
-    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", 2>() };
+    static constexpr auto num_lights{ define<"NUM_LIGHTS", 2>() };
     static constexpr auto arr{ array<light.name, num_lights, "test">() };
     static constexpr auto expected_result{ "Light test[NUM_LIGHTS];\n" };
     EXPECT_TRUE(arr.declaration == expected_result);
@@ -130,7 +130,7 @@ TEST(Arrays, custom_type_declaration)
 TEST(Arrays, array_of_struct_access)
 {
     static constexpr auto light{ create_light_struct() };
-    static constexpr auto num_lights{ define_statement<"NUM_LIGHTS", static_string{ "2" }>() };
+    static constexpr auto num_lights{ define<"NUM_LIGHTS", static_string{ "2" }>() };
     static constexpr auto arr{ make_array_of_structs<light, num_lights, "test">() };
 
     static constexpr auto access_var{ variable<gl_int, "i">() };

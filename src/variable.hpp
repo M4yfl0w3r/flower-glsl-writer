@@ -2,7 +2,6 @@
 
 #include "symbols.hpp"
 #include "utils.hpp"
-#include "value.hpp"
 
 namespace mfl::detail
 {
@@ -140,32 +139,50 @@ namespace mfl
     }
 
     template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator*(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
-        return concat(left_parenthesis, str, times, N, right_parenthesis);
+    consteval auto operator*(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+        return concat(left_parenthesis, string, times, N, right_parenthesis);
     }
 
     template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
-        return concat(left_parenthesis, N, times, str, right_parenthesis);
+    consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+        return concat(left_parenthesis, N, times, string, right_parenthesis);
     }
 
     template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& str) {
-        return concat(left_parenthesis, N, minus, str, right_parenthesis);
+    consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+        return concat(left_parenthesis, N, minus, string, right_parenthesis);
     }
 
     template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator-(const static_string<len>& str, const variable_impl<T, N, K, V>&) {
-        return concat(left_parenthesis, str, minus, N, right_parenthesis);
+    consteval auto operator-(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+        return concat(left_parenthesis, string, minus, N, right_parenthesis);
     }
 
     template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
-    consteval auto operator-(auto num, const variable_impl<T, N, K, V>& var) {
-        return num - var.original_value;
+    consteval auto operator-(auto number, const variable_impl<T, N, K, V>& var) {
+        return number - var.original_value;
+    }
+    
+    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
+    consteval auto operator/(auto number, const variable_impl<T, N, K, V>& var) {
+        return number / var.original_value;
+    }
+
+    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+    consteval auto operator*(auto number, const variable_impl<T, N, K, V>& var) {
+        return number * var.original_value;
+    }
+
+    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+    consteval auto operator+(auto number, const variable_impl<T, N, K, V>& var) {
+        return number + var.original_value;
     }
 
     template <Type type, static_string name>
     using uniform = variable_impl<type, name, Keyword::gl_uniform>;
+
+    template <static_string name>
+    using sampler2D = uniform<Type::gl_sampler2D, name>;
 
     template <Type type, static_string name>
     using in_var = variable_impl<type, name, Keyword::gl_in>;
@@ -180,6 +197,6 @@ namespace mfl
     using field = variable_impl<type, name, Keyword::none, value>;
 
     template <static_string name, auto value>
-    using define_statement = variable_impl<Type::empty, name, Keyword::gl_define, value>;
+    using define = variable_impl<Type::empty, name, Keyword::gl_define, value>;
 }
 

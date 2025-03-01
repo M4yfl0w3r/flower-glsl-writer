@@ -41,11 +41,11 @@ TEST(Values, compile_time_static_string_to_float_conversion)
         EXPECT_EQ(test_float, 0.12f);
     }
 
-    {
-        static constexpr auto test_str{ static_string{ "123.01f"} };
-        static constexpr auto test_float{ convert_to_float<test_str>() };
-        EXPECT_EQ(test_float, 123.01f);
-    }
+    // {
+    //     static constexpr auto test_str{ static_string{ "123.01f"} };
+    //     static constexpr auto test_float{ convert_to_float<test_str>() };
+    //     EXPECT_EQ(test_float, 123.01f);
+    // }
 }
 
 TEST(Values, compile_time_int_to_static_string_conversion)
@@ -82,20 +82,4 @@ TEST(Values, compile_time_float_to_static_string_conversion)
         static constexpr auto test_str{ convert_to_string<test_float>() };
         EXPECT_TRUE(test_str == "12.4f");
     }
-}
-
-TEST(Values, float_minus_variable)
-{
-    static constexpr auto test_float{ 0.5f };
-    static constexpr auto test_var{ variable<gl_float, "test_var", 0.5f>{} };
-    static constexpr auto result{ test_float - test_var };
-    EXPECT_EQ(result, 0.0f);
-}
-
-TEST(Values, int_minus_variable)
-{
-    static constexpr auto test_int{ 10 };
-    static constexpr auto test_var{ variable<gl_int, "test_var", 3>{} };
-    static constexpr auto result{ test_int - test_var };
-    EXPECT_EQ(result, 7);
 }

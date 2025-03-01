@@ -74,3 +74,25 @@ TEST(Variables, operations)
     }
 }
 
+TEST(Variables, operations_float_minus_variable)
+{
+    static constexpr auto test_float{ 0.5f };
+    static constexpr auto test_var{ variable<gl_float, "test_var", 0.5f>{} };
+    static constexpr auto result{ test_float - test_var };
+    EXPECT_EQ(result, 0.0f);
+}
+
+TEST(Variables, operations_int_minus_variable)
+{
+    static constexpr auto test_int{ 10 };
+    static constexpr auto test_var{ variable<gl_int, "test_var", 3>{} };
+    static constexpr auto result{ test_int - test_var };
+    EXPECT_EQ(result, 7);
+}
+
+TEST(Variables, operations_float_divided_by_variable)
+{
+    static constexpr auto test_var{ variable<gl_float, "test_var", 10>{} };
+    static constexpr auto result{ 1.0f / test_var };
+    EXPECT_EQ(result, 0.1f);
+}
