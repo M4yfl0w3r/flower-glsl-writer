@@ -8,23 +8,43 @@ namespace mfl::detail
         return c >= '0' && c <= '9';
     }
 
-    static consteval auto convert_string_to_int_impl(const char* str, int value = 0) -> int
+    static consteval auto pow(int num, unsigned n) -> int
     {
-        return is_digit(*str) 
-               ? convert_string_to_int_impl(str + 1, (*str - '0') + value * 10)
-               : value;
+        return n == 0
+               ? 1 
+               : num * pow(num, n - 1);
     }
 
-    static consteval auto convert_string_to_float_impl(const char* str, float value = 0.0f) -> float 
+    static consteval auto num_digits(int num, int count = 0) -> unsigned 
     {
-        // "0.523f";
-        return 0.5f;
-    }
-
-    static consteval auto num_digits(int num, int count = 0) -> unsigned {
         return num == 0 
                ? (count == 0 ? 1 : count) 
                : num_digits(num / 10, count + 1);
+    }
+
+    static consteval auto convert_string_to_int_impl(const char* string, int value = 0) -> int
+    {
+        return is_digit(*string) 
+               ? convert_string_to_int_impl(string + 1, (*string - '0') + value * 10)
+               : value;
+    }
+
+    static consteval auto extract_frac(const char* string) -> int 
+    {
+        const std::string_view number{ string };
+        const auto dot_it_pos{ std::ranges::find(number, '.') };
+        const auto dot_pos{ std::distance(std::begin(number), dot_it_pos) };
+        const auto frac_str{ number.substr(dot_pos + 1u) };
+        return convert_string_to_int_impl(frac_str.data());
+    }
+
+    static consteval auto convert_string_to_float_impl(const char* string) -> float
+    {
+        /* TODO: Handle the *.01 case */
+        const auto whole{ convert_string_to_int_impl(string) };
+        const auto frac{ extract_frac(string) };
+        const auto digits{ num_digits(frac) };
+        return whole + (static_cast<float>(frac) / pow(10, digits));
     }
 
     template <int num, int... digits>
@@ -48,16 +68,21 @@ namespace mfl::detail
         return std::array{ digits... };
     }
 
-    static consteval auto pow(int num, unsigned n) -> int {
-        return n == 0
-               ? 1 
-               : num * pow(num, n - 1);
+    template <float num, int precision>
+    static consteval auto extract_frac() -> int 
+    {
+        auto val{ num };
+        constexpr auto whole{ static_cast<int>(num) };
+        val -= whole;
+        val *= pow(10, precision);
+        return static_cast<int>(val);
     }
 
     template <int num>
     static consteval auto convert_int_to_string_impl()
     {
-        // TODO: Handle negative values 
+        /* TODO: Handle negative values */
+
         char buffer[num_digits(num) + 1] {};
         buffer[num_digits(num)] = '\0';
 
@@ -69,16 +94,6 @@ namespace mfl::detail
         } (std::make_index_sequence<num_digits(num)>());
         
         return static_string{ buffer };
-    }
-
-    template <float num, int precision>
-    static consteval auto extract_frac() -> int 
-    {
-        auto val{ num };
-        constexpr auto whole{ static_cast<int>(num) };
-        val -= whole;
-        val *= pow(10, precision);
-        return static_cast<int>(val);
     }
 
     template <float num, int precision = 1>

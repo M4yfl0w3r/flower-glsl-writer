@@ -27,6 +27,27 @@ TEST(Values, compile_time_static_string_to_int_conversion)
     }
 }
 
+TEST(Values, compile_time_static_string_to_float_conversion)
+{
+    {
+        static constexpr auto test_str{ static_string{ "123.12f"} };
+        static constexpr auto test_float{ convert_to_float<test_str>() };
+        EXPECT_EQ(test_float, 123.12f);
+    }
+    
+    {
+        static constexpr auto test_str{ static_string{ "0.12f"} };
+        static constexpr auto test_float{ convert_to_float<test_str>() };
+        EXPECT_EQ(test_float, 0.12f);
+    }
+
+    {
+        static constexpr auto test_str{ static_string{ "123.01f"} };
+        static constexpr auto test_float{ convert_to_float<test_str>() };
+        EXPECT_EQ(test_float, 123.01f);
+    }
+}
+
 TEST(Values, compile_time_int_to_static_string_conversion)
 {
     {
