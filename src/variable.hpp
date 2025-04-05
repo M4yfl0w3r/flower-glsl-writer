@@ -42,7 +42,7 @@ namespace mfl::detail
     }
 }
 
-namespace mfl 
+namespace mfl
 {
     template <Type t_type, static_string t_name, Keyword t_key, auto t_value = static_string{ "" }>
     struct [[nodiscard]] variable_impl
@@ -69,31 +69,31 @@ namespace mfl
         static consteval auto x() { return component<"x">(); }
         static consteval auto y() { return component<"y">(); }
         static consteval auto z() { return component<"z">(); }
-         
+
         static consteval auto rgb() requires at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "rgb" } );
         }
-        
+
         static consteval auto xyz() requires at_least_vec3<type> {
             return concat(name, sym_dot, static_string{ "xyz" } );
         }
 
         template <auto expression>
-        static consteval auto assign() 
+        static consteval auto assign()
         {
             constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, equal, expr, line_end);
         }
 
         template <auto expression>
-        static consteval auto add_assign() 
+        static consteval auto add_assign()
         {
             constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, plusequal, expr, line_end);
         }
 
         template <auto expression>
-        static consteval auto multiply_assign() 
+        static consteval auto multiply_assign()
         {
             constexpr auto expr{ detail::expression_value<expression>() };
             return concat(name, timesequal, expr, line_end);
@@ -113,70 +113,125 @@ namespace mfl
         static consteval auto increment() {
             return concat(plusplus, name);
         }
-        
+
         static consteval auto decrement() {
             return concat(minusminus, name);
         }
 
-    private:    
+    private:
         template <static_string access_name>
         static consteval auto component() {
             return concat(name, sym_dot, access_name);
         }
     };
-    
-    // TODO: a better structure for operators
-    template <Type T, static_string N1, Keyword K1, auto V1,
-                      static_string N2, Keyword K2, auto V2>
-    consteval auto operator+(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
-        return concat(left_parenthesis, N1, plus, N2, right_parenthesis);
-    }
 
-    template <Type T1, static_string N1, Keyword K1, auto V1,
-              Type T2, static_string N2, Keyword K2, auto V2>
-    consteval auto operator*(const variable_impl<T1, N1, K1, V1>&, const variable_impl<T2, N2, K2, V2>&) {
-        return concat(N1, times, N2);
-    }
+    // + operator
+        template <Type T, static_string N1, Keyword K1, auto V1, static_string N2, Keyword K2, auto V2>
+        consteval auto operator+(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
+            return concat(left_parenthesis, N1, plus, N2, right_parenthesis);
+        }
 
-    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator*(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
-        return concat(left_parenthesis, string, times, N, right_parenthesis);
-    }
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator+(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+            return concat(left_parenthesis, N, plus, string, right_parenthesis);
+        }
 
-    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
-        return concat(left_parenthesis, N, times, string, right_parenthesis);
-    }
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator+(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+            return concat(left_parenthesis, string, plus, N, right_parenthesis);
+        }
 
-    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
-        return concat(left_parenthesis, N, minus, string, right_parenthesis);
-    }
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+        consteval auto operator+(auto number, const variable_impl<T, N, K, V>& var) {
+            return number + var.original_value;
+        }
 
-    template <Type T, static_string N, Keyword K, auto V, std::size_t len>
-    consteval auto operator-(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
-        return concat(left_parenthesis, string, minus, N, right_parenthesis);
-    }
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
+        consteval auto operator+(const variable_impl<T, N, K, V>& var, auto number) {
+            return number + var.original_value;
+        }
+    //
 
-    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
-    consteval auto operator-(auto number, const variable_impl<T, N, K, V>& var) {
-        return number - var.original_value;
-    }
-    
-    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
-    consteval auto operator/(auto number, const variable_impl<T, N, K, V>& var) {
-        return number / var.original_value;
-    }
+    // - operator
+        template <Type T, static_string N1, Keyword K1, auto V1, static_string N2, Keyword K2, auto V2>
+        consteval auto operator-(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
+            return concat(left_parenthesis, N1, minus, N2, right_parenthesis);
+        }
 
-    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
-    consteval auto operator*(auto number, const variable_impl<T, N, K, V>& var) {
-        return number * var.original_value;
-    }
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator-(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+            return concat(left_parenthesis, N, minus, string, right_parenthesis);
+        }
 
-    template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
-    consteval auto operator+(auto number, const variable_impl<T, N, K, V>& var) {
-        return number + var.original_value;
-    }
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator-(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+            return concat(left_parenthesis, string, minus, N, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+        consteval auto operator-(auto number, const variable_impl<T, N, K, V>& var) {
+            return number - var.original_value;
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
+        consteval auto operator-(const variable_impl<T, N, K, V>& var, auto number) {
+            return number - var.original_value;
+        }
+    //
+
+    // * operator
+        template <Type T, static_string N1, Keyword K1, auto V1, static_string N2, Keyword K2, auto V2>
+        consteval auto operator*(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
+            return concat(left_parenthesis, N1, times, N2, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator*(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+            return concat(left_parenthesis, N, times, string, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator*(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+            return concat(left_parenthesis, string, times, N, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+        consteval auto operator*(auto number, const variable_impl<T, N, K, V>& var) {
+            return number * var.original_value;
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
+        consteval auto operator*(const variable_impl<T, N, K, V>& var, auto number) {
+            return number * var.original_value;
+        }
+    //
+
+    // / operator
+        template <Type T, static_string N1, Keyword K1, auto V1, static_string N2, Keyword K2, auto V2>
+        consteval auto operator/(const variable_impl<T, N1, K1, V1>&, const variable_impl<T, N2, K2, V2>&)  {
+            return concat(left_parenthesis, N1, divide, N2, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator/(const variable_impl<T, N, K, V>&, const static_string<len>& string) {
+            return concat(left_parenthesis, N, divide, string, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V, std::size_t len>
+        consteval auto operator/(const static_string<len>& string, const variable_impl<T, N, K, V>&) {
+            return concat(left_parenthesis, string, divide, N, right_parenthesis);
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int)
+        consteval auto operator/(auto number, const variable_impl<T, N, K, V>& var) {
+            return number / var.original_value;
+        }
+
+        template <Type T, static_string N, Keyword K, auto V> requires (T == Type::gl_float || T == Type::gl_int || T == Type::gl_vec3)
+        consteval auto operator/(const variable_impl<T, N, K, V>& var, auto number) {
+            return number / var.original_value;
+        }
+    //
 
     template <Type type, static_string name>
     using uniform = variable_impl<type, name, Keyword::gl_uniform>;
@@ -186,7 +241,7 @@ namespace mfl
 
     template <Type type, static_string name>
     using in_var = variable_impl<type, name, Keyword::gl_in>;
-    
+
     template <Type type, static_string name>
     using out_var = variable_impl<type, name, Keyword::gl_out>;
 
@@ -199,4 +254,3 @@ namespace mfl
     template <static_string name, auto value>
     using define = variable_impl<Type::empty, name, Keyword::gl_define, value>;
 }
-

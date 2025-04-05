@@ -21,7 +21,6 @@ namespace mfl::detail
             }
         }();
     }
-#pragma once
 
     template <bool is_last, typename Param>
     static consteval auto format_param(Param param)

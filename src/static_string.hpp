@@ -1,10 +1,10 @@
-#pragma once 
+#pragma once
 
 #include <array>
 #include <algorithm>
 #include <string_view>
 
-namespace mfl::detail 
+namespace mfl::detail
 {
     template <typename T, std::size_t... Indices>
     static consteval auto fill_buffer(std::string_view str, std::index_sequence<Indices...>) {
@@ -25,7 +25,7 @@ namespace mfl::detail
 namespace mfl
 {
     template <std::size_t N>
-    struct static_string 
+    struct static_string
     {
         static constexpr auto size{ N - 1 };
 
@@ -48,17 +48,17 @@ namespace mfl
         consteval auto operator==(const static_string& other) const -> bool {
             return std::equal(std::begin(value), std::end(value), std::begin(other.value));
         }
-        
+
         consteval auto operator==(const char* other) const -> bool {
             return std::string_view{ value } == other;
         }
 
-        constexpr auto begin() const { 
-            return value; 
+        constexpr auto begin() const {
+            return value;
         }
 
-        constexpr auto end() const { 
-            return value + size; 
+        constexpr auto end() const {
+            return value + size;
         }
 
         char value[N] {};
@@ -71,7 +71,7 @@ namespace mfl
     concept is_static_string = std::same_as<T, static_string<T::size + 1>>;
 
     template <static_string string, std::size_t index, char delimiter>
-    consteval auto insert_delimiter_at() 
+    consteval auto insert_delimiter_at()
     {
         constexpr auto N{ string.size + 1 };
         std::array<char, N + 1> result{};
@@ -126,5 +126,24 @@ namespace mfl
     consteval auto concat_all(Vars... vars) {
         return concat(vars.declaration...);
     }
-}
 
+    template <std::size_t N1, std::size_t N2>
+    consteval auto operator+(const static_string<N1>& a, const static_string<N2>& b) {
+        return concat(a, static_string{ "+" }, b);
+    }
+
+    template <std::size_t N1, std::size_t N2>
+    consteval auto operator-(const static_string<N1>& a, const static_string<N2>& b) {
+        return concat(a, static_string{ "-" }, b);
+    }
+
+    template <std::size_t N1, std::size_t N2>
+    consteval auto operator/(const static_string<N1>& a, const static_string<N2>& b) {
+        return concat(a, static_string{ "/" }, b);
+    }
+
+    template <std::size_t N1, std::size_t N2>
+    consteval auto operator*(const static_string<N1>& a, const static_string<N2>& b) {
+        return concat(a, static_string{ "*" }, b);
+    }
+}

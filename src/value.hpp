@@ -11,20 +11,20 @@ namespace mfl::detail
     static consteval auto pow(int number, unsigned n) -> int
     {
         return n == 0
-               ? 1 
+               ? 1
                : number * pow(number, n - 1);
     }
 
-    static consteval auto num_digits(int number, int count = 0) -> unsigned 
+    static consteval auto num_digits(int number, int count = 0) -> unsigned
     {
-        return number == 0 
-               ? (count == 0 ? 1 : count) 
+        return number == 0
+               ? (count == 0 ? 1 : count)
                : num_digits(number / 10, count + 1);
     }
 
     static consteval auto convert_string_to_int_impl(const char* string, int value = 0) -> int
     {
-        return is_digit(*string) 
+        return is_digit(*string)
                ? convert_string_to_int_impl(string + 1, (*string - '0') + value * 10)
                : value;
     }
@@ -54,7 +54,7 @@ namespace mfl::detail
     struct to_digit_seq<0, digits...> {
         using type = std::integer_sequence<int, digits...>;
     };
-    
+
     template <>
     struct to_digit_seq<0> {
         using type = std::integer_sequence<int, 0>;
@@ -92,7 +92,7 @@ namespace mfl::detail
         [&]<auto... indicies>(std::index_sequence<indicies...>) consteval {
             ((buffer[indicies] = chars.at(digits.at(indicies))), ...);
         } (std::make_index_sequence<num_digits(number)>());
-        
+
         return static_string{ buffer };
     }
 
@@ -103,8 +103,8 @@ namespace mfl::detail
         constexpr auto frac{ extract_frac<number, precision>() };
 
         return concat(
-            convert_int_to_string_impl<whole>(),    
-            static_string{ "." }, 
+            convert_int_to_string_impl<whole>(),
+            static_string{ "." },
             convert_int_to_string_impl<frac>(),
             static_string{ "f" }
         );
@@ -117,14 +117,14 @@ namespace mfl
     consteval auto convert_to_int() {
         return detail::convert_string_to_int_impl(string.value);
     }
-    
+
     template <static_string string>
     consteval auto convert_to_float() {
         return detail::convert_string_to_float_impl(string.value);
     }
 
     template <auto number>
-    consteval auto convert_to_string() 
+    consteval auto convert_to_string()
     {
         if constexpr (std::is_integral_v<decltype(number)>)
             return detail::convert_int_to_string_impl<number>();
@@ -137,29 +137,43 @@ namespace mfl
         return concat(static_string{ "#version " }, glsl_version, static_string{ "\n" });
     }
 
-    template <std::size_t N1, std::size_t N2>
-    consteval auto operator+(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, static_string{ "+" }, b);
+    template <std::size_t N>
+    consteval auto operator+(auto value, const static_string<N>& string) {
+        return value + detail::convert_string_to_float_impl(string.value);
     }
 
-    template <std::size_t N1, std::size_t N2>
-    consteval auto operator-(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, static_string{ "-" }, b);
+    template <std::size_t N>
+    consteval auto operator+(const static_string<N>& string, auto value) {
+        return detail::convert_string_to_float_impl(string.value) + value;
     }
 
-    template <std::size_t N1, std::size_t N2>
-    consteval auto operator/(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, static_string{ "/" }, b);
+    template <std::size_t N>
+    consteval auto operator-(auto value, const static_string<N>& string) {
+        return value - detail::convert_string_to_float_impl(string.value);
     }
 
-    template <std::size_t N1, std::size_t N2>
-    consteval auto operator*(const static_string<N1>& a, const static_string<N2>& b) {
-        return concat(a, static_string{ "*" }, b);
+    template <std::size_t N>
+    consteval auto operator-(const static_string<N>& string, auto value) {
+        return detail::convert_string_to_float_impl(string.value) - value;
+    }
+
+    template <std::size_t N>
+    consteval auto operator*(auto value, const static_string<N>& string) {
+        return value * detail::convert_string_to_float_impl(string.value);
+    }
+
+    template <std::size_t N>
+    consteval auto operator*(const static_string<N>& string, auto value) {
+        return detail::convert_string_to_float_impl(string.value) * value;
     }
 
     template <std::size_t N>
     consteval auto operator/(auto value, const static_string<N>& string) {
         return value / detail::convert_string_to_float_impl(string.value);
     }
-}
 
+    template <std::size_t N>
+    consteval auto operator/(const static_string<N>& string, auto value) {
+        return detail::convert_string_to_float_impl(string.value) / value;
+    }
+}
